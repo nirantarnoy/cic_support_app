@@ -8,10 +8,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CarData extends ChangeNotifier {
-  // final String url_to_addcar = "http://192.168.60.12:1223/api/car/createcar";
-  final String url_to_addcar = "http://192.168.60.12:1223/api/car/createcar";
+  // final String url_to_addcar = "http://192.168.60.85:1223/api/car/createcar";
+  final String url_to_addcar = "http://192.168.60.58:1223/api/car/createcar";
   final String url_to_listcar_by_emp =
-      "http://192.168.60.12:1223/api/car/listcarbyemp";
+      "http://192.168.60.58:1223/api/car/listcarbyemp";
 
   List<CarList> _carlist = [];
   List<CarList> get listcaritem => _carlist;

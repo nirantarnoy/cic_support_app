@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     bool res = await Provider.of<UserData>(context, listen: false)
         .login(_formData['username'], _formData['password']);
 
-    if (res) {
+    if (res == true) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainPage()));
     }

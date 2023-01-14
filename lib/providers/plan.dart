@@ -12,15 +12,15 @@ import 'package:http/http.dart' as http;
 
 class PlanData extends ChangeNotifier {
   final String url_to_getplanby_person =
-      "http://192.168.60.12:1223/api/teaminspectionitem/findbyteam";
+      "http://192.168.60.58:1223/api/teaminspectionitem/findbyteam";
   final String url_to_add_inspection_trans =
-      "http://192.168.60.12:1223/api/plan/addinspection";
+      "http://192.168.60.58:1223/api/plan/addinspection";
 
   final String url_to_plan_by_emp =
-      "http://192.168.60.12:1223/api/plan/listplanbyemp";
+      "http://192.168.60.58:1223/api/plan/listplanbyemp";
 
   final String url_to_noncomformall =
-      "http://192.168.60.12:1223/api/carinspection/findall";
+      "http://192.168.60.58:1223/api/carinspection/findall";
 
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
@@ -259,52 +259,54 @@ class PlanData extends ChangeNotifier {
 
     print('current team is ${team_id}');
 
-    try {
-      http.Response response;
-      response = await http.get(
-          Uri.parse(url_to_getplanby_person + "/" + team_id),
-          headers: {"Authorization": token});
+    if (listJobplanArea.length == 0) {
+      try {
+        http.Response response;
+        response = await http.get(
+            Uri.parse(url_to_getplanby_person + "/" + team_id),
+            headers: {"Authorization": token});
 
-      if (response.statusCode == 200) {
-        List<JobplanArea> data = [];
-        List<dynamic> res = json.decode(response.body);
+        if (response.statusCode == 200) {
+          List<JobplanArea> data = [];
+          List<dynamic> res = json.decode(response.body);
 
-        if (res == null) {
-          print("no data");
-          return false;
+          if (res == null) {
+            print("no data");
+            return false;
+          }
+
+          print("data is ${res[0]["seq_sort"]}");
+
+          for (var i = 0; i <= res.length - 1; i++) {
+            final JobplanArea _item = JobplanArea(
+              plan_id: res[i]["id"].toString(),
+              plan_date: res[i]["plan_target_date"].toString(),
+              plan_area_id: res[i]["area_inspection_id"].toString(),
+              plan_area_name: res[i]["area_inspection_name"].toString(),
+              plan_topic_check_qty: "0",
+              plan_topic_checked_qty: "0",
+              status: "0",
+              topic_id: res[i]["topic_id"].toString(),
+              topic_name: res[i]["topic_name"].toString(),
+              topic_item_id: res[i]["topic_item_id"].toString(),
+              topic_item_name: res[i]["topic_item_name"].toString(),
+              scored: "-1",
+              is_enable: res[i]["is_enable"].toString(),
+              seq_sort: res[i]["seq_sort"].toString(),
+              seq_sort_item: res[i]["seq_sort_item"].toString(),
+            );
+
+            data.add(_item);
+          }
+          listJobplanArea = data;
+          notifyListeners();
+          return listJobplanArea;
+        } else {
+          print("No Data");
         }
-
-        print("data is ${res[0]["seq_sort"]}");
-
-        for (var i = 0; i <= res.length - 1; i++) {
-          final JobplanArea _item = JobplanArea(
-            plan_id: res[i]["id"].toString(),
-            plan_date: res[i]["plan_target_date"].toString(),
-            plan_area_id: res[i]["area_inspection_id"].toString(),
-            plan_area_name: res[i]["area_inspection_name"].toString(),
-            plan_topic_check_qty: "0",
-            plan_topic_checked_qty: "0",
-            status: "0",
-            topic_id: res[i]["topic_id"].toString(),
-            topic_name: res[i]["topic_name"].toString(),
-            topic_item_id: res[i]["topic_item_id"].toString(),
-            topic_item_name: res[i]["topic_item_name"].toString(),
-            scored: "-1",
-            is_enable: res[i]["is_enable"].toString(),
-            seq_sort: res[i]["seq_sort"].toString(),
-            seq_sort_item: res[i]["seq_sort_item"].toString(),
-          );
-
-          data.add(_item);
-        }
-        listJobplanArea = data;
-        notifyListeners();
-        return listJobplanArea;
-      } else {
-        print("No Data");
+      } catch (err) {
+        print("error na ja is ${err}");
       }
-    } catch (err) {
-      print("error na ja is ${err}");
     }
   }
 
@@ -345,7 +347,6 @@ class PlanData extends ChangeNotifier {
         if (response.statusCode == 200) {
           // List<JobplanArea> data = [];
           Map<String, dynamic> res = json.decode(response.body);
-
           if (res == null) {
             print("no data");
             return false;

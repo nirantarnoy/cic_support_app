@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PersonData extends ChangeNotifier {
-  final String url_person_list = "http://172.16.0.41:8080/api/person";
+  final String url_person_list = "http://172.16.0.231:8080/api/person";
 
   late List<Person> _person;
   List<Person> get listPerson => _person;

@@ -50,8 +50,9 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
                       end: Alignment.centerRight,
                       colors: _current == index
                           ? [
-                              Colors.purple.withOpacity(0.5),
-                              Colors.purple,
+                              Color.fromARGB(255, 45, 172, 123)
+                                  .withOpacity(0.5),
+                              Color.fromARGB(255, 45, 172, 123),
                             ]
                           : [
                               Colors.white,
@@ -103,8 +104,8 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Colors.purple.withOpacity(0.5),
-                      Colors.purple,
+                      Color.fromARGB(255, 45, 172, 123).withOpacity(0.5),
+                      Color.fromARGB(255, 45, 172, 123),
                     ]),
               ),
               child: Padding(

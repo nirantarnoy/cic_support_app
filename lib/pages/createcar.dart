@@ -446,7 +446,7 @@ class _CreateCarState extends State<CreateCar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         title: Text('ออกใบ CAR'),
         backgroundColor: Colors.transparent,
@@ -641,7 +641,7 @@ class _CreateCarState extends State<CreateCar> {
           Container(
             height: 60,
             alignment: Alignment.center,
-            color: Colors.purple,
+            color: Color.fromARGB(255, 45, 172, 123),
             child: GestureDetector(
               onTap: () => submitform(),
               child: Text(

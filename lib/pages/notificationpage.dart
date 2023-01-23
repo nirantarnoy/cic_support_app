@@ -50,7 +50,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

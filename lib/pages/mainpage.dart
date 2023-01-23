@@ -45,7 +45,7 @@ class MainPage extends StatelessWidget {
           TextSpan(
             text: "SUPPORT",
             style: TextStyle(
-              color: Colors.purple,
+              color: Color.fromARGB(255, 45, 172, 123),
               fontSize: 20,
               fontWeight: FontWeight.bold,
               shadows: <Shadow>[
@@ -62,7 +62,7 @@ class MainPage extends StatelessWidget {
           IconButton(
             icon: const Icon(
               Icons.notifications_outlined,
-              color: Colors.purple,
+              color: Color.fromARGB(255, 45, 172, 123),
             ),
             onPressed: () => Navigator.push(
                 context,

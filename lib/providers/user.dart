@@ -1,20 +1,46 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_cic_support/models/person.dart';
 import 'package:flutter_cic_support/models/teammerber.dart';
+import 'package:flutter_cic_support/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData with ChangeNotifier {
-  final String url_to_login = "http://192.168.60.58:1223/api/auth/login";
-  final String url_to_profile = "http://192.168.60.58:1223/api/user/profile";
+  final String url_to_login = "http://172.16.0.231:1223/api/auth/login";
+  final String url_to_profile = "http://172.16.0.231:1223/api/user/profile";
   final String url_to_teammember =
-      "http://192.168.60.58:1223/api/user/teammember";
+      "http://172.16.0.231:1223/api/user/teammember";
+
+  late User _authenticatedUser;
+  late Timer _authTimer;
+
+  // List<User> _user;
+  // List<User> _userlogin;
+  // List<User> get listuser => _user;
+  // List<User> get listuserlogin => _userlogin;
+  bool _isLoading = false;
+  bool _isauthenuser = false;
 
   late List<TeamMember> _memberTeam = [];
   List<TeamMember> get listmemberteam => _memberTeam;
+
+  late String _username_display = '';
+  String get username_display => _username_display;
+
+  late String _team_display = '';
+  String get team_display => _team_display;
+
+  set team_display(String val) {
+    _team_display = val;
+  }
+
+  set username_display(String val) {
+    _username_display = val;
+  }
 
   set listmemberteam(List<TeamMember> val) {
     _memberTeam = val;
@@ -50,13 +76,17 @@ class UserData with ChangeNotifier {
         );
 
         data.add(user);
-
+        final DateTime now = DateTime.now();
+        final DateTime expiryTime = now.add(Duration(seconds: 160000));
         final SharedPreferences prefs = await SharedPreferences.getInstance();
 
         prefs.setString('token', res['data']['token'].toString());
         prefs.setString('user_id', res['data']['id'].toString());
         prefs.setString('user_name', res['data']['dns_user'].toString());
         prefs.setString('team_id', res['data']['current_team_id'].toString());
+
+        username_display = res['data']['dns_user'].toString();
+        prefs.setString('expiryTime', expiryTime.toIso8601String());
 
         print("res data is ${res['data']}");
         print("token is ${res['data']['token']}");
@@ -69,6 +99,14 @@ class UserData with ChangeNotifier {
       print(err);
       return false;
     }
+  }
+
+  String getCurrenUserName() {
+    String c_username = '';
+    if (username_display != '') {
+      c_username = username_display;
+    }
+    return c_username;
   }
 
   Future<dynamic> fetchProfile() async {
@@ -93,6 +131,8 @@ class UserData with ChangeNotifier {
         }
 
         print("profile team data is ${res['data']}");
+
+        team_display = res['data']['current_team_id'].toString();
 
         prefs.setString('team_id', res['data']['current_team_id'].toString());
         notifyListeners();
@@ -125,13 +165,14 @@ class UserData with ChangeNotifier {
           notifyListeners();
           return false;
         }
-        // print("member team data is ${res[0]['fname']}");
+        print("member team data is ${res}");
 
         for (var i = 0; i <= res.length - 1; i++) {
           TeamMember _item = TeamMember(
             current_team_id: res[i]['current_team_id'].toString(),
             fname: res[i]['fname'].toString(),
             lname: res[i]['lname'].toString(),
+            team_leader: res[i]['is_head'].toString(),
           );
           data.add(_item);
         }
@@ -145,5 +186,52 @@ class UserData with ChangeNotifier {
     } catch (err) {
       print(err);
     }
+  }
+
+  void autoAuthenticate() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   final String token = prefs.getString('token');
+    final String? expiryTimeString = prefs.getString('expiryTime').toString();
+
+    final DateTime now = DateTime.now();
+    final parsedExpiryTime = DateTime.parse(expiryTimeString!);
+    if (parsedExpiryTime.isBefore(now)) {
+      //_authenticatedUser = null;
+      notifyListeners();
+      return;
+    }
+    final String? emp_id = prefs.getString('emp_id').toString();
+    final String? userId = prefs.getString('user_id').toString();
+    final String? adUsername = prefs.getString('dns_user').toString();
+
+    final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
+    _authenticatedUser = User(
+      id: userId!,
+      user_id: userId,
+      team_id: "0",
+      username: adUsername!,
+    );
+
+    _isauthenuser = true;
+    setAuthTimeout(tokenLifespan);
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>> logout() async {
+    //_authenticatedUser = null;
+    _isauthenuser = false;
+    _authTimer.cancel();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    // prefs.remove('token');
+    // prefs.remove('username');
+    // prefs.remove('userId');
+    // prefs.remove('studentId');
+    _isLoading = false;
+    return {'success': true};
+  }
+
+  void setAuthTimeout(int time) {
+    _authTimer = Timer(Duration(seconds: time), logout);
   }
 }

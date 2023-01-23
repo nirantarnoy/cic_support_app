@@ -8,6 +8,7 @@ import 'package:flutter_cic_support/pages/jobcheck.dart';
 import 'package:flutter_cic_support/pages/loginpage.dart';
 import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
+// import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,21 +22,35 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Future<String> _displayname() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String current_username = "";
+  // Future<String> _displayname() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String username = prefs.getString("user_name").toString();
+  //   return username;
+  // }
+
+  @override
+  void initState() {
+    // TODO: implement initState
     Provider.of<UserData>(context, listen: false).fetchProfile();
-    return prefs.getString("user_name").toString();
+    current_username =
+        Provider.of<UserData>(context, listen: false).getCurrenUserName();
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   appBar: AppBar(title: Text("hlllo")),
+    // );
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Profile',
+          'User Profile',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -51,284 +66,362 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.logout_outlined,
-              color: Colors.white,
-            ),
-            onPressed: () =>
-                Navigator.of(context).popUntil((route) => route.isFirst),
-          ),
+              icon: const Icon(
+                Icons.logout_outlined,
+                color: Colors.white,
+              ),
+              onPressed: () => showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => Dialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 12,
+                            ),
+                            Icon(
+                              Icons.mood_bad_outlined,
+                              size: 32,
+                              color: Colors.red,
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            Text(
+                              'ยืนยันการทำรายการ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            Text(
+                              'ต้องการออกจากระบบใช่หรือไม่ ?',
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: MaterialButton(
+                                    color: Colors.red.shade300,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
+                                    onPressed: () async {
+                                      Navigator.of(context)
+                                          .popUntil((route) => route.isFirst);
+                                    },
+                                    child: Text(
+                                      'ใช่',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Expanded(
+                                  child: MaterialButton(
+                                    color: Colors.grey[400],
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child: Text(
+                                      'ไม่ใช่',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
         ],
       ),
       body: Stack(
         fit: StackFit.expand,
         alignment: Alignment.centerLeft,
-        children: [
+        children: <Widget>[
           //Initialize the chart widget
-
-          Expanded(
-            flex: 2,
-            child: Container(
-              margin: const EdgeInsets.only(top: 50),
-              //  height: 60,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.only(
-                  // topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
+          Container(
+            margin: const EdgeInsets.only(top: 50),
+            //  height: 60,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.only(
+                // topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
-              child: SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              child: Container(
-                                width: 150,
-                                height: 30,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                ),
-                                child: Text('Change Password'),
+            ),
+            child: SingleChildScrollView(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          GestureDetector(
+                            child: Container(
+                              width: 150,
+                              height: 30,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.calendar_month,
-                                  color: Colors.lightBlue,
-                                )),
-                              ),
-                              title: Text(
-                                'แผนและตารางตรวจ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
+                              child: Text('Change Password'),
                             ),
                           ),
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PlanPage())),
-                        ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(2),
+                          height: 80,
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: ListTile(
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.grey.shade200,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.calendar_month,
+                                color: Colors.lightBlue,
+                              )),
                             ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.check_box_outlined,
-                                  color: Colors.amber,
-                                )),
+                            title: Text(
+                              'แผนและตารางตรวจ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              title: Text(
-                                'ตรวจกิจกรรม 5ส.',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.keyboard_arrow_right,
                             ),
                           ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => JobplanAreaPage())),
                         ),
+                        //  onTap: () {}
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PlanPage())),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(2),
+                          height: 80,
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: ListTile(
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.grey.shade200,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.check_box_outlined,
+                                color: Colors.amber,
+                              )),
                             ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.safety_check,
-                                  color: Colors.green,
-                                )),
+                            title: Text(
+                              'ตรวจกิจกรรม 5ส.',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              title: Text(
-                                'ตรวจ Safety',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.keyboard_arrow_right,
                             ),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => JobCheckPage(
-                                        plan_area_id: "",
-                                        plan_id: "",
-                                        plan_area_name: "",
-                                      ))),
                         ),
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => JobplanAreaPage())),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(2),
+                          height: 80,
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: ListTile(
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.grey.shade200,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.safety_check,
+                                color: Colors.green,
+                              )),
                             ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.cancel,
-                                  color: Colors.red,
-                                )),
+                            title: Text(
+                              'ตรวจ Safety',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              title: Text(
-                                'จัดการใบ CAR',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.keyboard_arrow_right,
                             ),
                           ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => CarlistPage())),
                         ),
+                        onTap: () =>
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => JobCheckPage(
+                                      plan_area_id: "",
+                                      plan_id: "",
+                                      plan_area_name: "",
+                                    ))),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(2),
+                          height: 80,
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: ListTile(
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.grey.shade200,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                              )),
                             ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.person_search,
-                                  color: Colors.blueGrey,
-                                )),
+                            title: Text(
+                              'จัดการใบ CAR',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              title: Text(
-                                'สมาชิกทีมตรวจ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.keyboard_arrow_right,
                             ),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MemberTeamPage(
-                                        team_id: '1',
-                                      ))),
                         ),
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => CarlistPage())),
                       ),
-                      const Expanded(
-                        child: Text(''),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(2),
+                          height: 80,
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: ListTile(
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.grey.shade200,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.person_search,
+                                color: Colors.blueGrey,
+                              )),
+                            ),
+                            title: Text(
+                              'สมาชิกทีมตรวจ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.keyboard_arrow_right,
+                            ),
+                          ),
+                        ),
+                        onTap: () =>
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => MemberTeamPage(
+                                      team_id: '1',
+                                    ))),
                       ),
-                    ],
-                  ),
+                    ),
+                    const Expanded(
+                      child: Text(''),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -337,7 +430,7 @@ class _ProfilePageState extends State<ProfilePage> {
             top: 5,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Container(
                   height: 100,
                   width: 100,
@@ -365,19 +458,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   width: 10,
                 ),
-                FutureBuilder(
-                    future: _displayname(),
-                    builder: (context, snapshort) {
-                      if (!snapshort.hasData) {}
-                      return Text(
-                        "${snapshort.data}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      );
-                    }),
+                Consumer<UserData>(
+                  builder: (context, _user, _) => Text(
+                    "${current_username.toString()} (ทีมตรวจ ${_user.team_display.toString()})",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                // FutureBuilder(
+                //     future: _displayname(),
+                //     builder: (context, snapshort) {
+                //       if (!snapshort.hasData) {}
+                //       return Text(
+                //         "${snapshort.data}",
+                //         style: TextStyle(
+                //           fontSize: 18,
+                //           fontWeight: FontWeight.bold,
+                //           color: Colors.white,
+                //         ),
+                //       );
+                //     }),
               ],
             ),
           ),

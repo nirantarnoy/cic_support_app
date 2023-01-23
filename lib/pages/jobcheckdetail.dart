@@ -13,11 +13,13 @@ class JobCheckDetailPage extends StatefulWidget {
   final String plan_id;
   final String topic_id;
   final String plan_area_id;
+  final String plan_num;
   const JobCheckDetailPage({
     Key? key,
     required this.topic_id,
     required this.plan_area_id,
     required this.plan_id,
+    required this.plan_num,
   }) : super(key: key);
 
   @override
@@ -35,9 +37,12 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
   Color active_color4 = Colors.white;
   Color submit_scored_color = Colors.white;
 
+  int is_selected = 0;
+
   @override
   void initState() {
     //  Provider.of<TopicItemData>(context, listen: false).fetchTopicItem();
+    print("area id detail is ${widget.plan_area_id}");
     super.initState();
   }
 
@@ -119,7 +124,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                       flex: 1,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.purple.shade100,
+                          color: Colors.green.shade50,
                         ),
                         alignment: Alignment.center,
                         child: Text(
@@ -233,9 +238,14 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                                             this.active_color4 =
                                                                 Colors.white;
                                                             submit_scored_color =
-                                                                Colors.green;
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    45,
+                                                                    172,
+                                                                    123);
                                                             print(
                                                                 current_scored);
+                                                            is_selected = 1;
                                                           });
                                                         } else {
                                                           this.active_color =
@@ -250,6 +260,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                                               Colors.white;
                                                           submit_scored_color =
                                                               Colors.white;
+                                                          is_selected = 0;
                                                         }
                                                         Navigator.of(context)
                                                             .pop(false);
@@ -330,6 +341,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color4 = Colors.white;
 
                                         submit_scored_color = Colors.white;
+                                        is_selected = 0;
                                         print(current_scored);
                                       });
                                     } else {
@@ -341,7 +353,9 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color2 = Colors.white;
                                         this.active_color3 = Colors.white;
                                         this.active_color4 = Colors.white;
-                                        submit_scored_color = Colors.green;
+                                        submit_scored_color =
+                                            Color.fromARGB(255, 45, 172, 123);
+                                        is_selected = 1;
                                         print(current_scored);
                                       });
                                     }
@@ -386,6 +400,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color3 = Colors.white;
                                         this.active_color4 = Colors.white;
                                         submit_scored_color = Colors.white;
+                                        is_selected = 0;
                                         print(current_scored);
                                       });
                                     } else {
@@ -397,7 +412,9 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color2 = Colors.green;
                                         this.active_color3 = Colors.white;
                                         this.active_color4 = Colors.white;
-                                        submit_scored_color = Colors.green;
+                                        submit_scored_color =
+                                            Color.fromARGB(255, 45, 172, 123);
+                                        is_selected = 1;
                                         print(current_scored);
                                       });
                                     }
@@ -436,6 +453,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color3 = Colors.white;
                                         this.active_color4 = Colors.white;
                                         submit_scored_color = Colors.white;
+                                        is_selected = 0;
                                         print(current_scored);
                                       });
                                     } else {
@@ -447,7 +465,9 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color2 = Colors.white;
                                         this.active_color3 = Colors.green;
                                         this.active_color4 = Colors.white;
-                                        submit_scored_color = Colors.green;
+                                        submit_scored_color =
+                                            Color.fromARGB(255, 45, 172, 123);
+                                        is_selected = 1;
                                         print(current_scored);
                                       });
                                     }
@@ -504,6 +524,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color3 = Colors.white;
                                         this.active_color4 = Colors.white;
                                         submit_scored_color = Colors.white;
+                                        is_selected = 0;
                                         print(current_scored);
                                       });
                                     } else {
@@ -515,7 +536,9 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                                         this.active_color2 = Colors.white;
                                         this.active_color3 = Colors.white;
                                         this.active_color4 = Colors.green;
-                                        submit_scored_color = Colors.green;
+                                        submit_scored_color =
+                                            Color.fromARGB(255, 45, 172, 123);
+                                        is_selected = 1;
                                         print(current_scored);
                                       });
                                     }
@@ -561,25 +584,28 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
                         ),
                       ),
                       onTap: () {
-                        print("selected scored is ${current_scored}");
-                        InspectionTrans _inspec = InspectionTrans(
-                          area_group_id: '0',
-                          emp_id: '0',
-                          plan_id: widget.plan_id,
-                          area_id: widget.plan_area_id,
-                          score: current_scored.toString(),
-                          status: '1',
-                          team_id: '0',
-                          topic_id: widget.topic_id,
-                          topic_item_id: topic_item_id,
-                          module_type_id: '1',
-                          note: '',
-                          trans_date: DateTime.now().toIso8601String(),
-                        );
-                        Provider.of<PlanData>(context, listen: false)
-                            .addInspectionTrans(_inspec);
+                        if (is_selected == 1) {
+                          print("selected scored is ${current_scored}");
+                          InspectionTrans _inspec = InspectionTrans(
+                            area_group_id: '0',
+                            emp_id: '0',
+                            plan_id: widget.plan_id,
+                            plan_num: widget.plan_num,
+                            area_id: widget.plan_area_id,
+                            score: current_scored.toString(),
+                            status: '1',
+                            team_id: '0',
+                            topic_id: widget.topic_id,
+                            topic_item_id: topic_item_id,
+                            module_type_id: '1',
+                            note: '',
+                            trans_date: DateTime.now().toIso8601String(),
+                          );
+                          Provider.of<PlanData>(context, listen: false)
+                              .addInspectionTrans(_inspec);
 
-                        Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        }
                       },
                     ),
                   ),
@@ -655,7 +681,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         title: Text('รายละเอียดการตรวจ'),
         backgroundColor: Colors.transparent,

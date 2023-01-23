@@ -31,9 +31,18 @@ class _MemberTeamPageState extends State<MemberTeamPage> {
           itemBuilder: (BuildContext context, int index) {
             return Card(
               child: ListTile(
-                leading: Icon(Icons.person),
+                leading: Icon(
+                  Icons.account_circle,
+                  color: Color.fromARGB(255, 45, 172, 123),
+                ),
                 title: Text(
                     '${_listcheck[index].fname} ${_listcheck[index].lname}'),
+                trailing: _listcheck[index].team_leader == "1"
+                    ? Icon(
+                        Icons.star,
+                        color: Color.fromARGB(216, 211, 214, 11),
+                      )
+                    : Text(""),
               ),
             );
           });
@@ -48,8 +57,17 @@ class _MemberTeamPageState extends State<MemberTeamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("สมาชิกทีมตรวจ"),
-        backgroundColor: Colors.purple,
+        title: Consumer<UserData>(
+          builder: (context, _user, _) => Text(
+            "สมาชิกทีมตรวจ ${_user.team_display}",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 45, 172, 123),
       ),
       body: Container(
         child: Column(children: <Widget>[

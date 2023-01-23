@@ -62,7 +62,7 @@ class _bottomnavState extends State<bottomnav> {
       children: [
         BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.purple,
+          selectedItemColor: Color.fromARGB(255, 45, 172, 123),
           currentIndex: _currentIndex,
           onTap: _onTaped,
           items: [

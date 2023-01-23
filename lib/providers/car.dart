@@ -9,11 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CarData extends ChangeNotifier {
   // final String url_to_addcar = "http://192.168.60.85:1223/api/car/createcar";
-  final String url_to_addcar = "http://192.168.60.58:1223/api/car/createcar";
+  final String url_to_addcar = "http://172.16.0.231:1223/api/car/createcar";
   final String url_to_listcar_by_emp =
-      "http://192.168.60.58:1223/api/car/listcarbyemp";
+      "http://172.16.0.231:1223/api/car/listcarbyemp";
 
-  List<CarList> _carlist = [];
+  late List<CarList> _carlist = [];
   List<CarList> get listcaritem => _carlist;
 
   set listcaritem(List<CarList> val) {
@@ -62,32 +62,47 @@ class CarData extends ChangeNotifier {
   Future<dynamic> getCarlistByEmpId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
 
     try {
       http.Response response;
       response = await http.get(
           Uri.parse(url_to_listcar_by_emp + "/" + user_id),
-          headers: {"Content-Type": "application/json"});
+          headers: {"Authorization": token});
 
       if (response.statusCode == 200) {
-        List<Map<String, dynamic>> res = json.decode(response.body);
+        // print("${json.decode(response.body)}");
+        // return;
+        List<dynamic> res = json.decode(response.body);
         if (res == null) {
           print("no data");
         }
 
         List<CarList> data = [];
-        for (var i = 0; i <= res.length; i++) {
+        for (var i = 0; i <= res.length - 1; i++) {
+          print('car no is ${res[i]['car_no'].toString()}');
           CarList _item = CarList(
-            car_id: res[i]['id'],
-            car_date: res[i]['car_date'],
-            module_type_id: res[i]['module_type_id'],
-            area_id: res[i]['area_id'],
-            area_name: res[i]['area_id'],
-            problem_type: res[i]['problem_type'],
-            description: res[i]['description'],
-            status: res[i]['status'],
+            car_id: res[i]['id'].toString(),
+            car_no: res[i]['car_no'] == null ? '' : res[i]['car_no'].toString(),
+            car_date: res[i]['car_date'].toString(),
+            module_type_id: "1",
+            area_id: res[i]['area_id'].toString(),
+            area_name: res[i]['area_name'].toString(),
+            problem_type: "",
+            description: res[i]['car_description'].toString(),
+            status: res[i]['status'].toString(),
+            is_new: res[i]['is_new'].toString(),
+            target_finish_date: res[i]['target_finish_date'].toString(),
+            responsibility: res[i]['responsibility'].toString(),
+            car_non_conform: res[i]['car_non_conform'].toString(),
           );
+
+          data.add(_item);
         }
+        listcaritem = data;
+        // print(listcaritem);
+        notifyListeners();
+        return listcaritem;
       } else {
         print("Something went wrong!");
       }

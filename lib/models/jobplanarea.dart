@@ -14,6 +14,7 @@ class JobplanArea {
   final String is_enable;
   final String seq_sort;
   final String seq_sort_item;
+  final String plan_num;
 
   JobplanArea({
     required this.plan_id,
@@ -31,5 +32,6 @@ class JobplanArea {
     required this.is_enable,
     required this.seq_sort,
     required this.seq_sort_item,
+    required this.plan_num,
   });
 }

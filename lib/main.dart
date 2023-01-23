@@ -42,37 +42,41 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<PersonData>.value(value: PersonData()),
-        ChangeNotifierProvider<UserData>.value(value: UserData()),
-        ChangeNotifierProvider<TopicItemData>.value(value: TopicItemData()),
-        ChangeNotifierProvider<PlanData>.value(value: PlanData()),
-        ChangeNotifierProvider<CarData>.value(value: CarData()),
-        ChangeNotifierProvider<TeamnotifyData>.value(value: TeamnotifyData()),
-        ChangeNotifierProvider<PersonData>.value(value: PersonData())
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'CIC Support',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-          fontFamily: 'Kanit-Regular',
-        ),
-        home: LoginPage(),
-        routes: {
-          ProfilePage.routeName: (ctx) => ProfilePage(),
-        },
-        builder: EasyLoading.init(),
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider<PersonData>.value(value: PersonData()),
+          ChangeNotifierProvider<UserData>.value(value: UserData()),
+          ChangeNotifierProvider<TopicItemData>.value(value: TopicItemData()),
+          ChangeNotifierProvider<PlanData>.value(value: PlanData()),
+          ChangeNotifierProvider<CarData>.value(value: CarData()),
+          ChangeNotifierProvider<TeamnotifyData>.value(value: TeamnotifyData()),
+          ChangeNotifierProvider<PersonData>.value(value: PersonData())
+        ],
+        child: Consumer<UserData>(
+          builder: (context, _users, _) {
+            _users.autoAuthenticate();
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'CIC Support',
+              theme: ThemeData(
+                // This is the theme of your application.
+                //
+                // Try running your application with "flutter run". You'll see the
+                // application has a blue toolbar. Then, without quitting the app, try
+                // changing the primarySwatch below to Colors.green and then invoke
+                // "hot reload" (press "r" in the console where you ran "flutter run",
+                // or simply save your changes to "hot reload" in a Flutter IDE).
+                // Notice that the counter didn't reset back to zero; the application
+                // is not restarted.
+                primarySwatch: Colors.blue,
+                fontFamily: 'Kanit-Regular',
+              ),
+              home: LoginPage(),
+              routes: {
+                ProfilePage.routeName: (ctx) => ProfilePage(),
+              },
+              builder: EasyLoading.init(),
+            );
+          },
+        ));
   }
 }

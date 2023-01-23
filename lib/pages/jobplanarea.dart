@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
+import 'package:flutter_cic_support/pages/carhistory.dart';
+import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/history.dart';
 import 'package:flutter_cic_support/pages/jobcheck.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
@@ -52,6 +54,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
     // Provider.of<PlanData>(context, listen: false).fetchJobplan();
     // _obtainPlanArea();
     EasyLoading.show(status: "โหลดข้อมูล");
+    Provider.of<PlanData>(context, listen: false).fetFinishedCheck();
     Provider.of<PlanData>(context, listen: false).fetchJobplan();
     EasyLoading.dismiss();
     super.initState();
@@ -68,6 +71,17 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
             int total_topic_counted =
                 Provider.of<PlanData>(contex, listen: false)
                     .countCheckedTopicitem(listcheck[index].plan_area_id);
+
+            Color _bgcolor = Colors.green.shade50;
+            if (total_topic_counted <= 0) {
+              _bgcolor = Colors.green.shade50;
+            } else if (total_topic_counted > 0 &&
+                total_topic_counted < total_topic) {
+              _bgcolor = Color.fromARGB(255, 235, 177, 17);
+            }
+            if (total_topic_counted == total_topic) {
+              _bgcolor = Colors.green.shade400;
+            }
             return Slidable(
               key: const ValueKey(0),
               startActionPane: ActionPane(
@@ -76,25 +90,25 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                 children: [
                   SlidableAction(
                     onPressed: doNothing,
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    icon: Icons.edit,
-                    label: 'Edit',
-                  ),
-                  SlidableAction(
-                    onPressed: doNothing,
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                     icon: Icons.delete,
-                    label: 'Delete',
+                    label: 'Clear',
                   ),
-                  SlidableAction(
-                    onPressed: doNothing,
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    icon: Icons.share,
-                    label: 'Share',
-                  )
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.red,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.delete,
+                  //   label: 'Delete',
+                  // ),
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.green,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.share,
+                  //   label: 'Share',
+                  // )
                 ],
               ),
               endActionPane: ActionPane(
@@ -102,26 +116,31 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                 children: [
                   SlidableAction(
                     // flex: 2,
-                    onPressed: doNothing,
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    icon: Icons.edit,
-                    label: 'Edit',
-                  ),
-                  SlidableAction(
-                    onPressed: doNothing,
+                    // onPressed:
+                    //     _removecheckeditem(listcheck[index].plan_area_id),
+                    onPressed: (BuildContext context) {
+                      print("you pressed meeee");
+                      _removecheckeditem(listcheck[index].plan_area_id);
+                    },
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                     icon: Icons.delete,
-                    label: 'Delete',
+                    label: 'Clear',
                   ),
-                  SlidableAction(
-                    onPressed: doNothing,
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    icon: Icons.share,
-                    label: 'Share',
-                  )
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.red,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.delete,
+                  //   label: 'Delete',
+                  // ),
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.green,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.share,
+                  //   label: 'Share',
+                  // )
                 ],
               ),
               child: Padding(
@@ -131,9 +150,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                     padding: EdgeInsets.all(5),
                     margin: EdgeInsets.only(top: 1),
                     decoration: BoxDecoration(
-                        color: total_topic_counted == total_topic
-                            ? Colors.green.shade400
-                            : Colors.purple.shade100,
+                        color: _bgcolor,
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: ListTile(
                       leading: Container(
@@ -158,7 +175,10 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      trailing: Text("${total_topic_counted}/${total_topic}"),
+                      trailing: Text(
+                        "${total_topic_counted}/${total_topic}",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
@@ -179,11 +199,15 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   }
 
   void doNothing(BuildContext context) {}
+  dynamic _removecheckeditem(String area_id) {
+    //print("you press me ${area_id}");
+    Provider.of<PlanData>(context, listen: false).removeinspectionitem(area_id);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         title: Text("แผนพื้นที่ตรวจ 5ส."),
         backgroundColor: Colors.transparent,
@@ -198,10 +222,19 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
             ),
             icon: Icon(Icons.history),
           ),
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CarlistPage(),
+              ),
+            ),
+            icon: Icon(Icons.error_outline),
+          ),
         ],
       ),
       body: Container(
-        color: Colors.white,
+        color: Colors.grey.shade100,
         width: double.infinity,
         child: Column(children: <Widget>[
           SizedBox(
@@ -210,18 +243,51 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
           Expanded(
             flex: 5,
             child: Consumer<PlanData>(
-              builder: ((context, _plans, _) => _buildList(
-                    _plans.getAreaTitle(),
-                  )),
+              builder: ((context, _plans, _) => _plans.finishedcheck > 0
+                  ? Center(
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 2,
+                            child: Text(""),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Column(children: [
+                              Icon(
+                                Icons.block,
+                                size: 50,
+                                color: Color.fromARGB(255, 45, 172, 123),
+                              ),
+                              Center(
+                                  child: Text(
+                                'ไม่พบรายการตรวจ',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              )),
+                            ]),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(""),
+                          ),
+                        ],
+                      ),
+                    )
+                  : _buildList(
+                      _plans.getAreaTitle(),
+                    )),
             ),
           ),
           //_plans.checkfinish()
           Consumer<PlanData>(
-            builder: ((context, _plans, _) => 1 > 0
+            builder: ((context, _plans, _) => _plans.finishedcheck <= 0
                 ? Container(
                     height: 50,
                     width: double.infinity,
-                    color: Colors.purple,
+                    color: Color.fromARGB(255, 45, 172, 123),
                     child: GestureDetector(
                       child: Center(
                         child: Text(
@@ -279,7 +345,8 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                     children: <Widget>[
                                       Expanded(
                                         child: MaterialButton(
-                                          color: Colors.grey.shade800,
+                                          color:
+                                              Color.fromARGB(255, 45, 172, 123),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(50)),

@@ -11,6 +11,7 @@ class InspectionTrans {
   String score;
   final String status;
   final String note;
+  final String plan_num;
 
   InspectionTrans({
     required this.module_type_id,
@@ -25,5 +26,6 @@ class InspectionTrans {
     required this.score,
     required this.status,
     required this.note,
+    required this.plan_num,
   });
 }

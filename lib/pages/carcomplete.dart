@@ -45,7 +45,7 @@ class CarcompletePage extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.purple),
+                        color: Color.fromARGB(255, 45, 172, 123)),
                   ),
                   onTap: () => Navigator.pushAndRemoveUntil(
                       context,

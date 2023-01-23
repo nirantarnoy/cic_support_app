@@ -6,27 +6,51 @@ import 'package:flutter_cic_support/models/inspectiontrans.dart';
 import 'package:flutter_cic_support/models/jobcheckdetail.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
 import 'package:flutter_cic_support/models/nonconformtitle.dart';
+import 'package:flutter_cic_support/models/personcurrentplan.dart';
 import 'package:flutter_cic_support/models/planareagroup.dart';
+import 'package:flutter_cic_support/models/transhistoryemp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class PlanData extends ChangeNotifier {
   final String url_to_getplanby_person =
-      "http://192.168.60.58:1223/api/teaminspectionitem/findbyteam";
+      "http://172.16.0.231:1223/api/teaminspectionitem/findbyteam";
   final String url_to_add_inspection_trans =
-      "http://192.168.60.58:1223/api/plan/addinspection";
+      "http://172.16.0.231:1223/api/plan/addinspection";
 
   final String url_to_plan_by_emp =
-      "http://192.168.60.58:1223/api/plan/listplanbyemp";
+      "http://172.16.0.231:1223/api/plan/listplanbyemp";
 
   final String url_to_noncomformall =
-      "http://192.168.60.58:1223/api/carinspection/findall";
+      "http://172.16.0.231:1223/api/carinspection/findall";
 
+  final String url_to_check_already_trans =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyemp";
+
+  final String url_to_histoty_trans_by_emp =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findtranshistorybyemp";
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
 
   late List<NonConformTitle> _nonconform = [];
   List<NonConformTitle> get listnonconform => _nonconform;
+
+  late List<PersoncurrentPlan> _personcurrentplan = [];
+  List<PersoncurrentPlan> get listpersoncurrentplan => _personcurrentplan;
+
+  late List<TransHistoryEmp> _histoytrans = [];
+  List<TransHistoryEmp> get listhistorytrans => _histoytrans;
+
+  set listpersoncurrentplan(List<PersoncurrentPlan> val) {
+    _personcurrentplan = val;
+  }
+
+  late int _finished_check = 0;
+  int get finishedcheck => _finished_check;
+
+  set finishedcheck(int val) {
+    _finished_check = val;
+  }
 
   set listJobplanArea(List<JobplanArea> val) {
     _plan = val;
@@ -34,6 +58,10 @@ class PlanData extends ChangeNotifier {
 
   set listnonconform(List<NonConformTitle> val) {
     _nonconform = val;
+  }
+
+  set listhistorytrans(List<TransHistoryEmp> val) {
+    _histoytrans = val;
   }
 
   late List<InspectionTrans> _inspectiontrans = [];
@@ -56,6 +84,7 @@ class PlanData extends ChangeNotifier {
       } else {
         JobplanArea _group = JobplanArea(
           plan_id: element.plan_id,
+          plan_num: element.plan_num,
           plan_date: "",
           plan_area_id: element.plan_area_id,
           plan_area_name: element.plan_area_name,
@@ -98,6 +127,7 @@ class PlanData extends ChangeNotifier {
             element.is_enable == "1") {
           JobplanArea _group = JobplanArea(
               plan_id: element.plan_id,
+              plan_num: element.plan_num,
               plan_date: "",
               plan_area_id: element.plan_area_id,
               plan_area_name: "",
@@ -201,16 +231,42 @@ class PlanData extends ChangeNotifier {
         .toList();
   }
 
-  bool addInspectionTrans(InspectionTrans data) {
-    if (data != null) {
-      listInspectiontrans.forEach((element) {
-        if (element.topic_item_id == data.topic_item_id &&
-            element.area_id == data.area_id) {
-          element.score = data.score.toString(); // update score if exist
-        } else {
-          listInspectiontrans.add(data); // original line
+  String getNonconformName(String id) {
+    String name = "";
+    if (listnonconform.isNotEmpty) {
+      listnonconform.forEach((element) {
+        // print("loop non list ${element.id}");
+        if (element.id == id) {
+          name = element.name;
         }
       });
+    }
+
+    return name;
+  }
+
+  bool addInspectionTrans(InspectionTrans data) {
+    if (data != null) {
+      if (listInspectiontrans.isNotEmpty) {
+        int has_update = 0;
+        listInspectiontrans.forEach((element) {
+          if (element.topic_item_id == data.topic_item_id &&
+              element.area_id == data.area_id) {
+            element.score = data.score.toString(); // update score if exist
+            print("have data to update trans");
+            has_update = 1;
+          } else {
+            has_update = 0;
+          }
+        });
+        if (has_update == 0) {
+          listInspectiontrans.add(data); // original line
+          print("loop new data to add trans");
+        }
+      } else {
+        listInspectiontrans.add(data); // original line
+        print("first new data to add trans");
+      }
 
       listJobplanArea.forEach((element) {
         if (element.topic_item_id == data.topic_item_id &&
@@ -218,15 +274,36 @@ class PlanData extends ChangeNotifier {
           element.status = "1";
           element.scored = data.score.toString();
         } else {
-          print("no data to add");
+          //print("no data to add");
         }
       });
 
       notifyListeners();
       return true;
     } else {
+      //print("no data to add 2");
       return false;
     }
+  }
+
+  bool removeinspectionitem(String area_id) {
+    if (listJobplanArea.isNotEmpty && area_id != null) {
+      // listInspectiontrans.forEach((element) {
+      //   print(element.area_id);
+      // });
+
+      listJobplanArea.forEach((element) {
+        if (element.plan_area_id == area_id) {
+          print("remove area id is ${area_id} and ${element.plan_area_id}");
+          element.scored = "-1";
+        }
+      });
+      //   listInspectiontrans.removeWhere((item) =>
+      //       item.area_id == area_id); // remove all checked score of this area
+      //   print("remove checked topic item");
+    }
+    notifyListeners();
+    return true;
   }
 
   int countTopicitem(String area_id) {
@@ -249,6 +326,15 @@ class PlanData extends ChangeNotifier {
     return cnt;
   }
 
+  void clearInspectionTrans() {
+    if (listInspectiontrans.isNotEmpty) {
+      listInspectiontrans.clear();
+    }
+    if (listJobplanArea.isNotEmpty) {
+      listJobplanArea.clear();
+    }
+  }
+
   Future<dynamic> fetchJobplan() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("user_id").toString();
@@ -268,6 +354,7 @@ class PlanData extends ChangeNotifier {
 
         if (response.statusCode == 200) {
           List<JobplanArea> data = [];
+          List<PersoncurrentPlan> personplan_data = [];
           List<dynamic> res = json.decode(response.body);
 
           if (res == null) {
@@ -275,11 +362,12 @@ class PlanData extends ChangeNotifier {
             return false;
           }
 
-          print("data is ${res[0]["seq_sort"]}");
+          print("data plan_num is ${res[0]["plan_num"]}");
 
           for (var i = 0; i <= res.length - 1; i++) {
             final JobplanArea _item = JobplanArea(
               plan_id: res[i]["id"].toString(),
+              plan_num: res[i]["plan_num"].toString(),
               plan_date: res[i]["plan_target_date"].toString(),
               plan_area_id: res[i]["area_inspection_id"].toString(),
               plan_area_name: res[i]["area_inspection_name"].toString(),
@@ -296,9 +384,22 @@ class PlanData extends ChangeNotifier {
               seq_sort_item: res[i]["seq_sort_item"].toString(),
             );
 
+            if (i == 0) {
+              final PersoncurrentPlan personplan = PersoncurrentPlan(
+                plan_id: res[i]["plan_id"].toString(),
+                plan_no: res[i]["plan_no"].toString(),
+                plan_date: res[i]["plan_target_date"].toString(),
+                plan_status: "0",
+                plan_type: res[i]["module_type_id"].toString(),
+              );
+
+              personplan_data.add(personplan);
+            }
+
             data.add(_item);
           }
           listJobplanArea = data;
+          listpersoncurrentplan = personplan_data;
           notifyListeners();
           return listJobplanArea;
         } else {
@@ -311,16 +412,19 @@ class PlanData extends ChangeNotifier {
   }
 
   Future<bool> submitInspection() async {
+    print("list data is ${listInspectiontrans[0].area_id}");
+    //return false;
     if (listInspectiontrans.isNotEmpty) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String user_id = prefs.getString("user_id").toString();
       final String team_id = prefs.getString("team_id").toString();
       final String token = prefs.getString("token").toString();
+      // final String plan_num = prefs.getString("plan_num").toString();
 
       var addData = listInspectiontrans
           .map((e) => {
                 'module_type_id': int.parse(e.module_type_id),
-                'plan_id': int.parse(e.plan_id),
+                'plan_id': int.parse(e.plan_num),
                 'trans_date': e.trans_date,
                 'emp_id': int.parse(user_id),
                 'area_group_id': int.parse(e.area_group_id),
@@ -336,6 +440,7 @@ class PlanData extends ChangeNotifier {
               })
           .toList();
       print('data save is ${json.encode(addData)}');
+      // return false;
       try {
         http.Response response;
         response = await http.post(
@@ -351,6 +456,8 @@ class PlanData extends ChangeNotifier {
             print("no data");
             return false;
           }
+          print("save transaction ok");
+          clearInspectionTrans(); // clear list after save finished
         }
         return true;
       } catch (err) {
@@ -381,7 +488,7 @@ class PlanData extends ChangeNotifier {
           return false;
         }
 
-        //print("data is ${res}");
+        print("non conform data is ${res}");
 
         for (var i = 0; i <= res.length - 1; i++) {
           final NonConformTitle _item = NonConformTitle(
@@ -398,6 +505,97 @@ class PlanData extends ChangeNotifier {
         listnonconform = data;
         notifyListeners();
         return listnonconform;
+      } else {
+        print("No Data");
+      }
+    } catch (err) {
+      print("error na ja is ${err}");
+    }
+  }
+
+  Future<dynamic> fetFinishedCheck() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String team_id = prefs.getString("team_id").toString();
+    final String token = prefs.getString("token").toString();
+
+    notifyListeners();
+
+    final Map<String, dynamic> checkData = {
+      'teamid': team_id,
+      'empid': user_id,
+    };
+    print('data find is ${checkData}');
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_check_already_trans),
+          headers: {'Content-Type': 'application/json', "Authorization": token},
+          body: json.encode(checkData));
+
+      print("response is ${response.statusCode}");
+      if (response.statusCode == 200) {
+        int res = json.decode(response.body);
+
+        // Map<String, dynamic> res = json.decode(response.body);
+        print("data res is check already ${res}");
+        // if (res == null) {
+        //   print("no data");
+        //   return false;
+        // }
+
+        finishedcheck = res;
+        notifyListeners();
+        return _finished_check;
+      } else {
+        print("No Data From Check");
+      }
+    } catch (err) {
+      print("error na is ${err}");
+    }
+  }
+
+  Future<dynamic> fetchHistoryTransByEmp() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
+
+    notifyListeners();
+
+    print('current user id is ${user_id}');
+
+    try {
+      http.Response response;
+      response = await http.get(
+          Uri.parse(url_to_histoty_trans_by_emp + "/" + user_id),
+          headers: {"Authorization": token});
+
+      if (response.statusCode == 200) {
+        List<TransHistoryEmp> data = [];
+
+        List<dynamic> res = json.decode(response.body);
+
+        if (res == null) {
+          print("no data");
+          return false;
+        }
+
+        print("data history is ${res}");
+
+        for (var i = 0; i <= res.length - 1; i++) {
+          final TransHistoryEmp _item = TransHistoryEmp(
+            plan_id: res[i]["plan_id"].toString(),
+            plan_no: res[i]["plan_no"].toString(),
+            plan_date: res[i]["plan_date"].toString(),
+            team_id: res[i]["team_id"].toString(),
+            status: res[i]["status"].toString(),
+            plan_actual_date: res[i]["plan_actual_date"].toString(),
+          );
+
+          data.add(_item);
+        }
+        listhistorytrans = data;
+        notifyListeners();
+        return listhistorytrans;
       } else {
         print("No Data");
       }

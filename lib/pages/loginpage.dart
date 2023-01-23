@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextSpan(
                   text: "SUPPORT",
                   style: TextStyle(
-                    color: Colors.purple,
+                    color: Color.fromARGB(255, 45, 172, 123),
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                     shadows: <Shadow>[
@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.purple,
+                color: Color.fromARGB(255, 45, 172, 123),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Material(

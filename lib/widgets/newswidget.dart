@@ -73,7 +73,7 @@ class _newswidgetState extends State<newswidget> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _current == index
-                    ? Colors.purple
+                    ? Color.fromARGB(255, 45, 172, 123)
                     : Colors.grey.withOpacity(0.3),
               ),
             );

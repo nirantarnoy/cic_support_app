@@ -62,6 +62,13 @@ class _JobCheckPageState extends State<JobCheckPage> {
   //   ),
   // ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    print("area id is ${widget.plan_area_id}");
+    super.initState();
+  }
+
   Widget _buildList(List<JobplanArea> listcheck) {
     Widget cardlist;
     if (listcheck.length > 0) {
@@ -84,7 +91,7 @@ class _JobCheckPageState extends State<JobCheckPage> {
                   decoration: BoxDecoration(
                       color: child_counted == child_cnt
                           ? Colors.green.shade400
-                          : Colors.purple.shade100,
+                          : Colors.green.shade50,
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   child: ListTile(
                     leading: Container(
@@ -98,7 +105,7 @@ class _JobCheckPageState extends State<JobCheckPage> {
                           child: Text(
                         "${(index + 1).toString()}",
                         style: TextStyle(
-                          color: Colors.purple,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       )),
@@ -112,6 +119,7 @@ class _JobCheckPageState extends State<JobCheckPage> {
                           plan_id: listcheck[index].plan_id,
                           topic_id: listcheck[index].topic_id,
                           plan_area_id: listcheck[index].plan_area_id,
+                          plan_num: listcheck[index].plan_num,
                         ))),
               ),
             );
@@ -126,7 +134,7 @@ class _JobCheckPageState extends State<JobCheckPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         title: Text('หัวข้อการตรวจ'),
         backgroundColor: Colors.transparent,

@@ -151,32 +151,49 @@ class PlanData extends ChangeNotifier {
 
   List<JobCheckDetail> getTopicitem(String topic_id, String area_id) {
     print('area is ${area_id}');
+    print('topic is ${topic_id}');
     List<JobCheckDetail> _list = [];
+    List<JobCheckDetail> _list2 = [];
 
     listJobplanArea.forEach((element) {
       print('topic name enable is ${element.is_enable}');
       if (element.topic_id == topic_id &&
           element.plan_area_id == area_id &&
           element.is_enable == "1") {
+        // JobCheckDetail _item = JobCheckDetail(
+        //   plan_id: element.plan_id,
+        //   topicid: element.topic_id,
+        //   topicname: element.topic_name,
+        //   topic_detail_id: element.topic_item_id,
+        //   topic_detail_name: element.topic_item_name,
+        //   status: element.status,
+        //   score: element.scored,
+        //   is_enable: element.is_enable,
+        //   seq_sort: element.seq_sort,
+        //   seq_sort_item: element.seq_sort_item,
+        // );
         JobCheckDetail _item = JobCheckDetail(
-          plan_id: element.plan_id,
-          topicid: element.topic_id,
-          topicname: element.topic_name,
-          topic_detail_id: element.topic_item_id,
-          topic_detail_name: element.topic_item_name,
-          status: element.status,
-          score: element.scored,
-          is_enable: element.is_enable,
-          seq_sort: element.seq_sort,
-          seq_sort_item: element.seq_sort_item,
+          plan_id: element.plan_id == null ? '' : element.plan_id,
+          topicid: element.topic_id == null ? '' : element.topic_id,
+          topicname: element.topic_name == null ? '' : element.topic_name,
+          topic_detail_id:
+              element.topic_item_id == null ? '' : element.topic_item_id,
+          topic_detail_name:
+              element.topic_item_name == null ? '' : element.topic_item_name,
+          status: element.status == null ? '0' : element.status,
+          score: element.scored == null ? '-1' : element.scored,
+          is_enable: element.is_enable == null ? '1' : element.is_enable,
+          seq_sort: element.seq_sort == null ? '0' : element.seq_sort,
+          seq_sort_item:
+              element.seq_sort_item == null ? '0' : element.seq_sort_item,
         );
         _list.add(_item);
       }
     });
-    _list.sort(
-      (a, b) =>
-          int.parse(b.seq_sort_item).compareTo(int.parse(a.seq_sort_item)),
-    );
+    // _list.sort(
+    //   (a, b) =>
+    //       int.parse(b.seq_sort_item).compareTo(int.parse(a.seq_sort_item)),
+    // );
     notifyListeners();
     return _list;
   }
@@ -223,6 +240,28 @@ class PlanData extends ChangeNotifier {
       isfinish = 1;
     }
     return isfinish;
+  }
+
+  int getAllMushCheckTopic() {
+    int cnt = 0;
+    listJobplanArea.forEach((element) {
+      print('topic name enable is ${element.is_enable}');
+      if (element.is_enable == "1") {
+        cnt += 1;
+      }
+    });
+    return cnt;
+  }
+
+  int getAllCheckedTopic() {
+    int cnt = 0;
+    listJobplanArea.forEach((element) {
+      print('topic name enable is ${element.is_enable}');
+      if (element.scored != "-1") {
+        cnt += 1;
+      }
+    });
+    return cnt;
   }
 
   List<NonConformTitle> listofnonconform_5s() {
@@ -379,7 +418,9 @@ class PlanData extends ChangeNotifier {
               topic_item_id: res[i]["topic_item_id"].toString(),
               topic_item_name: res[i]["topic_item_name"].toString(),
               scored: "-1",
-              is_enable: res[i]["is_enable"].toString(),
+              is_enable: res[i]["is_enable"] == null
+                  ? ''
+                  : res[i]["is_enable"].toString(),
               seq_sort: res[i]["seq_sort"].toString(),
               seq_sort_item: res[i]["seq_sort_item"].toString(),
             );
@@ -413,7 +454,7 @@ class PlanData extends ChangeNotifier {
 
   Future<bool> submitInspection() async {
     print("list data is ${listInspectiontrans[0].area_id}");
-    //return false;
+    // return false;
     if (listInspectiontrans.isNotEmpty) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String user_id = prefs.getString("user_id").toString();
@@ -439,6 +480,24 @@ class PlanData extends ChangeNotifier {
                 'created_by': int.parse(user_id),
               })
           .toList();
+      // var addData = listInspectiontrans
+      //     .map((e) => {
+      //           'module_type_id': e.module_type_id,
+      //           'plan_id': e.plan_num,
+      //           'trans_date': e.trans_date,
+      //           'emp_id': user_id,
+      //           'area_group_id': e.area_group_id,
+      //           'area_id': e.area_id,
+      //           'team_id': team_id,
+      //           'topic_id': e.topic_id,
+      //           'topic_item_id': e.topic_item_id,
+      //           'score': e.score,
+      //           'status': e.status,
+      //           'note': e.note,
+      //           'created_at': '0',
+      //           'created_by': user_id,
+      //         })
+      //     .toList();
       print('data save is ${json.encode(addData)}');
       // return false;
       try {

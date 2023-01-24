@@ -5,6 +5,7 @@ import 'package:flutter_cic_support/pages/carhistory.dart';
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/history.dart';
 import 'package:flutter_cic_support/pages/jobcheck.dart';
+import 'package:flutter_cic_support/pages/plancheckcomplete.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -301,112 +302,230 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                       onTap: () {
                         // Provider.of<PlanData>(context, listen: false)
                         //     .submitInspection();
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Icon(
-                                    Icons.privacy_tip_outlined,
-                                    size: 32,
-                                    color: Colors.green.shade400,
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Text(
-                                    'ยืนยันการทำรายการ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Text(
-                                    'ต้องการดำเนินการต่อใช่หรือไม่ ?',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: MaterialButton(
-                                          color:
-                                              Color.fromARGB(255, 45, 172, 123),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(50)),
-                                          onPressed: () async {
-                                            //  _timer?.cancel();
-                                            await EasyLoading.show(
-                                                status: "กำลังบันทึกข้อมูล");
-                                            bool isSave =
-                                                await Provider.of<PlanData>(
-                                                        context,
-                                                        listen: false)
-                                                    .submitInspection();
-                                            if (isSave == true) {
-                                              await EasyLoading.showSuccess(
-                                                  'บันทึกรายการเรียบร้อย');
-                                              // Navigator.popUntil(context, ModalRoute.withName("/profile"));
-                                              // Navigator.pushAndRemoveUntil(
-                                              //     context,
-                                              //     MaterialPageRoute(builder: (context) => ProfilePage()),
-                                              //     (route) => false);
-                                              int count = 0;
-                                              Navigator.of(context).popUntil(
-                                                  (_) => count++ >= 2);
-                                            }
-                                            EasyLoading.dismiss();
-                                          },
-                                          child: Text(
-                                            'ใช่',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                        int MustChekAll = _plans.getAllMushCheckTopic();
+                        int AllChecked = _plans.getAllCheckedTopic();
+                        if (AllChecked < MustChekAll) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Icon(
+                                      Icons.error,
+                                      size: 32,
+                                      color: Colors.red,
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Text(
+                                      'แจ้งให้ทราบ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Text(
+                                      'พบข้อมูลการตรวจไม่ครบหัวข้อ ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: MaterialButton(
+                                            color: Color.fromARGB(
+                                                255, 45, 172, 123),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            onPressed: () async {
+                                              //  _timer?.cancel();
+                                              await EasyLoading.show(
+                                                  status: "กำลังบันทึกข้อมูล");
+                                              bool isSave =
+                                                  await Provider.of<PlanData>(
+                                                          context,
+                                                          listen: false)
+                                                      .submitInspection();
+                                              if (isSave == true) {
+                                                await EasyLoading.showSuccess(
+                                                    'บันทึกรายการเรียบร้อย');
+                                                // Navigator.popUntil(context, ModalRoute.withName("/profile"));
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlancheckcompletePage()));
+                                                // (route) => false);
+                                                // int count = 0;
+                                                // Navigator.of(context).popUntil(
+                                                //     (_) => count++ >= 2);
+                                              }
+                                              EasyLoading.dismiss();
+                                            },
+                                            child: Text(
+                                              'ใช่',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Spacer(),
-                                      Expanded(
-                                        child: MaterialButton(
-                                          color: Colors.grey[400],
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(50)),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          child: Text(
-                                            'ไม่ใช่',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                        Spacer(),
+                                        Expanded(
+                                          child: MaterialButton(
+                                            color: Colors.grey[400],
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            },
+                                            child: Text(
+                                              'ไม่ใช่',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Icon(
+                                      Icons.privacy_tip_outlined,
+                                      size: 32,
+                                      color: Colors.green.shade400,
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Text(
+                                      'ยืนยันการทำรายการ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Text(
+                                      'ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: MaterialButton(
+                                            color: Color.fromARGB(
+                                                255, 45, 172, 123),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            onPressed: () async {
+                                              //  _timer?.cancel();
+                                              await EasyLoading.show(
+                                                  status: "กำลังบันทึกข้อมูล");
+                                              bool isSave =
+                                                  await Provider.of<PlanData>(
+                                                          context,
+                                                          listen: false)
+                                                      .submitInspection();
+                                              if (isSave == true) {
+                                                await EasyLoading.showSuccess(
+                                                    'บันทึกรายการเรียบร้อย');
+                                                // Navigator.popUntil(context, ModalRoute.withName("/profile"));
+                                                // Navigator.pushAndRemoveUntil(
+                                                //     context,
+                                                //     MaterialPageRoute(builder: (context) => ProfilePage()),
+                                                //     (route) => false);
+                                                // int count = 0;
+                                                // Navigator.of(context).popUntil(
+                                                //     (_) => count++ >= 2);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlancheckcompletePage()));
+                                              }
+                                              EasyLoading.dismiss();
+                                            },
+                                            child: Text(
+                                              'ใช่',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Expanded(
+                                          child: MaterialButton(
+                                            color: Colors.grey[400],
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            },
+                                            child: Text(
+                                              'ไม่ใช่',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                       },
                     ),
                   )

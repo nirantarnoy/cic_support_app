@@ -114,9 +114,10 @@ class _JobCheckPageState extends State<JobCheckPage> {
                     trailing: Text('${child_counted} / ${child_cnt}'),
                   ),
                 ),
+                // onTap: () {}
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => JobCheckDetailPage(
-                          plan_id: listcheck[index].plan_id,
+                          plan_id: widget.plan_id,
                           topic_id: listcheck[index].topic_id,
                           plan_area_id: listcheck[index].plan_area_id,
                           plan_num: listcheck[index].plan_num,

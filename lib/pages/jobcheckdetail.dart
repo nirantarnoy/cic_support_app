@@ -670,6 +670,7 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
           );
         },
       );
+
       return carditem;
     } else {
       return Center(
@@ -692,7 +693,8 @@ class _JobCheckDetailPageState extends State<JobCheckDetailPage> {
         child: Column(children: [
           Expanded(
             flex: 4,
-            //child: _buildlist(this.check_list),
+            // child: Text("ok"),
+
             child: Consumer<PlanData>(
                 builder: (context, topicitems, _) => _buildlist(topicitems
                     .getTopicitem(widget.topic_id, widget.plan_area_id))),

@@ -39,6 +39,98 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
+  void _logoutaction(Function logout) async {
+    Map<String, dynamic> sucessInformation;
+    sucessInformation = await logout();
+    if (sucessInformation['success']) {
+      print('logout success');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    }
+  }
+
+  void _logout(UserData users) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 12,
+              ),
+              Icon(
+                Icons.mood_bad_outlined,
+                size: 32,
+                color: Colors.red,
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                'ยืนยันการทำรายการ',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                'ต้องการออกจากระบบใช่หรือไม่ ?',
+                style: TextStyle(fontWeight: FontWeight.normal),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: MaterialButton(
+                      color: Colors.red.shade300,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
+                      onPressed: () {
+                        _logoutaction(users.logout);
+                      },
+                      child: Text(
+                        'ใช่',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  Expanded(
+                    child: MaterialButton(
+                      color: Colors.grey[400],
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text(
+                        'ไม่ใช่',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // return Scaffold(
@@ -65,95 +157,14 @@ class _ProfilePageState extends State<ProfilePage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          IconButton(
-              icon: const Icon(
-                Icons.logout_outlined,
-                color: Colors.white,
-              ),
-              onPressed: () => showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) => Dialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Icon(
-                              Icons.mood_bad_outlined,
-                              size: 32,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Text(
-                              'ยืนยันการทำรายการ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Text(
-                              'ต้องการออกจากระบบใช่หรือไม่ ?',
-                              style: TextStyle(fontWeight: FontWeight.normal),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: MaterialButton(
-                                    color: Colors.red.shade300,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50)),
-                                    onPressed: () async {
-                                      Navigator.of(context)
-                                          .popUntil((route) => route.isFirst);
-                                    },
-                                    child: Text(
-                                      'ใช่',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Spacer(),
-                                Expanded(
-                                  child: MaterialButton(
-                                    color: Colors.grey[400],
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50)),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                    },
-                                    child: Text(
-                                      'ไม่ใช่',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  )),
+          Consumer<UserData>(
+            builder: (context, _users, _) => IconButton(
+                icon: const Icon(
+                  Icons.logout_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () => _logout(_users)),
+          ),
         ],
       ),
       body: Stack(

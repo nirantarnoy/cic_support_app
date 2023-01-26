@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/pages/notificationpage.dart';
 import 'package:flutter_cic_support/pages/profile.dart';
+import 'package:flutter_cic_support/providers/teamnotify.dart';
+import 'package:provider/provider.dart';
 
 class bottomnav extends StatefulWidget {
   const bottomnav({
@@ -18,6 +20,7 @@ class _bottomnavState extends State<bottomnav> {
   @override
   void initState() {
     _currentIndex = 0;
+    Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
     super.initState();
   }
 
@@ -71,31 +74,37 @@ class _bottomnavState extends State<bottomnav> {
                 icon: new Stack(
                   children: <Widget>[
                     Icon(Icons.notifications_active),
-                    Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Stack(
-                          children: [
-                            Container(
-                              width: 15,
-                              height: 15,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.red,
-                              ),
-                              child: Align(
-                                alignment: Alignment.topCenter,
-                                child: Text(
-                                  "1",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ))
+                    Consumer<TeamnotifyData>(
+                      builder: (context, _notifydata, _) =>
+                          _notifydata.listteamnotify.length <= 0
+                              ? Text('')
+                              : Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        width: 15,
+                                        height: 15,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          color: Colors.red,
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Text(
+                                            "1",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                    ),
                   ],
                 ),
                 label: 'การแจ้งเตือน'),

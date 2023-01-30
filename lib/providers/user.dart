@@ -16,6 +16,7 @@ class UserData with ChangeNotifier {
       "http://172.16.0.231:1223/api/user/teammember";
 
   late User _authenticatedUser;
+  late User _emptyauthenicatedUser;
   late Timer _authTimer;
 
   // List<User> _user;
@@ -196,7 +197,7 @@ class UserData with ChangeNotifier {
     final DateTime now = DateTime.now();
     final parsedExpiryTime = DateTime.parse(expiryTimeString!);
     if (parsedExpiryTime.isBefore(now)) {
-      //_authenticatedUser = null;
+      // _authenticatedUser = _emptyauthenicatedUser;
       notifyListeners();
       return;
     }
@@ -218,7 +219,7 @@ class UserData with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> logout() async {
-    //_authenticatedUser = null;
+    //_authenticatedUser = _emptyauthenicatedUser;
     _isauthenuser = false;
     _authTimer.cancel();
     final SharedPreferences prefs = await SharedPreferences.getInstance();

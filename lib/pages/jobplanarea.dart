@@ -5,6 +5,7 @@ import 'package:flutter_cic_support/pages/carhistory.dart';
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/history.dart';
 import 'package:flutter_cic_support/pages/jobcheck.dart';
+import 'package:flutter_cic_support/pages/jobchecknew.dart';
 import 'package:flutter_cic_support/pages/plancheckcomplete.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -183,10 +184,11 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                     ),
                   ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => JobCheckPage(
+                      builder: (context) => JobCheckNewPage(
                             plan_area_id: listcheck[index].plan_area_id,
                             plan_id: listcheck[index].plan_id,
                             plan_area_name: listcheck[index].plan_area_name,
+                            plan_num: listcheck[index].plan_num,
                           ))),
                 ),
               ),

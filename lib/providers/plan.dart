@@ -198,6 +198,53 @@ class PlanData extends ChangeNotifier {
     return _list;
   }
 
+  List<JobCheckDetail> getTopicitemNew(String area_id) {
+    // print('area is ${area_id}');
+
+    List<JobCheckDetail> _list = [];
+    List<JobCheckDetail> _list2 = [];
+
+    listJobplanArea.forEach((element) {
+      // print('topic name enable is ${element.is_enable}');
+      if (element.plan_area_id == area_id && element.is_enable == "1") {
+        // JobCheckDetail _item = JobCheckDetail(
+        //   plan_id: element.plan_id,
+        //   topicid: element.topic_id,
+        //   topicname: element.topic_name,
+        //   topic_detail_id: element.topic_item_id,
+        //   topic_detail_name: element.topic_item_name,
+        //   status: element.status,
+        //   score: element.scored,
+        //   is_enable: element.is_enable,
+        //   seq_sort: element.seq_sort,
+        //   seq_sort_item: element.seq_sort_item,
+        // );
+        JobCheckDetail _item = JobCheckDetail(
+          plan_id: element.plan_id == null ? '' : element.plan_id,
+          topicid: element.topic_id == null ? '' : element.topic_id,
+          topicname: element.topic_name == null ? '' : element.topic_name,
+          topic_detail_id:
+              element.topic_item_id == null ? '' : element.topic_item_id,
+          topic_detail_name:
+              element.topic_item_name == null ? '' : element.topic_item_name,
+          status: element.status == null ? '0' : element.status,
+          score: element.scored == null ? '-1' : element.scored,
+          is_enable: element.is_enable == null ? '1' : element.is_enable,
+          seq_sort: element.seq_sort == null ? '0' : element.seq_sort,
+          seq_sort_item:
+              element.seq_sort_item == null ? '0' : element.seq_sort_item,
+        );
+        _list.add(_item);
+      }
+    });
+    // _list.sort(
+    //   (a, b) =>
+    //       int.parse(b.seq_sort_item).compareTo(int.parse(a.seq_sort_item)),
+    // );
+    notifyListeners();
+    return _list;
+  }
+
   int getTopicitemcountByTopic(String topic_id, String area_id) {
     int cnt = 0;
     listJobplanArea.forEach((element) {

@@ -46,110 +46,123 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final UserData users = Provider.of<UserData>(context, listen: false);
 
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RichText(
-                  text: const TextSpan(children: [
-                TextSpan(
-                  text: "CIC",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.grey,
-                        blurRadius: 8.0,
-                      ),
-                    ],
-                  ),
-                ),
-                TextSpan(
-                  text: "SUPPORT",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 45, 172, 123),
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.grey,
-                        blurRadius: 8.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ])),
-            ],
-          ),
-          const SizedBox(
-            height: 50,
-          ),
-          Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  buildUsernameField(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  buildPasswordField(),
-                ],
-              )),
-          const SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 45, 172, 123),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Material(
-                child: InkWell(
-                  onTap: () => _submitForm(users.login),
-                  // onTap: () {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (contex) => MainPage(),
-                  //     ),
-                  //   );
-                  // },
-                  child: Container(
-                    width: double.infinity,
-                    height: 60,
-                    child: const Center(
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Text(''),
+            ),
+            Expanded(
+                flex: 4,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                            text: const TextSpan(children: [
+                          TextSpan(
+                            text: "CIC",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(1, 1),
+                                  color: Colors.grey,
+                                  blurRadius: 8.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextSpan(
+                            text: "SUPPORT",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 45, 172, 123),
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(1, 1),
+                                  color: Colors.grey,
+                                  blurRadius: 8.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ])),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            buildUsernameField(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildPasswordField(),
+                          ],
+                        )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 45, 172, 123),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Material(
+                          child: InkWell(
+                            onTap: () => _submitForm(users.login),
+                            // onTap: () {
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (contex) => MainPage(),
+                            //     ),
+                            //   );
+                            // },
+                            child: Container(
+                              width: double.infinity,
+                              height: 60,
+                              child: const Center(
+                                child: Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          color: Colors.transparent,
                         ),
                       ),
                     ),
-                  ),
-                ),
-                color: Colors.transparent,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            'version 0.1',
-            style: TextStyle(color: Colors.grey.withOpacity(0.8)),
-          ),
-        ],
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'version 0.1',
+                      style: TextStyle(color: Colors.grey.withOpacity(0.8)),
+                    ),
+                  ],
+                )),
+          ],
+        ),
       ),
     );
   }

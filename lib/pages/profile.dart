@@ -44,8 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
     sucessInformation = await logout();
     if (sucessInformation['success']) {
       print('logout success');
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => LoginPage()));
+      Navigator.popUntil(context, (route) => route.isFirst);
     }
   }
 
@@ -131,6 +132,57 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void _editBottomSheet(context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.75;
+
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              //  height: MediaQuery.of(context).size.height * 0.9,
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'เลือกรูปจาก',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text('กล้องถ่ายรูป'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 45, 172, 123),
+                          minimumSize: const Size.fromHeight(50)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text('คลังภาพ'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 45, 172, 123),
+                          minimumSize: const Size.fromHeight(50)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     // return Scaffold(
@@ -160,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Consumer<UserData>(
             builder: (context, _users, _) => IconButton(
                 icon: const Icon(
-                  Icons.logout_outlined,
+                  Icons.logout_rounded,
                   color: Colors.white,
                 ),
                 onPressed: () => _logout(_users)),
@@ -191,19 +243,35 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          GestureDetector(
-                            child: Container(
-                              width: 150,
-                              height: 30,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
+                          Expanded(
+                            flex: 1,
+                            child: Text(''),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _editBottomSheet(context),
+                              child: Container(
+                                width: 150,
+                                height: 30,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color.fromARGB(255, 45, 172, 123),
+                                ),
+                                child: Text(
+                                  'Change Photo',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                              child: Text('Change Password'),
                             ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(''),
                           ),
                         ],
                       ),
@@ -457,14 +525,21 @@ class _ProfilePageState extends State<ProfilePage> {
                         spreadRadius: 1,
                         blurRadius: 1,
                         offset: Offset(1, 1),
-                      )
+                      ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.purple,
-                    size: 50,
+                  child: CircleAvatar(
+                    radius: 45,
+                    backgroundImage: NetworkImage(
+                        "http://172.16.0.231/cicsupport/backend/web/uploads/1635j0541.jpg"),
+                    // backgroundImage:
+                    //     NetworkImage("172.16.0.240/uploads/1635j0541.jpg"),
                   ),
+                  // child: const Icon(
+                  //   Icons.person,
+                  //   color: Colors.purple,
+                  //   size: 50,
+                  // ),
                 ),
                 const SizedBox(
                   width: 10,

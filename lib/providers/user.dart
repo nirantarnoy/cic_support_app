@@ -225,6 +225,8 @@ class UserData with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     // prefs.remove('token');
+    // prefs.remove('emp_id');
+
     // prefs.remove('username');
     // prefs.remove('userId');
     // prefs.remove('studentId');
@@ -234,5 +236,11 @@ class UserData with ChangeNotifier {
 
   void setAuthTimeout(int time) {
     _authTimer = Timer(Duration(seconds: time), logout);
+  }
+
+  Future<dynamic> updatePhotoprofile(String newphoto) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token").toString();
+    return null;
   }
 }

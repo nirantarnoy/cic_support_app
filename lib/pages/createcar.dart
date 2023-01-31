@@ -440,6 +440,74 @@ class _CreateCarState extends State<CreateCar> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => CarcompletePage()));
       }
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 12,
+                ),
+                Icon(
+                  Icons.mood_bad_outlined,
+                  size: 32,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  'พบข้อผิดพลาด',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 8.0, right: 15.0, bottom: 8.0, left: 15.0),
+                  child: Text(
+                    'กรุณาตรวจสอบการเลือกหัวข้อไม่สอดคล้องและประเภทปัญหา ?',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: MaterialButton(
+                        color: Colors.red.shade300,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50)),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: Text(
+                          'ตกลง',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
     }
   }
 

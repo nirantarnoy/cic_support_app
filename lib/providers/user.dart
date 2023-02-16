@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserData with ChangeNotifier {
   final String url_to_login = "http://172.16.0.231:1223/api/auth/login";
   final String url_to_profile = "http://172.16.0.231:1223/api/user/profile";
+  final String url_to_update_profile_photo =
+      "http://172.16.0.231:1223/api/user/updatephoto";
   final String url_to_teammember =
       "http://172.16.0.231:1223/api/user/teammember";
 
@@ -35,12 +37,26 @@ class UserData with ChangeNotifier {
   late String _team_display = '';
   String get team_display => _team_display;
 
+  late String _photo_display = '';
+  String get photo_display => _photo_display;
+
+  late String _section_display = '';
+  String get section_display => _section_display;
+
   set team_display(String val) {
     _team_display = val;
   }
 
+  set photo_display(String val) {
+    _photo_display = val;
+  }
+
   set username_display(String val) {
     _username_display = val;
+  }
+
+  set section_display(String val) {
+    _section_display = val;
   }
 
   set listmemberteam(List<TeamMember> val) {
@@ -110,6 +126,22 @@ class UserData with ChangeNotifier {
     return c_username;
   }
 
+  String getCurrenUserPhoto() {
+    String c_photo = '';
+    if (photo_display != '') {
+      c_photo = photo_display;
+    }
+    return c_photo;
+  }
+
+  String getCurrenUserSection() {
+    String c_section_code = '';
+    if (section_display != '') {
+      c_section_code = section_display;
+    }
+    return c_section_code;
+  }
+
   Future<dynamic> fetchProfile() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token").toString();
@@ -134,6 +166,8 @@ class UserData with ChangeNotifier {
         print("profile team data is ${res['data']}");
 
         team_display = res['data']['current_team_id'].toString();
+        photo_display = res['data']['photo'].toString();
+        section_display = res['data']['section_code'].toString();
 
         prefs.setString('team_id', res['data']['current_team_id'].toString());
         notifyListeners();
@@ -238,9 +272,32 @@ class UserData with ChangeNotifier {
     _authTimer = Timer(Duration(seconds: time), logout);
   }
 
-  Future<dynamic> updatePhotoprofile(String newphoto) async {
+  Future<dynamic> updatePhotoprofile(List<String> profilephoto) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_ad = prefs.getString("user_name").toString();
     final String token = prefs.getString("token").toString();
-    return null;
+
+    final photoJson = profilephoto.map((e) => {'photo': e}).toList();
+    final Map<String, dynamic> insertData = {
+      'profile_photo': profilephoto,
+      'ad_user': user_ad.toString(),
+    };
+    //print('photo profile are ${json.encode(photoJson)}');
+    print('user id is ${user_ad}');
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_update_profile_photo),
+          headers: {"Authorization": token, 'Content-Type': 'application/json'},
+          body: json.encode(insertData));
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      print('has error na ja ${err}');
+      return false;
+    }
   }
 }

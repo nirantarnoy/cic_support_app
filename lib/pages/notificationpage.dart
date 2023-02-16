@@ -41,8 +41,8 @@ class _NotificationPageState extends State<NotificationPage> {
           });
       return cards;
     } else {
-      return Card(
-        child: Text('No Data naja'),
+      return Center(
+        child: Text('No Data'),
       );
     }
   }
@@ -81,6 +81,7 @@ class _NotificationPageState extends State<NotificationPage> {
             flex: 2,
             child: Container(
               height: 60,
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(

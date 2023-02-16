@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_cic_support/pages/carlistpage.dart';
@@ -8,8 +11,12 @@ import 'package:flutter_cic_support/pages/jobcheck.dart';
 import 'package:flutter_cic_support/pages/loginpage.dart';
 import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
+import 'package:flutter_cic_support/pages/safetycheck.dart';
+import 'package:flutter_cic_support/pages/safetyplanarea.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +30,14 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String current_username = "";
+  String display_url =
+      "http://172.16.0.231/cicsupport/backend/web/photo_uploads/";
+  String display_photo = "";
+  String display_section_code = "";
+
+  late Future<XFile> file;
+  List<File> image2 = [];
+  List<String> base64ImageList = [];
   // Future<String> _displayname() async {
   //   final SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String username = prefs.getString("user_name").toString();
@@ -36,7 +51,58 @@ class _ProfilePageState extends State<ProfilePage> {
     current_username =
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
 
+    // display_section_code =
+    //     Provider.of<UserData>(context, listen: false).getCurrenUserSection();
+
     super.initState();
+  }
+
+  Future chooseCameraImage() async {
+    try {
+      final image = await ImagePicker().pickImage(
+          source: ImageSource.camera,
+          imageQuality: 60,
+          // maxHeight: 400,
+          // maxWidth: 400,
+          preferredCameraDevice: CameraDevice.rear);
+
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      List<int> imageBytes = imageTemp.readAsBytesSync();
+
+      setState(() {
+        this.image2.clear(); // only one photo
+        this.image2.add(imageTemp);
+        this.base64ImageList.clear(); // only one photo
+        this.base64ImageList.add(base64Encode(imageBytes));
+      });
+    } catch (err) {
+      print("${err}");
+    }
+    Navigator.of(context).pop();
+  }
+
+  Future chooseGalleryImage() async {
+    try {
+      final image = await ImagePicker().pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 60,
+          // maxHeight: 400,
+          // maxWidth: 400,
+          preferredCameraDevice: CameraDevice.rear);
+
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      List<int> imageBytes = imageTemp.readAsBytesSync();
+
+      setState(() {
+        this.image2.add(imageTemp);
+        this.base64ImageList.add(base64Encode(imageBytes));
+      });
+    } catch (err) {
+      print("${err}");
+    }
+    Navigator.of(context).pop();
   }
 
   void _logoutaction(Function logout) async {
@@ -156,8 +222,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text('กล้องถ่ายรูป'),
+                      onPressed: () => chooseCameraImage(),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Icon(Icons.camera),
+                          ),
+                          Expanded(
+                            child: Text('กล้องถ่ายรูป'),
+                          ),
+                        ],
+                      ),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 45, 172, 123),
                           minimumSize: const Size.fromHeight(50)),
@@ -169,8 +244,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text('คลังภาพ'),
+                      onPressed: () => chooseGalleryImage(),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Icon(Icons.photo),
+                          ),
+                          Expanded(
+                            child: Text('คลังภาพ'),
+                          ),
+                        ],
+                      ),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 45, 172, 123),
                           minimumSize: const Size.fromHeight(50)),
@@ -183,11 +267,42 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
+  Future _updatephotofrofil(BuildContext context) async {
+    if (base64ImageList.isNotEmpty) {
+      EasyLoading.show(status: "กำลังบันทึก");
+      bool isSave = await Provider.of<UserData>(context, listen: false)
+          .updatePhotoprofile(
+        base64ImageList,
+      );
+      EasyLoading.dismiss();
+      if (isSave == true) {
+        setState(() {
+          print("successsssssssssssssss");
+          Provider.of<UserData>(context, listen: false).fetchProfile();
+          image2.clear();
+        });
+        // Navigator.of(context).pop();
+        //Navigator.popAndPushNamed(context, '/profile');
+      } else {
+        print("nooooooooooooooooo");
+        image2.clear();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // return Scaffold(
     //   appBar: AppBar(title: Text("hlllo")),
     // );
+    display_photo =
+        Provider.of<UserData>(context, listen: false).getCurrenUserPhoto();
+    display_photo = display_url + display_photo;
+
+    display_section_code =
+        Provider.of<UserData>(context, listen: false).getCurrenUserSection();
+    //print("image is ${display_photo}");
+
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
@@ -250,28 +365,86 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Text(''),
                           ),
                           Expanded(
-                            child: GestureDetector(
-                              onTap: () => _editBottomSheet(context),
-                              child: Container(
-                                width: 150,
-                                height: 30,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Color.fromARGB(255, 45, 172, 123),
-                                ),
-                                child: Text(
-                                  'Change Photo',
-                                  style: TextStyle(
-                                    color: Colors.white,
+                            child: image2.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: () => _updatephotofrofil(context),
+                                      child: Container(
+                                        width: 150,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color:
+                                              Color.fromARGB(255, 13, 103, 238),
+                                        ),
+                                        child: Text(
+                                          'Update Photo',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: () => _editBottomSheet(context),
+                                      child: Container(
+                                        width: 150,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color:
+                                              Color.fromARGB(255, 45, 172, 123),
+                                        ),
+                                        child: Text(
+                                          'Change Photo',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ),
                           Expanded(
                             flex: 2,
-                            child: Text(''),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: image2.isNotEmpty
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          this.image2.clear();
+                                          this.base64ImageList.clear();
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 150,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color:
+                                              Color.fromARGB(255, 224, 63, 14),
+                                        ),
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Text(''),
+                            ),
                           ),
                         ],
                       ),
@@ -402,13 +575,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        onTap: () =>
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => JobCheckPage(
-                                      plan_area_id: "",
-                                      plan_id: "",
-                                      plan_area_name: "",
-                                    ))),
+                        // onTap: () => Navigator.of(context).push(
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SafetyplanAreaPage())),
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => SafetyCheckPage())),
                       ),
                     ),
                     Padding(
@@ -528,13 +700,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  child: CircleAvatar(
-                    radius: 45,
-                    backgroundImage: NetworkImage(
-                        "http://172.16.0.231/cicsupport/backend/web/uploads/1635j0541.jpg"),
-                    // backgroundImage:
-                    //     NetworkImage("172.16.0.240/uploads/1635j0541.jpg"),
-                  ),
+                  child: image2.isNotEmpty
+                      ? CircleAvatar(
+                          radius: 45,
+                          child: CircleAvatar(
+                              radius: 45,
+                              backgroundImage:
+                                  Image.file(File(image2[0].path)).image),
+                        )
+                      : CircleAvatar(
+                          radius: 45,
+                          backgroundImage: NetworkImage(display_photo),
+                          // backgroundImage:
+                          //     NetworkImage("172.16.0.240/uploads/1635j0541.jpg"),
+                        ),
                   // child: const Icon(
                   //   Icons.person,
                   //   color: Colors.purple,
@@ -546,7 +725,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Consumer<UserData>(
                   builder: (context, _user, _) => Text(
-                    "${current_username.toString()} (ทีมตรวจ ${_user.team_display.toString()})",
+                    "${current_username.toString()} (ทีมตรวจ ${_user.team_display.toString()}) (${display_section_code})",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

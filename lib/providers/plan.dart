@@ -99,6 +99,9 @@ class PlanData extends ChangeNotifier {
           is_enable: element.is_enable,
           seq_sort: element.seq_sort,
           seq_sort_item: element.seq_sort_item,
+          department_code: element.department_code,
+          section_code: element.section_code,
+          inspection_type_id: element.inspection_type_id,
         );
         _newgroup.add(_group);
       }
@@ -126,22 +129,26 @@ class PlanData extends ChangeNotifier {
             element.plan_id == plan_id &&
             element.is_enable == "1") {
           JobplanArea _group = JobplanArea(
-              plan_id: element.plan_id,
-              plan_num: element.plan_num,
-              plan_date: "",
-              plan_area_id: element.plan_area_id,
-              plan_area_name: "",
-              plan_topic_check_qty: "",
-              plan_topic_checked_qty: "",
-              status: "",
-              topic_id: element.topic_id,
-              topic_name: element.topic_name,
-              topic_item_id: "",
-              topic_item_name: "",
-              scored: "-1",
-              is_enable: element.is_enable,
-              seq_sort: element.seq_sort,
-              seq_sort_item: element.seq_sort_item);
+            plan_id: element.plan_id,
+            plan_num: element.plan_num,
+            plan_date: "",
+            plan_area_id: element.plan_area_id,
+            plan_area_name: "",
+            plan_topic_check_qty: "",
+            plan_topic_checked_qty: "",
+            status: "",
+            topic_id: element.topic_id,
+            topic_name: element.topic_name,
+            topic_item_id: "",
+            topic_item_name: "",
+            scored: "-1",
+            is_enable: element.is_enable,
+            seq_sort: element.seq_sort,
+            seq_sort_item: element.seq_sort_item,
+            department_code: element.department_code,
+            section_code: element.section_code,
+            inspection_type_id: element.inspection_type_id,
+          );
           _newgroup.add(_group);
         }
       }
@@ -342,7 +349,7 @@ class PlanData extends ChangeNotifier {
             print("have data to update trans");
             has_update = 1;
           } else {
-            has_update = 0;
+            has_update = 0; // if duplicate score please commit this line
           }
         });
         if (has_update == 0) {
@@ -470,6 +477,9 @@ class PlanData extends ChangeNotifier {
                   : res[i]["is_enable"].toString(),
               seq_sort: res[i]["seq_sort"].toString(),
               seq_sort_item: res[i]["seq_sort_item"].toString(),
+              department_code: res[i]["department_code"].toString(),
+              section_code: res[i]["section_code"].toString(),
+              inspection_type_id: res[i]["inspection_type_id"].toString(),
             );
 
             if (i == 0) {
@@ -479,8 +489,8 @@ class PlanData extends ChangeNotifier {
                 plan_date: res[i]["plan_target_date"].toString(),
                 plan_status: "0",
                 plan_type: res[i]["module_type_id"].toString(),
+                inspection_type_id: res[i]['inspection_type_id'].toString(),
               );
-
               personplan_data.add(personplan);
             }
 
@@ -488,6 +498,7 @@ class PlanData extends ChangeNotifier {
           }
           listJobplanArea = data;
           listpersoncurrentplan = personplan_data;
+          print("section code is ${data[0].section_code}");
           notifyListeners();
           return listJobplanArea;
         } else {
@@ -594,7 +605,7 @@ class PlanData extends ChangeNotifier {
           return false;
         }
 
-        print("non conform data is ${res}");
+        // print("non conform data is ${res}");
 
         for (var i = 0; i <= res.length - 1; i++) {
           final NonConformTitle _item = NonConformTitle(

@@ -13,14 +13,14 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
-class JobplanAreaPage extends StatefulWidget {
-  const JobplanAreaPage({Key? key}) : super(key: key);
+class SafetyplanAreaPage extends StatefulWidget {
+  const SafetyplanAreaPage({Key? key}) : super(key: key);
 
   @override
-  State<JobplanAreaPage> createState() => _JobplanAreaPageState();
+  State<SafetyplanAreaPage> createState() => _SafetyplanAreaPageState();
 }
 
-class _JobplanAreaPageState extends State<JobplanAreaPage> {
+class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
   String current_section_code = '';
   Future _obtainPlanArea() async {
     return await Provider.of<PlanData>(context, listen: false).fetchJobplan();
@@ -243,9 +243,9 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
     current_section_code =
         Provider.of<UserData>(context, listen: false).getCurrenUserSection();
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: Color.fromARGB(255, 233, 154, 36),
       appBar: AppBar(
-        title: Text("แผนพื้นที่ตรวจ 5ส."),
+        title: Text("แผนพื้นที่ตรวจ Safety"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [

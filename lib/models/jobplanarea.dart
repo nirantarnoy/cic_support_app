@@ -15,6 +15,9 @@ class JobplanArea {
   final String seq_sort;
   final String seq_sort_item;
   final String plan_num;
+  final String department_code;
+  final String section_code;
+  final String inspection_type_id;
 
   JobplanArea({
     required this.plan_id,
@@ -33,5 +36,8 @@ class JobplanArea {
     required this.seq_sort,
     required this.seq_sort_item,
     required this.plan_num,
+    required this.department_code,
+    required this.section_code,
+    required this.inspection_type_id,
   });
 }

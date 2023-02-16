@@ -13,9 +13,18 @@ import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart' as path;
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final dir = await path.getApplicationDocumentsDirectory();
+  Hive.init(dir.path);
+  Hive.initFlutter('hive_db');
+
   runApp(const MyApp());
   void configLoading() {
     EasyLoading.instance

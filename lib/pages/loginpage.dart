@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/appcache/appcache.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,11 +20,32 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameText = TextEditingController();
   final TextEditingController passwordText = TextEditingController();
 
+  bool isChecked = false;
+
+  late Box box1;
+
   @override
   void initState() {
     // TODO: implement initState
     //Provider.of<PersonData>(context, listen: false).fetchPerson();
+    createBox();
     super.initState();
+  }
+
+  void createBox() async {
+    box1 = await Hive.openBox('logindata');
+    getdata();
+  }
+
+  void getdata() async {
+    if (box1.get('username') != null) {
+      usernameText.text = box1.get('username');
+      isChecked = true;
+      setState(() {});
+    }
+    if (box1.get('password') != null) {
+      passwordText.text = box1.get('password');
+    }
   }
 
   void _submitForm(Function login) async {
@@ -37,6 +60,12 @@ class _LoginPageState extends State<LoginPage> {
         .login(_formData['username'], _formData['password']);
 
     if (res == true) {
+      if (isChecked) {
+        box1.put('username', _formData['username']);
+        box1.put('password', _formData['password']);
+      }
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => AppCache()));
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
@@ -168,6 +197,10 @@ class _LoginPageState extends State<LoginPage> {
                     height: 10,
                   ),
                   buildPasswordField(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  builRememberMe(),
                 ],
               )),
           const SizedBox(
@@ -214,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 20,
           ),
           Text(
-            'version 0.1',
+            'version 0.2',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
         ],
@@ -293,6 +326,23 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
+    );
+  }
+
+  Widget builRememberMe() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+            flex: 1,
+            child: Checkbox(
+              value: isChecked,
+              onChanged: (value) {
+                isChecked = !isChecked;
+                setState(() {});
+              },
+            )),
+        Expanded(flex: 4, child: Text("จดจำเพื่อเข้าระบบครั้งต่อไป")),
+      ],
     );
   }
 }

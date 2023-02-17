@@ -14,18 +14,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class CreateCar extends StatefulWidget {
+class CreateSafetyCar extends StatefulWidget {
   final String plan_area_id;
   final String plan_area_name;
-  const CreateCar(
+  const CreateSafetyCar(
       {Key? key, required this.plan_area_id, required this.plan_area_name})
       : super(key: key);
 
   @override
-  State<CreateCar> createState() => _CreateCarState();
+  State<CreateSafetyCar> createState() => _CreateSafetyCarState();
 }
 
-class _CreateCarState extends State<CreateCar> {
+class _CreateSafetyCarState extends State<CreateSafetyCar> {
   final Map<String, dynamic> _formData = {
     'car_date': null,
     'department_id': null,
@@ -162,52 +162,6 @@ class _CreateCarState extends State<CreateCar> {
         ),
       ),
     );
-  }
-
-  Widget _buildNonconformlist(List<NonConformTitle> _listcheck) {
-    Widget cards;
-    if (_listcheck.length > 0) {
-      cards = ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          //    scrollDirection: Axis.vertical,
-          itemCount: _listcheck.length,
-          itemBuilder: (BuildContext context, int index) {
-            //  return Text('${_listcheck[index].name}');
-            return GestureDetector(
-              child: CheckboxListTile(
-                value: _isNonconformChecked[index],
-                selected: _isNonconformChecked[index],
-                title: Text('${_listcheck[index].name}'),
-                onChanged: (bool? value) {
-                  setState(() {
-                    _isNonconformChecked[index] = value!;
-                    if (value == true) {
-                      NonconformSelected item = NonconformSelected(
-                          id: _listcheck[index].id,
-                          name: _listcheck[index].name);
-                      nonconformSelected.add(item);
-                    } else {
-                      nonconformSelected.forEach((element) {
-                        if (element.id == _listcheck[index].id) {
-                          nonconformSelected.removeWhere(
-                              (items) => items.id == _listcheck[index].id);
-                        }
-                      });
-                    }
-
-                    print('nonconformselecred is ${nonconformSelected}');
-                  });
-                },
-              ),
-            );
-          });
-      return cards;
-    } else {
-      return Center(
-        child: Text('No Data'),
-      );
-    }
   }
 
   Widget _buildProblemTypelist(List<ProblemType> _listproblemtype) {
@@ -425,7 +379,7 @@ class _CreateCarState extends State<CreateCar> {
   }
 
   Future submitform() async {
-    if (nonconformSelected.length > 0 && problemtypeSelected != '') {
+    if (problemtypeSelected != '') {
       EasyLoading.show(status: "กำลังบันทึก");
       bool isSave = await Provider.of<CarData>(context, listen: false).addCar(
         _cardateText.text,
@@ -434,7 +388,7 @@ class _CreateCarState extends State<CreateCar> {
         _cardescriptionText.text,
         nonconformSelected,
         base64ImageList,
-        1,
+        2,
       );
       EasyLoading.dismiss();
       if (isSave == true) {
@@ -517,7 +471,7 @@ class _CreateCarState extends State<CreateCar> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
-        title: Text('ออกใบ CAR'),
+        title: Text('ออกใบ CAR Safety'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: <Widget>[
@@ -560,34 +514,6 @@ class _CreateCarState extends State<CreateCar> {
                           ),
                           SizedBox(
                             height: 10,
-                          ),
-                          Card(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      "ไม่สอดคล้องตามมาตรฐานในหัวข้อ",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Consumer<PlanData>(
-                                          builder: (context, _nonconform, _) =>
-                                              _buildNonconformlist(_nonconform
-                                                  .listofnonconform_5s())),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
                           ),
                           SizedBox(
                             height: 10,

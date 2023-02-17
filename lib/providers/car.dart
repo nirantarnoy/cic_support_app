@@ -41,12 +41,14 @@ class CarData extends ChangeNotifier {
   }
 
   Future<bool> addCar(
-      String trans_date,
-      String area_id,
-      String problem_type,
-      String description,
-      List<NonconformSelected> nonconformlist,
-      List<String> carphoto) async {
+    String trans_date,
+    String area_id,
+    String problem_type,
+    String description,
+    List<NonconformSelected> nonconformlist,
+    List<String> carphoto,
+    int module_type_id,
+  ) async {
     final nonconformJson = nonconformlist.map((e) => {'id': e.id}).toList();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("user_id").toString();
@@ -64,6 +66,7 @@ class CarData extends ChangeNotifier {
       'car_photo': carphoto,
       'created_by': 2,
       'emp_id': int.parse(user_id),
+      'module_type_id': module_type_id,
     };
     print('photo are ${json.encode(photoJson)}');
     try {

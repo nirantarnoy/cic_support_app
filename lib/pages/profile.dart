@@ -13,6 +13,7 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
+import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -48,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     // TODO: implement initState
     Provider.of<UserData>(context, listen: false).fetchProfile();
+    Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
     current_username =
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
 
@@ -575,12 +577,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        // onTap: () => Navigator.of(context).push(
-                        //     MaterialPageRoute(
-                        //         builder: (context) => SafetyplanAreaPage())),
                         onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => SafetyCheckPage())),
+                                builder: (context) => SafetyplanAreaPage())),
+                        // onTap: () => Navigator.of(context).push(
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SafetyCheckPage())),
                       ),
                     ),
                     Padding(

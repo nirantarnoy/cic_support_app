@@ -37,6 +37,9 @@ class UserData with ChangeNotifier {
   late String _team_display = '';
   String get team_display => _team_display;
 
+  late String _team_safety_display = '';
+  String get team_safety_display => _team_safety_display;
+
   late String _photo_display = '';
   String get photo_display => _photo_display;
 
@@ -45,6 +48,10 @@ class UserData with ChangeNotifier {
 
   set team_display(String val) {
     _team_display = val;
+  }
+
+  set team_safety_display(String val) {
+    _team_safety_display = val;
   }
 
   set photo_display(String val) {
@@ -163,13 +170,16 @@ class UserData with ChangeNotifier {
           return false;
         }
 
-        print("profile team data is ${res['data']}");
+        print("profile team new data is ${res['data']}");
 
         team_display = res['data']['current_team_id'].toString();
+        team_safety_display = res['data']['current_safety_team_id'].toString();
         photo_display = res['data']['photo'].toString();
         section_display = res['data']['section_code'].toString();
 
         prefs.setString('team_id', res['data']['current_team_id'].toString());
+        prefs.setString(
+            'team_safety_id', res['data']['current_safety_team_id'].toString());
         notifyListeners();
         return true;
       } else {

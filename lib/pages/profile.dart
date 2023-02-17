@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     // TODO: implement initState
     Provider.of<UserData>(context, listen: false).fetchProfile();
-    Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
+    // Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
     current_username =
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
 
@@ -540,51 +540,58 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => JobplanAreaPage())),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(2),
-                          height: 80,
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey.shade200,
-                              ),
-                              child: Center(
-                                  child: Icon(
-                                Icons.safety_check,
-                                color: Colors.green,
-                              )),
-                            ),
-                            title: Text(
-                              'ตรวจ Safety',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.keyboard_arrow_right,
-                            ),
-                          ),
-                        ),
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => SafetyplanAreaPage())),
-                        // onTap: () => Navigator.of(context).push(
-                        //     MaterialPageRoute(
-                        //         builder: (context) => SafetyCheckPage())),
-                      ),
-                    ),
+                    Consumer<UserData>(
+                        builder: (context, _userx, _) =>
+                            _userx.team_safety_display != null
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.all(2),
+                                        height: 80,
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.white,
+                                        ),
+                                        child: ListTile(
+                                          leading: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            child: Center(
+                                                child: Icon(
+                                              Icons.safety_check,
+                                              color: Colors.green,
+                                            )),
+                                          ),
+                                          title: Text(
+                                            'ตรวจ Safety',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          trailing: Icon(
+                                            Icons.keyboard_arrow_right,
+                                          ),
+                                        ),
+                                      ),
+                                      onTap: () => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SafetyplanAreaPage())),
+                                      // onTap: () => Navigator.of(context).push(
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) => SafetyCheckPage())),
+                                    ),
+                                  )
+                                : Text('')),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(

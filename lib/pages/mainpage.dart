@@ -2,11 +2,25 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/notificationpage.dart';
 import 'package:flutter_cic_support/pages/settingpage.dart';
+import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/widgets/bottomnav.dart';
 import 'package:flutter_cic_support/widgets/menucategory.dart';
 import 'package:flutter_cic_support/widgets/newswidget.dart';
+import 'package:provider/provider.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

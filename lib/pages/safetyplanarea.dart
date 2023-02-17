@@ -11,6 +11,7 @@ import 'package:flutter_cic_support/pages/history.dart';
 import 'package:flutter_cic_support/pages/jobcheck.dart';
 import 'package:flutter_cic_support/pages/jobchecknew.dart';
 import 'package:flutter_cic_support/pages/plancheckcomplete.dart';
+import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -231,26 +232,26 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
         title: Text("แผนพื้นที่ตรวจ Safety"),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () => Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => HistoryPage(),
-        //       ),
-        //     ),
-        //     icon: Icon(Icons.history),
-        //   ),
-        //   IconButton(
-        //     onPressed: () => Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => CarlistPage(),
-        //       ),
-        //     ),
-        //     icon: Icon(Icons.error_outline),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SafetyCheckPage(),
+              ),
+            ),
+            icon: Icon(Icons.list),
+          ),
+          // IconButton(
+          //   onPressed: () => Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => CarlistPage(),
+          //     ),
+          //   ),
+          //   icon: Icon(Icons.error_outline),
+          // ),
+        ],
       ),
       body: Container(
         color: Colors.grey.shade100,

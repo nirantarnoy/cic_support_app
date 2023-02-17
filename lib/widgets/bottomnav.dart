@@ -3,6 +3,8 @@ import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/pages/notificationpage.dart';
 import 'package:flutter_cic_support/pages/profile.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
+import 'package:flutter_cic_support/services/localnoti.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
 class bottomnav extends StatefulWidget {
@@ -16,7 +18,8 @@ class bottomnav extends StatefulWidget {
 
 class _bottomnavState extends State<bottomnav> {
   int _currentIndex = 0;
-
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     _currentIndex = 0;

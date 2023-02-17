@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/notificationpage.dart';
 import 'package:flutter_cic_support/pages/settingpage.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
+import 'package:flutter_cic_support/services/localnoti.dart';
 import 'package:flutter_cic_support/widgets/bottomnav.dart';
 import 'package:flutter_cic_support/widgets/menucategory.dart';
 import 'package:flutter_cic_support/widgets/newswidget.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -14,11 +16,23 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     // TODO: implement initState
     Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
+    LocalNoti.initialize(flutterLocalNotificationsPlugin);
     super.initState();
+    shownoti();
+  }
+
+  void shownoti() {
+    //print("notiiiiiiiiiiiiiiiiiiii");
+    LocalNoti.showBigTextNotification(
+        title: "แจ้งเตือนจาก cicsupport",
+        body: 'มีรายการคาคงค้างในพื้นที่ตรวจของคุณ',
+        fln: flutterLocalNotificationsPlugin);
   }
 
   @override

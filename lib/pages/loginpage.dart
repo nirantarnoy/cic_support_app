@@ -3,6 +3,8 @@ import 'package:flutter_cic_support/appcache/appcache.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_cic_support/services/localnoti.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
@@ -24,12 +26,23 @@ class _LoginPageState extends State<LoginPage> {
 
   late Box box1;
 
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     // TODO: implement initState
     //Provider.of<PersonData>(context, listen: false).fetchPerson();
     createBox();
+    // LocalNoti.initialize(flutterLocalNotificationsPlugin);
     super.initState();
+  }
+
+  void shownoti() {
+    print("notiiiiiiiiiiiiiiiiiiii");
+    LocalNoti.showBigTextNotification(
+        title: "test",
+        body: 'fdfdfdfdfdffd',
+        fln: flutterLocalNotificationsPlugin);
   }
 
   void createBox() async {
@@ -217,12 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: InkWell(
                   onTap: () => _submitForm(users.login),
                   // onTap: () {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (contex) => MainPage(),
-                  //     ),
-                  //   );
+                  //   shownoti();
                   // },
                   child: Container(
                     width: double.infinity,

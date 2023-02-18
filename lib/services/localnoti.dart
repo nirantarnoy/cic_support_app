@@ -6,10 +6,21 @@ class LocalNoti {
     var androidInitialize =
         new AndroidInitializationSettings('mipmap/ic_launcher');
 
-    var initializationSettings =
-        new InitializationSettings(android: androidInitialize);
+    var IOSInitialize = new DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification:
+            (int id, String? title, String? body, String? payload) async {});
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    var initializationSettings = new InitializationSettings(
+      android: androidInitialize,
+      iOS: IOSInitialize,
+    );
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationReasponse) async {});
   }
 
   static Future showBigTextNotification(
@@ -28,7 +39,9 @@ class LocalNoti {
       priority: Priority.high,
     );
 
-    var not = NotificationDetails(android: androidPlatformChannelSpecifics);
+    var not = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: DarwinNotificationDetails());
     await fln.show(0, title, body, not);
   }
 }

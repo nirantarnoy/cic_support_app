@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/models/inspectionsafetytrans.dart';
 import 'package:flutter_cic_support/models/inspectiontrans.dart';
 import 'package:flutter_cic_support/models/jobcheckdetail.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
+import 'package:flutter_cic_support/models/jobsafetyplanarea.dart';
 import 'package:flutter_cic_support/models/nonconformtitle.dart';
 import 'package:flutter_cic_support/models/personcurrentplan.dart';
 import 'package:flutter_cic_support/models/planareagroup.dart';
@@ -18,6 +20,12 @@ class PlanData extends ChangeNotifier {
   final String url_to_add_inspection_trans =
       "http://172.16.0.231:1223/api/plan/addinspection";
 
+  final String url_to_add_safety_inspection_trans =
+      "http://172.16.0.231:1223/api/plan/addsafetyinspection";
+
+  final String url_to_check_safety_already_trans =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyempsafety";
+
   final String url_to_plan_by_emp =
       "http://172.16.0.231:1223/api/plan/listplanbyemp";
 
@@ -29,8 +37,15 @@ class PlanData extends ChangeNotifier {
 
   final String url_to_histoty_trans_by_emp =
       "http://172.16.0.231:1223/api/teaminspectionitem/findtranshistorybyemp";
+
+  final String url_to_safety_plan =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findsafetyplanbyteam";
+
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
+
+  late List<JobSafetyplanArea> _safety_plan = [];
+  List<JobSafetyplanArea> get listSafetyJobplanArea => _safety_plan;
 
   late List<NonConformTitle> _nonconform = [];
   List<NonConformTitle> get listnonconform => _nonconform;
@@ -48,12 +63,23 @@ class PlanData extends ChangeNotifier {
   late int _finished_check = 0;
   int get finishedcheck => _finished_check;
 
+  late int _finished_safety_check = 0;
+  int get finishedsafetycheck => _finished_safety_check;
+
   set finishedcheck(int val) {
     _finished_check = val;
   }
 
+  set finishedsafetycheck(int val) {
+    _finished_safety_check = val;
+  }
+
   set listJobplanArea(List<JobplanArea> val) {
     _plan = val;
+  }
+
+  set listSafetyJobplanArea(List<JobSafetyplanArea> val) {
+    _safety_plan = val;
   }
 
   set listnonconform(List<NonConformTitle> val) {
@@ -69,6 +95,14 @@ class PlanData extends ChangeNotifier {
 
   set listInspectiontrans(List<InspectionTrans> val) {
     _inspectiontrans = val;
+  }
+
+  late List<InspectionSafetyTrans> _inspectionsafetytrans = [];
+  List<InspectionSafetyTrans> get listInspectionSafetytrans =>
+      _inspectionsafetytrans;
+
+  set listInspectionSafetytrans(List<InspectionSafetyTrans> val) {
+    _inspectionsafetytrans = val;
   }
 
   List<JobplanArea> getAreaTitle() {
@@ -99,6 +133,43 @@ class PlanData extends ChangeNotifier {
           is_enable: element.is_enable,
           seq_sort: element.seq_sort,
           seq_sort_item: element.seq_sort_item,
+          department_code: element.department_code,
+          section_code: element.section_code,
+          inspection_type_id: element.inspection_type_id,
+        );
+        _newgroup.add(_group);
+      }
+    });
+    _newgroup.sort(
+      (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
+    );
+    return _newgroup.toSet().toList();
+  }
+
+  List<JobSafetyplanArea> getSafetyAreaTitle() {
+    List<JobSafetyplanArea> _newgroup = [];
+    listSafetyJobplanArea.forEach((element) {
+      int has_ = 0;
+      _newgroup.forEach((item_check) {
+        if (item_check.plan_area_id == element.plan_area_id) {
+          has_ += 1;
+        }
+      });
+      if (has_ > 0) {
+      } else {
+        JobSafetyplanArea _group = JobSafetyplanArea(
+          plan_id: element.plan_id,
+          plan_num: element.plan_num,
+          plan_date: "",
+          plan_area_id: element.plan_area_id,
+          plan_area_name: element.plan_area_name,
+          plan_topic_check_qty: "",
+          plan_topic_checked_qty: "",
+          status: "0",
+          scored: "0",
+          department_code: element.department_code,
+          section_code: element.section_code,
+          inspection_type_id: element.inspection_type_id,
         );
         _newgroup.add(_group);
       }
@@ -126,22 +197,26 @@ class PlanData extends ChangeNotifier {
             element.plan_id == plan_id &&
             element.is_enable == "1") {
           JobplanArea _group = JobplanArea(
-              plan_id: element.plan_id,
-              plan_num: element.plan_num,
-              plan_date: "",
-              plan_area_id: element.plan_area_id,
-              plan_area_name: "",
-              plan_topic_check_qty: "",
-              plan_topic_checked_qty: "",
-              status: "",
-              topic_id: element.topic_id,
-              topic_name: element.topic_name,
-              topic_item_id: "",
-              topic_item_name: "",
-              scored: "-1",
-              is_enable: element.is_enable,
-              seq_sort: element.seq_sort,
-              seq_sort_item: element.seq_sort_item);
+            plan_id: element.plan_id,
+            plan_num: element.plan_num,
+            plan_date: "",
+            plan_area_id: element.plan_area_id,
+            plan_area_name: "",
+            plan_topic_check_qty: "",
+            plan_topic_checked_qty: "",
+            status: "",
+            topic_id: element.topic_id,
+            topic_name: element.topic_name,
+            topic_item_id: "",
+            topic_item_name: "",
+            scored: "-1",
+            is_enable: element.is_enable,
+            seq_sort: element.seq_sort,
+            seq_sort_item: element.seq_sort_item,
+            department_code: element.department_code,
+            section_code: element.section_code,
+            inspection_type_id: element.inspection_type_id,
+          );
           _newgroup.add(_group);
         }
       }
@@ -311,6 +386,15 @@ class PlanData extends ChangeNotifier {
     return cnt;
   }
 
+  int getAllMushCheckSafetyArea() {
+    return listSafetyJobplanArea.length;
+  }
+
+  int getAllCheckedSafetyArea() {
+    int cnt = 0;
+    return cnt;
+  }
+
   List<NonConformTitle> listofnonconform_5s() {
     return listnonconform
         .where((element) => element.module_type_id == "1")
@@ -342,7 +426,7 @@ class PlanData extends ChangeNotifier {
             print("have data to update trans");
             has_update = 1;
           } else {
-            has_update = 0;
+            has_update = 0; // if duplicate score please commit this line
           }
         });
         if (has_update == 0) {
@@ -392,6 +476,65 @@ class PlanData extends ChangeNotifier {
     return true;
   }
 
+  bool addInspectionSafetyTrans(InspectionSafetyTrans data) {
+    if (data != null) {
+      if (listInspectionSafetytrans.isNotEmpty) {
+        int has_update = 0;
+        listInspectionSafetytrans.forEach((element) {
+          if (element.area_id == data.area_id) {
+            element.score = data.score.toString(); // update score if exist
+            print("have data to update trans");
+            has_update = 1;
+          } else {
+            has_update = 0; // if duplicate score please commit this line
+          }
+        });
+        if (has_update == 0) {
+          listInspectionSafetytrans.add(data); // original line
+          print("loop new data to add trans");
+        }
+      } else {
+        listInspectionSafetytrans.add(data); // original line
+        print("first new data to add trans");
+      }
+
+      listSafetyJobplanArea.forEach((element) {
+        if (element.plan_area_id == data.area_id) {
+          element.status = "1";
+          element.scored = data.score.toString();
+        } else {
+          //print("no data to add");
+        }
+      });
+
+      notifyListeners();
+      return true;
+    } else {
+      //print("no data to add 2");
+      return false;
+    }
+  }
+
+  bool removesafetyinspectionitem(String area_id) {
+    if (listSafetyJobplanArea.isNotEmpty && area_id != null) {
+      // listInspectiontrans.forEach((element) {
+      //   print(element.area_id);
+      // });
+
+      listInspectionSafetytrans.forEach((element) {
+        if (element.area_id == area_id) {
+          print("remove area id is ${area_id} and ${element.area_id}");
+          element.score = "0";
+        }
+      });
+      //   listInspectiontrans.removeWhere((item) =>
+      //       item.area_id == area_id); // remove all checked score of this area
+      //   print("remove checked topic item");
+    }
+    notifyListeners();
+    return true;
+  }
+
   int countTopicitem(String area_id) {
     int cnt = 0;
     listJobplanArea.forEach((element) {
@@ -419,6 +562,16 @@ class PlanData extends ChangeNotifier {
     if (listJobplanArea.isNotEmpty) {
       listJobplanArea.clear();
     }
+  }
+
+  int checkhaschecklist(String area_id) {
+    int cnt = 0;
+    listInspectionSafetytrans.forEach((element) {
+      if (element.area_id == area_id && element.score != "0") {
+        cnt += 1;
+      }
+    });
+    return cnt;
   }
 
   Future<dynamic> fetchJobplan() async {
@@ -470,6 +623,9 @@ class PlanData extends ChangeNotifier {
                   : res[i]["is_enable"].toString(),
               seq_sort: res[i]["seq_sort"].toString(),
               seq_sort_item: res[i]["seq_sort_item"].toString(),
+              department_code: res[i]["department_code"].toString(),
+              section_code: res[i]["section_code"].toString(),
+              inspection_type_id: res[i]["inspection_type_id"].toString(),
             );
 
             if (i == 0) {
@@ -479,8 +635,8 @@ class PlanData extends ChangeNotifier {
                 plan_date: res[i]["plan_target_date"].toString(),
                 plan_status: "0",
                 plan_type: res[i]["module_type_id"].toString(),
+                inspection_type_id: res[i]['inspection_type_id'].toString(),
               );
-
               personplan_data.add(personplan);
             }
 
@@ -488,8 +644,82 @@ class PlanData extends ChangeNotifier {
           }
           listJobplanArea = data;
           listpersoncurrentplan = personplan_data;
+          print("section code is ${data[0].section_code}");
           notifyListeners();
           return listJobplanArea;
+        } else {
+          print("No Data");
+        }
+      } catch (err) {
+        print("error na ja is ${err}");
+      }
+    }
+  }
+
+  Future<dynamic> fetchSafetyJobplan() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
+    final String team_safety_id = prefs.getString("team_safety_id").toString();
+
+    notifyListeners();
+
+    print('current safety team is ${team_safety_id}');
+
+    if (listSafetyJobplanArea.length == 0) {
+      try {
+        http.Response response;
+        response = await http.get(
+            Uri.parse(url_to_safety_plan + "/" + team_safety_id),
+            headers: {"Authorization": token});
+
+        if (response.statusCode == 200) {
+          List<JobSafetyplanArea> data = [];
+          List<PersoncurrentPlan> personplan_data = [];
+          List<dynamic> res = json.decode(response.body);
+
+          if (res == null) {
+            print("no data");
+            return false;
+          }
+
+          print("data plan_num is ${res[0]["plan_num"]}");
+
+          for (var i = 0; i <= res.length - 1; i++) {
+            final JobSafetyplanArea _item = JobSafetyplanArea(
+              plan_id: res[i]["id"].toString(),
+              plan_num: res[i]["plan_num"].toString(),
+              plan_date: res[i]["plan_target_date"].toString(),
+              plan_area_id: res[i]["area_inspection_id"].toString(),
+              plan_area_name: res[i]["area_inspection_name"].toString(),
+              plan_topic_check_qty: "0",
+              plan_topic_checked_qty: "0",
+              status: "0",
+              scored: "0",
+              department_code: res[i]["department_code"].toString(),
+              section_code: res[i]["section_code"].toString(),
+              inspection_type_id: res[i]["inspection_type_id"].toString(),
+            );
+
+            // if (i == 0) {
+            //   final PersoncurrentPlan personplan = PersoncurrentPlan(
+            //     plan_id: res[i]["plan_id"].toString(),
+            //     plan_no: res[i]["plan_no"].toString(),
+            //     plan_date: res[i]["plan_target_date"].toString(),
+            //     plan_status: "0",
+            //     plan_type: res[i]["module_type_id"].toString(),
+            //     inspection_type_id: res[i]['inspection_type_id'].toString(),
+            //   );
+            //   personplan_data.add(personplan);
+            // }
+
+            data.add(_item);
+          }
+          listSafetyJobplanArea = data;
+          //    listpersoncurrentplan = personplan_data;
+          print("section code is ${data[0].section_code}");
+          notifyListeners();
+          return listSafetyJobplanArea;
         } else {
           print("No Data");
         }
@@ -576,6 +806,65 @@ class PlanData extends ChangeNotifier {
     }
   }
 
+  Future<bool> submitSafetyInspection() async {
+    print("list data is ${listInspectionSafetytrans[0].area_id}");
+    // return false;
+    if (listInspectionSafetytrans.isNotEmpty) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String user_id = prefs.getString("user_id").toString();
+      final String team_safety_id =
+          prefs.getString("team_safety_id").toString();
+      final String token = prefs.getString("token").toString();
+      // final String plan_num = prefs.getString("plan_num").toString();
+
+      var addData = listInspectionSafetytrans
+          .map((e) => {
+                'module_type_id': int.parse(e.module_type_id),
+                'plan_id': int.parse(e.plan_num),
+                'trans_date': e.trans_date,
+                'emp_id': int.parse(user_id),
+                'area_group_id': int.parse(e.area_group_id),
+                'area_id': int.parse(e.area_id),
+                'team_id': int.parse(team_safety_id),
+                'score': int.parse(e.score),
+                'status': int.parse(e.status),
+                'note': e.note,
+                'created_at': int.parse('0'),
+                'created_by': int.parse(user_id),
+              })
+          .toList();
+
+      //  print('data save is ${json.encode(addData)}');
+      // return false;
+      try {
+        http.Response response;
+        response = await http.post(
+          Uri.parse(url_to_add_safety_inspection_trans),
+          headers: {"Authorization": token},
+          body: json.encode(addData),
+        );
+
+        if (response.statusCode == 200) {
+          // List<JobplanArea> data = [];
+          Map<String, dynamic> res = json.decode(response.body);
+          if (res == null) {
+            print("no data");
+            return false;
+          }
+          print("save transaction ok");
+          clearInspectionTrans(); // clear list after save finished
+        }
+        return true;
+      } catch (err) {
+        print("has eerror is ${err.toString()}");
+        return false;
+      }
+    } else {
+      print("not save naja");
+      return false;
+    }
+  }
+
   Future<dynamic> fetchNonconformTitle() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token").toString();
@@ -594,7 +883,7 @@ class PlanData extends ChangeNotifier {
           return false;
         }
 
-        print("non conform data is ${res}");
+        // print("non conform data is ${res}");
 
         for (var i = 0; i <= res.length - 1; i++) {
           final NonConformTitle _item = NonConformTitle(
@@ -654,6 +943,48 @@ class PlanData extends ChangeNotifier {
         return _finished_check;
       } else {
         print("No Data From Check");
+      }
+    } catch (err) {
+      print("error na is ${err}");
+    }
+  }
+
+  Future<dynamic> fetSafetyFinishedCheck() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String team_safety_id = prefs.getString("team_safety_id").toString();
+    final String token = prefs.getString("token").toString();
+
+    notifyListeners();
+
+    final Map<String, dynamic> checkData = {
+      'teamid': team_safety_id,
+      'empid': user_id,
+    };
+    print('data find is ${checkData}');
+    print('token find is ${token}');
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_check_safety_already_trans),
+          headers: {'Content-Type': 'application/json', "Authorization": token},
+          body: json.encode(checkData));
+
+      print("response is ${response.statusCode}");
+      if (response.statusCode == 200) {
+        int res = json.decode(response.body);
+
+        // Map<String, dynamic> res = json.decode(response.body);
+        print("data res is check already ${res}");
+        // if (res == null) {
+        //   print("no data");
+        //   return false;
+        // }
+
+        finishedsafetycheck = res;
+        notifyListeners();
+        return _finished_safety_check;
+      } else {
+        print("No Data From Check Naja");
       }
     } catch (err) {
       print("error na is ${err}");

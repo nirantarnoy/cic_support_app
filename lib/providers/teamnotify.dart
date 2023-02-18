@@ -29,7 +29,7 @@ class TeamnotifyData extends ChangeNotifier {
           headers: {"Authorization": token});
 
       if (response.statusCode == 200) {
-        print("has data");
+        print("has data notify");
         List<dynamic> res = json.decode(response.body);
         List<Teamnotify> data = [];
 

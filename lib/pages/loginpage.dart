@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/appcache/appcache.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,11 +20,32 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameText = TextEditingController();
   final TextEditingController passwordText = TextEditingController();
 
+  bool isChecked = false;
+
+  late Box box1;
+
   @override
   void initState() {
     // TODO: implement initState
     //Provider.of<PersonData>(context, listen: false).fetchPerson();
+    createBox();
     super.initState();
+  }
+
+  void createBox() async {
+    box1 = await Hive.openBox('logindata');
+    getdata();
+  }
+
+  void getdata() async {
+    if (box1.get('username') != null) {
+      usernameText.text = box1.get('username');
+      isChecked = true;
+      setState(() {});
+    }
+    if (box1.get('password') != null) {
+      passwordText.text = box1.get('password');
+    }
   }
 
   void _submitForm(Function login) async {
@@ -37,6 +60,12 @@ class _LoginPageState extends State<LoginPage> {
         .login(_formData['username'], _formData['password']);
 
     if (res == true) {
+      if (isChecked) {
+        box1.put('username', _formData['username']);
+        box1.put('password', _formData['password']);
+      }
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => AppCache()));
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
@@ -114,123 +143,114 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final UserData users = Provider.of<UserData>(context, listen: false);
 
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Text(''),
-            ),
-            Expanded(
-                flex: 4,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RichText(
-                            text: const TextSpan(children: [
-                          TextSpan(
-                            text: "CIC",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(1, 1),
-                                  color: Colors.grey,
-                                  blurRadius: 8.0,
-                                ),
-                              ],
-                            ),
-                          ),
-                          TextSpan(
-                            text: "SUPPORT",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 45, 172, 123),
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(1, 1),
-                                  color: Colors.grey,
-                                  blurRadius: 8.0,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ])),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            buildUsernameField(),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            buildPasswordField(),
-                          ],
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 45, 172, 123),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Material(
-                          child: InkWell(
-                            onTap: () => _submitForm(users.login),
-                            // onTap: () {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (contex) => MainPage(),
-                            //     ),
-                            //   );
-                            // },
-                            child: Container(
-                              width: double.infinity,
-                              height: 60,
-                              child: const Center(
-                                child: Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          color: Colors.transparent,
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                  text: const TextSpan(children: [
+                TextSpan(
+                  text: "CIC",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(1, 1),
+                        color: Colors.grey,
+                        blurRadius: 8.0,
+                      ),
+                    ],
+                  ),
+                ),
+                TextSpan(
+                  text: "SUPPORT",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 45, 172, 123),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(1, 1),
+                        color: Colors.grey,
+                        blurRadius: 8.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ])),
+            ],
+          ),
+          const SizedBox(
+            height: 50,
+          ),
+          Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  buildUsernameField(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildPasswordField(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  builRememberMe(),
+                ],
+              )),
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 45, 172, 123),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Material(
+                child: InkWell(
+                  onTap: () => _submitForm(users.login),
+                  // onTap: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (contex) => MainPage(),
+                  //     ),
+                  //   );
+                  // },
+                  child: Container(
+                    width: double.infinity,
+                    height: 60,
+                    child: const Center(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'version 0.1',
-                      style: TextStyle(color: Colors.grey.withOpacity(0.8)),
-                    ),
-                  ],
-                )),
-          ],
-        ),
+                  ),
+                ),
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            'version 0.2',
+            style: TextStyle(color: Colors.grey.withOpacity(0.8)),
+          ),
+        ],
       ),
     );
   }
@@ -306,6 +326,23 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
+    );
+  }
+
+  Widget builRememberMe() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+            flex: 1,
+            child: Checkbox(
+              value: isChecked,
+              onChanged: (value) {
+                isChecked = !isChecked;
+                setState(() {});
+              },
+            )),
+        Expanded(flex: 4, child: Text("จดจำเพื่อเข้าระบบครั้งต่อไป")),
+      ],
     );
   }
 }

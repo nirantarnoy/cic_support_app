@@ -107,7 +107,7 @@ class _bottomnavState extends State<bottomnav> {
                     ),
                   ],
                 ),
-                label: 'การแจ้งเตือน'),
+                label: 'แจ้งเตือน'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.person), label: 'ข้อมูลผู้ใช้')
           ],

@@ -1,4 +1,5 @@
 class CarList {
+  final String id;
   final String car_id;
   final String car_no;
   final String car_date;
@@ -14,6 +15,7 @@ class CarList {
   final String car_non_conform;
 
   CarList({
+    required this.id,
     required this.car_id,
     required this.car_no,
     required this.car_date,

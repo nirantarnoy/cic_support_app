@@ -4,6 +4,10 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
+import 'package:flutter_cic_support/models/carclosephotolist.dart';
+import 'package:flutter_cic_support/models/carphotolist.dart';
+import 'package:flutter_cic_support/pages/carcomplete.dart';
+import 'package:flutter_cic_support/pages/carphotocloseview.dart';
 import 'package:flutter_cic_support/pages/carphotoview.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -13,11 +17,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CarDetailPage extends StatefulWidget {
+  final String id;
   final String car_id;
   final String car_no;
   final String car_date;
@@ -31,6 +37,7 @@ class CarDetailPage extends StatefulWidget {
   final String car_status;
   const CarDetailPage({
     Key? key,
+    required this.id,
     required this.car_id,
     required this.car_no,
     required this.car_date,
@@ -57,6 +64,9 @@ class _CarDetailPageState extends State<CarDetailPage> {
   List<int> _deleteimage_selected = [];
   List<int> _deleteimageweb_selected = [];
 
+  int is_load_open = 0;
+  int is_load_close = 0;
+
   Uint8List webImage = Uint8List(8);
   List<Uint8List> imageweb2 = [];
 
@@ -64,8 +74,11 @@ class _CarDetailPageState extends State<CarDetailPage> {
   void initState() {
     // TODO: implement initState
     // _getNonConform();
-    // Provider.of<PlanData>(context, listen: false).fetchNonconformTitle();
+    Provider.of<CarData>(context, listen: false).getCarPhotoById(widget.car_id);
+    Provider.of<CarData>(context, listen: false)
+        .getCarClosePhotoById(widget.car_id);
     //_checkIsWeb();
+
     super.initState();
   }
 
@@ -502,8 +515,167 @@ class _CarDetailPageState extends State<CarDetailPage> {
         });
   }
 
+  Widget _buildcarphoto(List<CarPhotoList> _carphoto) {
+    Widget _items;
+    if (!_carphoto.isEmpty) {
+      _items = ListView.separated(
+        itemCount: _carphoto.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (BuildContext context, int index) {
+          // print(
+          //     'car image list is http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}');
+          String image_url =
+              'http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}';
+          return GestureDetector(
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CarphotoCloseviewPage(carphoto_url: image_url))),
+            child: SizedBox(
+              height: 100,
+              width: 100,
+              child: Image.network(
+                "http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}",
+                fit: BoxFit.fill,
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(
+            width: 5.0,
+          );
+        },
+      );
+    } else {
+      _items = Text('No Data');
+    }
+
+    return _items;
+  }
+
+  Widget _buildcarclosephoto(List<CarClosePhotoList> _carphoto) {
+    Widget _items;
+    if (!_carphoto.isEmpty) {
+      _items = ListView.separated(
+        itemCount: _carphoto.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (BuildContext context, int index) {
+          // print(
+          //     'car image list is http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}');
+          String image_url =
+              'http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}';
+          return GestureDetector(
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CarphotoCloseviewPage(carphoto_url: image_url))),
+            child: SizedBox(
+              height: 100,
+              width: 100,
+              child: Image.network(
+                "http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}",
+                fit: BoxFit.fill,
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(
+            width: 5.0,
+          );
+        },
+      );
+    } else {
+      _items = Text('No Data');
+    }
+
+    return _items;
+  }
+
+  Future _closecar() async {
+    bool isSave = await Provider.of<CarData>(context, listen: false)
+        .closeCar(widget.car_id, 'Close', base64ImageList);
+
+    if (isSave) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CarcompletePage()));
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 12,
+                ),
+                Icon(
+                  Icons.mood_bad_outlined,
+                  size: 32,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  'พบข้อผิดพลาด',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 8.0, right: 15.0, bottom: 8.0, left: 15.0),
+                  child: Text(
+                    'กรุณาตรวจสอบการอีกครั้ง?',
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: MaterialButton(
+                        color: Colors.red.shade300,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50)),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: Text(
+                          'ตกลง',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("is open is ${is_load_open}");
     final DateFormat dateFormatter = DateFormat('dd-MM-yyyy');
     String aStr = widget.car_non_conform.replaceAll(new RegExp(r'[^0-9]'), '');
     // print("string replace is ${aStr}");
@@ -535,7 +707,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
       ),
       body: Column(children: [
         Expanded(
-          flex: 5,
+          flex: 4,
           child: Column(
             children: [
               Padding(
@@ -674,46 +846,67 @@ class _CarDetailPageState extends State<CarDetailPage> {
           ),
         ),
         Expanded(
-            flex: 3,
+            flex: 4,
             child: Column(
               children: [
                 Text('รูปภาพ',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.photo_outlined,
-                      size: 100,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      Icons.photo_outlined,
-                      size: 100,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      Icons.photo_outlined,
-                      size: 100,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      Icons.photo_outlined,
-                      size: 100,
-                    ),
-                  ],
+                SizedBox(
+                  height: 10,
+                ),
+                Consumer<CarData>(
+                  builder: ((context, _car, child) => _car.listcarphoto.length >
+                          0
+                      ? Consumer<CarData>(
+                          builder: ((context, _car, child) => _car
+                                      .listcarphoto.length >
+                                  0
+                              ? Container(
+                                  padding: EdgeInsets.all(4),
+                                  width: double.infinity,
+                                  height: 100,
+                                  child: Align(
+                                      alignment: Alignment.center,
+                                      child: _buildcarphoto(_car.listcarphoto)))
+                              : Center(
+                                  child: Text('No Photo'),
+                                )),
+                        )
+                      : Center(
+                          child: Text('No Photo'),
+                        )),
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Text('รูปภาพปิด CAR',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     )),
+                Consumer<CarData>(
+                  builder: ((context, _car, child) =>
+                      _car.listcarclosephoto.length > 0
+                          ? Consumer<CarData>(
+                              builder: ((context, _car, child) =>
+                                  _car.listcarphoto.length > 0
+                                      ? Container(
+                                          padding: EdgeInsets.all(4),
+                                          width: double.infinity,
+                                          height: 100,
+                                          child: Align(
+                                              alignment: Alignment.center,
+                                              child: _buildcarclosephoto(
+                                                  _car.listcarclosephoto)))
+                                      : Center(
+                                          child: Text(''),
+                                        )),
+                            )
+                          : Center(
+                              child: Text('No Photo'),
+                            )),
+                ),
                 image2.length == 0
                     ? imageweb2.length > 0
                         ? GestureDetector(
@@ -827,10 +1020,11 @@ class _CarDetailPageState extends State<CarDetailPage> {
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(50)),
-                                      onPressed: () async {
-                                        Navigator.of(context)
-                                            .popUntil((route) => route.isFirst);
-                                      },
+                                      // onPressed: () async {
+                                      //   Navigator.of(context)
+                                      //       .popUntil((route) => route.isFirst);
+                                      // },
+                                      onPressed: () => _closecar(),
                                       child: Text(
                                         'ใช่',
                                         style: TextStyle(

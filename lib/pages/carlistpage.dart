@@ -37,6 +37,7 @@ class _CarlistPageState extends State<CarlistPage>
       listcar.forEach((element) {
         if (element.status == status) {
           CarList _item = CarList(
+            id: element.id,
             area_id: element.area_id,
             area_name: element.area_name,
             car_date: element.car_date,
@@ -60,10 +61,26 @@ class _CarlistPageState extends State<CarlistPage>
         cards = ListView.builder(
             itemCount: _listcar.length,
             itemBuilder: (BuildContext context, int index) {
-              String status_name =
-                  _listcar[index].status == "1" ? "Pending" : "Open";
-              Color status_color =
-                  _listcar[index].status == "1" ? Colors.orange : Colors.green;
+              String status_name = "";
+              // _listcar[index].status == "1" ? "Pending" : "Open";
+
+              if (_listcar[index].status == "1") {
+                status_name = "Pending";
+              } else if (_listcar[index].status == "2") {
+                status_name = "Open";
+              } else if (_listcar[index].status == "3") {
+                status_name = "Closed";
+              }
+
+              Color status_color = Colors.black;
+              if (_listcar[index].status == "1") {
+                status_color = Colors.orange;
+              } else if (_listcar[index].status == "2") {
+                status_color = Colors.green;
+              } else if (_listcar[index].status == "3") {
+                status_color = Colors.red;
+              }
+              //    _listcar[index].status == "1" ? Colors.orange : Colors.green;
 
               return GestureDetector(
                 child: Card(
@@ -82,6 +99,7 @@ class _CarlistPageState extends State<CarlistPage>
                     context,
                     MaterialPageRoute(
                         builder: (context) => CarDetailPage(
+                              id: _listcar[index].id,
                               car_id: _listcar[index].car_id,
                               area_id: _listcar[index].area_id,
                               area_name: _listcar[index].area_name,
@@ -115,7 +133,7 @@ class _CarlistPageState extends State<CarlistPage>
                   ),
                   Center(
                       child: Text(
-                    'ไม่พบรายการตรวจ',
+                    'ไม่พบรายการ',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey,

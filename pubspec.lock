@@ -240,6 +240,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.1.2"
+  hive:
+    dependency: "direct main"
+    description:
+      name: hive
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.3"
+  hive_flutter:
+    dependency: "direct main"
+    description:
+      name: hive_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   http:
     dependency: "direct main"
     description:
@@ -310,6 +324,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  loading_animation_widget:
+    dependency: "direct main"
+    description:
+      name: loading_animation_widget
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0+4"
   matcher:
     dependency: transitive
     description:
@@ -485,6 +506,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.1"
+  redis:
+    dependency: "direct main"
+    description:
+      name: redis
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   shared_preferences:
     dependency: "direct main"
     description:

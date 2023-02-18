@@ -79,6 +79,16 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
                     Icons.check_circle,
                     color: Colors.green,
                   );
+            String inspection_type_name = "";
+            Color inspection_type_color = Colors.black;
+            if (listplan[index].inspection_type_id == "1") {
+              inspection_type_name = "รอบตรวจปกติ";
+              inspection_type_color = Colors.green;
+            } else if (listplan[index].inspection_type_id == "2") {
+              inspection_type_name = "รอบตรวจซ้ำ";
+              inspection_type_color = Colors.blue;
+            }
+            // print("inspection type is ${listplan[index].inspection_type_id}");
             return Card(
               child: GestureDetector(
                 onTap: () => Navigator.push(context,
@@ -88,12 +98,20 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
                   title: Text('${listplan[index].plan_no}'),
                   subtitle: Text(
                       '${dateFormatter.format(DateTime.parse(listplan[index].plan_date))}'),
-                  trailing: Text(
-                    '${module_type}',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  trailing: Column(
+                    children: <Widget>[
+                      Text(
+                        '${module_type}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "${inspection_type_name}",
+                        style: TextStyle(color: inspection_type_color),
+                      ),
+                    ],
                   ),
                 ),
               ),

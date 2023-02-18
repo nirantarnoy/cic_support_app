@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/notificationpage.dart';
 import 'package:flutter_cic_support/pages/settingpage.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
+import 'package:flutter_cic_support/services/localnoti.dart';
 import 'package:flutter_cic_support/widgets/bottomnav.dart';
 import 'package:flutter_cic_support/widgets/menucategory.dart';
 import 'package:flutter_cic_support/widgets/newswidget.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -14,12 +18,42 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  late Box box2;
   @override
   void initState() {
     // TODO: implement initState
     Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
+    LocalNoti.initialize(flutterLocalNotificationsPlugin);
     super.initState();
+    shownoti();
   }
+
+  void shownoti() async {
+    //print("notiiiiiiiiiiiiiiiiiiii");
+    if (await checkdailymessage() == false) {
+      LocalNoti.showBigTextNotification(
+          title: "แจ้งเตือนจาก cicsupport",
+          body: 'มีรายการคาคงค้างในพื้นที่ตรวจของคุณ',
+          fln: flutterLocalNotificationsPlugin);
+    }
+  }
+
+  Future<bool> checkdailymessage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('showmessage').toString() == "1") {
+      return true;
+    } else {
+      prefs.setString('showmessage', '1');
+      return false;
+    }
+  }
+
+  // void createBox() async {
+  //   box2 = await Hive.openBox('shownotidaily');
+  // }
 
   @override
   Widget build(BuildContext context) {

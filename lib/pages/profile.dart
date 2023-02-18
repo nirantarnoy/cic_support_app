@@ -297,6 +297,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // return Scaffold(
     //   appBar: AppBar(title: Text("hlllo")),
     // );
+    final textScale = MediaQuery.of(context).textScaleFactor;
     display_photo =
         Provider.of<UserData>(context, listen: false).getCurrenUserPhoto();
     display_photo = display_url + display_photo;
@@ -386,6 +387,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           'Update Photo',
                                           style: TextStyle(
                                             color: Colors.white,
+                                            fontSize: 12 * textScale,
                                           ),
                                         ),
                                       ),
@@ -409,6 +411,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           'Change Photo',
                                           style: TextStyle(
                                             color: Colors.white,
+                                            fontSize: 12 * textScale,
                                           ),
                                         ),
                                       ),

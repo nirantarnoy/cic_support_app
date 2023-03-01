@@ -672,6 +672,7 @@ class PlanData extends ChangeNotifier {
     final String user_id = prefs.getString("user_id").toString();
     final String token = prefs.getString("token").toString();
 
+    listfiverankdata.clear();
     notifyListeners();
 
     final Map<String, dynamic> insertData = {
@@ -679,49 +680,46 @@ class PlanData extends ChangeNotifier {
       'month': int.parse(_month),
     };
 
-    if (listJobplanArea.length == 0) {
-      try {
-        http.Response response;
-        response = await http.post(Uri.parse(url_to_five_monthly_summary),
-            headers: {
-              "Authorization": token,
-              'Content-Type': 'application/json'
-            },
-            body: json.encode(insertData));
+    // if (listfiverankdata.length == 0) {
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_five_monthly_summary),
+          headers: {"Authorization": token, 'Content-Type': 'application/json'},
+          body: json.encode(insertData));
 
-        if (response.statusCode == 200) {
-          List<FiveRankData> data = [];
-          List<FiveRankData> personplan_data = [];
-          List<dynamic> res = json.decode(response.body);
+      if (response.statusCode == 200) {
+        List<FiveRankData> data = [];
+        List<FiveRankData> personplan_data = [];
+        List<dynamic> res = json.decode(response.body);
 
-          if (res == null) {
-            print("no data");
-            return false;
-          }
-
-          print("data five rank is ${res[0]["area_name"]}");
-
-          for (var i = 0; i <= res.length - 1; i++) {
-            final FiveRankData _item = FiveRankData(
-              deptname: res[i]["area_name"].toString(),
-              score: double.parse(res[i]["sum_value"].toString()),
-              zone_id: res[i]["zone_id"].toString(),
-              rank_no: 0,
-            );
-
-            data.add(_item);
-          }
-          listfiverankdata = data;
-
-          notifyListeners();
-          return listJobplanArea;
-        } else {
-          print("No Data");
+        if (res == null) {
+          print("no data");
+          return false;
         }
-      } catch (err) {
-        print("error na ja is ${err}");
+
+        print("data five rank is ${res[0]["area_name"]}");
+
+        for (var i = 0; i <= res.length - 1; i++) {
+          final FiveRankData _item = FiveRankData(
+            deptname: res[i]["area_name"].toString(),
+            score: double.parse(res[i]["sum_value"].toString()),
+            zone_id: res[i]["zone_id"].toString(),
+            rank_no: 0,
+          );
+
+          data.add(_item);
+        }
+        listfiverankdata = data;
+
+        notifyListeners();
+        return listfiverankdata;
+      } else {
+        print("No Data");
       }
+    } catch (err) {
+      print("error na ja is ${err}");
     }
+    // }
   }
 
   Future<dynamic> fetchSafetyJobplan() async {

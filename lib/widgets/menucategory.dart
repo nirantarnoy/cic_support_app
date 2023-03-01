@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/pages/fivedetailpage.dart';
 import 'package:flutter_cic_support/pages/fivespage.dart';
 
 class MenuCategoryWidget extends StatefulWidget {
@@ -144,7 +145,7 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
                               onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FivesPage())),
+                                      builder: (context) => FiveDetailPage())),
                               child: Container(
                                 alignment: Alignment.center,
                                 width: 100,

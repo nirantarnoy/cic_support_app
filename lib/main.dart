@@ -17,6 +17,7 @@ import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
@@ -33,33 +34,36 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final dir = await path.getApplicationDocumentsDirectory();
-  Hive.init(dir.path);
-  Hive.initFlutter('hive_db');
+  bool isWeb = GetPlatform.isWeb;
+  if (!isWeb) {
+    final dir = await path.getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+    Hive.initFlutter('hive_db');
 
-  await Firebase.initializeApp(
-      options: DefaultFirebaseOptions
-          .currentPlatform); // flutterfire configure and generate Default option
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions
+            .currentPlatform); // flutterfire configure and generate Default option
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    sound: true,
-  );
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      sound: true,
+    );
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message in the foreground');
-    print('Message data: ${message.data}');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message in the foreground');
+      print('Message data: ${message.data}');
 
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-    }
-  });
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
+  }
 
   runApp(const MyApp());
   void configLoading() {

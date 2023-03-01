@@ -61,11 +61,11 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                 .checkhaschecklist(listcheck[index].plan_area_id);
 
             Color _bgcolor = Colors.green.shade50;
-            Color _line_color = Colors.black;
+            // Color _line_color = Colors.black;
 
-            if (current_section_code == listcheck[index].section_code) {
-              _line_color = Colors.red;
-            }
+            // if (current_section_code == listcheck[index].section_code) {
+            //   _line_color = Colors.red;
+            // }
 
             if (line_is_checked > 0) {
               _bgcolor = Colors.green.shade400;
@@ -75,9 +75,7 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
 
             return Slidable(
               key: const ValueKey(0),
-              enabled: current_section_code == listcheck[index].section_code
-                  ? false
-                  : true,
+              enabled: true,
               startActionPane: ActionPane(
                 motion: const ScrollMotion(),
                 // dismissible: DismissiblePane(onDismissed: () {}),
@@ -181,25 +179,18 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                             color: Colors.white,
                           ),
                           child: Center(
-                              child: current_section_code ==
-                                      listcheck[index].section_code
-                                  ? Icon(
-                                      Icons.home,
-                                      color: Colors.red,
-                                    )
-                                  : Text(
-                                      "${(index + 1).toString()}",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
+                              child: Text(
+                            "${(index + 1).toString()}",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
                         ),
                         title: Text(
                           '${listcheck[index].plan_area_name}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: _line_color,
                           ),
                         ),
                       ),

@@ -136,6 +136,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //  resizeToAvoidBottomInset: true,
       backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
         title: Text('รายละเอียดกิจกรรม 5 ส.'),
@@ -164,96 +165,97 @@ class _FiveDetailPageState extends State<FiveDetailPage>
           ],
         ),
       ),
-      body: Container(
-        child: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            Container(
-              child: Column(children: <Widget>[
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.only(
-                      //   topLeft: Radius.circular(10),
-                      //   topRight: Radius.circular(10),
-                      // ),
-                      color: Colors.white,
-                    ),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          Expanded(
+            child: Column(children: <Widget>[
+              Expanded(
+                flex: 5,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.only(
+                    //   topLeft: Radius.circular(10),
+                    //   topRight: Radius.circular(10),
+                    // ),
+                    color: Colors.white,
+                  ),
+                  child: Expanded(
+                    flex: 5,
                     child: Consumer<PlanData>(
                       builder: (context, value, child) =>
                           getTabcontent("1", value, 98),
                     ),
                   ),
                 ),
-              ]),
-            ),
-            Container(
-              child: Column(children: <Widget>[
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.only(
-                      //   topLeft: Radius.circular(10),
-                      //   topRight: Radius.circular(10),
-                      // ),
-                      color: Colors.white,
-                    ),
-                    child: Consumer<PlanData>(
-                      builder: (context, value, child) =>
-                          getTabcontent("2", value, 98),
-                    ),
+              ),
+            ]),
+          ),
+          Container(
+            child: Column(children: <Widget>[
+              Expanded(
+                flex: 5,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.only(
+                    //   topLeft: Radius.circular(10),
+                    //   topRight: Radius.circular(10),
+                    // ),
+                    color: Colors.white,
+                  ),
+                  child: Consumer<PlanData>(
+                    builder: (context, value, child) =>
+                        getTabcontent("2", value, 98),
                   ),
                 ),
-              ]),
-            ),
-            Container(
-              child: Column(children: <Widget>[
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.only(
-                      //   topLeft: Radius.circular(10),
-                      //   topRight: Radius.circular(10),
-                      // ),
-                      color: Colors.white,
-                    ),
-                    child: Consumer<PlanData>(
-                      builder: (context, value, child) =>
-                          getTabcontent("3", value, 95),
-                    ),
+              ),
+            ]),
+          ),
+          Container(
+            child: Column(children: <Widget>[
+              Expanded(
+                flex: 5,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.only(
+                    //   topLeft: Radius.circular(10),
+                    //   topRight: Radius.circular(10),
+                    // ),
+                    color: Colors.white,
+                  ),
+                  child: Consumer<PlanData>(
+                    builder: (context, value, child) =>
+                        getTabcontent("3", value, 95),
                   ),
                 ),
-              ]),
-            ),
-            Container(
-              child: Column(children: <Widget>[
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.only(
-                      //   topLeft: Radius.circular(10),
-                      //   topRight: Radius.circular(10),
-                      // ),
-                      color: Colors.white,
-                    ),
-                    child: Consumer<PlanData>(
-                      builder: (context, value, child) =>
-                          getTabcontent("4", value, 95),
-                    ),
+              ),
+            ]),
+          ),
+          Container(
+            child: Column(children: <Widget>[
+              Expanded(
+                flex: 5,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.only(
+                    //   topLeft: Radius.circular(10),
+                    //   topRight: Radius.circular(10),
+                    // ),
+                    color: Colors.white,
+                  ),
+                  child: Consumer<PlanData>(
+                    builder: (context, value, child) =>
+                        getTabcontent("4", value, 95),
                   ),
                 ),
-              ]),
-            ),
-          ],
-        ),
+              ),
+            ]),
+          ),
+        ],
       ),
     );
   }
@@ -392,28 +394,31 @@ class _FiveDetailPageState extends State<FiveDetailPage>
         SizedBox(
           height: 5,
         ),
-        SfCircularChart(
-          // primaryXAxis: CategoryAxis(),
-          // Chart title
-          // title: ChartTitle(text: 'CAR'),
-          // Enable legend
-          legend: Legend(
-            isVisible: false,
-            overflowMode: LegendItemOverflowMode.wrap,
-            position: LegendPosition.bottom,
+        Expanded(
+          flex: 2,
+          child: SfCircularChart(
+            // primaryXAxis: CategoryAxis(),
+            // Chart title
+            // title: ChartTitle(text: 'CAR'),
+            // Enable legend
+            legend: Legend(
+              isVisible: false,
+              overflowMode: LegendItemOverflowMode.wrap,
+              position: LegendPosition.bottom,
+            ),
+            // Enable tooltip
+            tooltipBehavior: TooltipBehavior(enable: true),
+            series: <CircularSeries<FiveRankData, String>>[
+              DoughnutSeries<FiveRankData, String>(
+                dataSource: _tabvaluelist,
+                xValueMapper: (FiveRankData sales, _) => sales.deptname,
+                yValueMapper: (FiveRankData sales, _) => sales.score,
+                // name: 'Sales',
+                // Enable data label
+                dataLabelSettings: DataLabelSettings(isVisible: true),
+              )
+            ],
           ),
-          // Enable tooltip
-          tooltipBehavior: TooltipBehavior(enable: true),
-          series: <CircularSeries<FiveRankData, String>>[
-            DoughnutSeries<FiveRankData, String>(
-              dataSource: _tabvaluelist,
-              xValueMapper: (FiveRankData sales, _) => sales.deptname,
-              yValueMapper: (FiveRankData sales, _) => sales.score,
-              // name: 'Sales',
-              // Enable data label
-              dataLabelSettings: DataLabelSettings(isVisible: true),
-            )
-          ],
         ),
         SizedBox(
           height: 10,
@@ -433,6 +438,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
           ],
         ),
         Expanded(
+          flex: 4,
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: _buildlist(_tabvaluelist, score_rank),

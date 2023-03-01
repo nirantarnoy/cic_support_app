@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/models/fiverank.dart';
 import 'package:flutter_cic_support/models/inspectionsafetytrans.dart';
 import 'package:flutter_cic_support/models/inspectiontrans.dart';
 import 'package:flutter_cic_support/models/jobcheckdetail.dart';
@@ -41,6 +42,9 @@ class PlanData extends ChangeNotifier {
   final String url_to_safety_plan =
       "http://172.16.0.231:1223/api/teaminspectionitem/findsafetyplanbyteam";
 
+  final String url_to_five_monthly_summary =
+      "http://172.16.0.231:1223/api/plan/fivemonthlysummary";
+
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
 
@@ -56,6 +60,9 @@ class PlanData extends ChangeNotifier {
   late List<TransHistoryEmp> _histoytrans = [];
   List<TransHistoryEmp> get listhistorytrans => _histoytrans;
 
+  late List<FiveRankData> _fiverank = [];
+  List<FiveRankData> get listfiverankdata => _fiverank;
+
   set listpersoncurrentplan(List<PersoncurrentPlan> val) {
     _personcurrentplan = val;
   }
@@ -68,6 +75,10 @@ class PlanData extends ChangeNotifier {
 
   set finishedcheck(int val) {
     _finished_check = val;
+  }
+
+  set listfiverankdata(List<FiveRankData> val) {
+    _fiverank = val;
   }
 
   set finishedsafetycheck(int val) {
@@ -645,6 +656,63 @@ class PlanData extends ChangeNotifier {
           listJobplanArea = data;
           listpersoncurrentplan = personplan_data;
           print("section code is ${data[0].section_code}");
+          notifyListeners();
+          return listJobplanArea;
+        } else {
+          print("No Data");
+        }
+      } catch (err) {
+        print("error na ja is ${err}");
+      }
+    }
+  }
+
+  Future<dynamic> fetchFiveRank(String _year, String _month) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
+
+    notifyListeners();
+
+    final Map<String, dynamic> insertData = {
+      'year': int.parse(_year),
+      'month': int.parse(_month),
+    };
+
+    if (listJobplanArea.length == 0) {
+      try {
+        http.Response response;
+        response = await http.post(Uri.parse(url_to_five_monthly_summary),
+            headers: {
+              "Authorization": token,
+              'Content-Type': 'application/json'
+            },
+            body: json.encode(insertData));
+
+        if (response.statusCode == 200) {
+          List<FiveRankData> data = [];
+          List<FiveRankData> personplan_data = [];
+          List<dynamic> res = json.decode(response.body);
+
+          if (res == null) {
+            print("no data");
+            return false;
+          }
+
+          print("data five rank is ${res[0]["area_name"]}");
+
+          for (var i = 0; i <= res.length - 1; i++) {
+            final FiveRankData _item = FiveRankData(
+              deptname: res[i]["area_name"].toString(),
+              score: double.parse(res[i]["sum_value"].toString()),
+              zone_id: res[i]["zone_id"].toString(),
+              rank_no: 0,
+            );
+
+            data.add(_item);
+          }
+          listfiverankdata = data;
+
           notifyListeners();
           return listJobplanArea;
         } else {

@@ -260,6 +260,20 @@ class _FiveDetailPageState extends State<FiveDetailPage>
 
   Widget getTabcontent(String tab_id, PlanData value, int score_rank) {
     Widget _content;
+    List _stdmonth = [
+      {'id': "01", "name": "มกราคม"},
+      {'id': "02", "name": "กุมภาพันธ์"},
+      {'id': "03", "name": "มีนาคม"},
+      {'id': "04", "name": "เมษายน"},
+      {'id': "05", "name": "พฤษภาคม"},
+      {'id': "06", "name": "มิถุนายน"},
+      {'id': "07", "name": "กรกฎาคม"},
+      {'id': "08", "name": "สิงหาคม"},
+      {'id': "09", "name": "กันยายน"},
+      {'id': "10", "name": "ตุลาคม"},
+      {'id': "11", "name": "พฤศจิกายน"},
+      {'id': "12", "name": "ธันวาคม"},
+    ];
     if (value.listfiverankdata.isNotEmpty) {
       List<FiveRankData> _tabvaluelist = [];
       double max_score = 0;
@@ -358,20 +372,6 @@ class _FiveDetailPageState extends State<FiveDetailPage>
                       backgroundColor: Color.fromARGB(255, 45, 172, 123)),
                   child: Text('ค้นหา'),
                   onPressed: () {
-                    List _stdmonth = [
-                      {'id': "01", "name": "มกราคม"},
-                      {'id': "02", "name": "กุมภาพันธ์"},
-                      {'id': "03", "name": "มีนาคม"},
-                      {'id': "04", "name": "เมษายน"},
-                      {'id': "05", "name": "พฤษภาคม"},
-                      {'id': "06", "name": "มิถุนายน"},
-                      {'id': "07", "name": "กรกฎาคม"},
-                      {'id': "08", "name": "สิงหาคม"},
-                      {'id': "09", "name": "กันยายน"},
-                      {'id': "10", "name": "ตุลาคม"},
-                      {'id': "11", "name": "พฤศจิกายน"},
-                      {'id': "12", "name": "ธันวาคม"},
-                    ];
                     setState(() {
                       var _month_value = "";
                       var indexValue = _stdmonth.indexWhere(
@@ -440,9 +440,113 @@ class _FiveDetailPageState extends State<FiveDetailPage>
         )
       ]);
     } else {
-      _content = Center(
-        child: Text('No Data'),
-      );
+      _content = Column(children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'อันดับคะแนน 5 ส. ประจำเดือน',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButton(
+                  value: dropdownvalue,
+                  alignment: AlignmentDirectional.centerEnd,
+                  items:
+                      month_list.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      dropdownvalue = value.toString();
+                    });
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButton(
+                  value: dropdownyearvalue,
+                  alignment: AlignmentDirectional.centerEnd,
+                  items:
+                      year_list.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      dropdownyearvalue = value.toString();
+                    });
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 45, 172, 123)),
+                  child: Text('ค้นหา'),
+                  onPressed: () {
+                    setState(() {
+                      var _month_value = "";
+                      var indexValue = _stdmonth.indexWhere(
+                          (element) => element["name"] == dropdownvalue);
+                      _month_value = _stdmonth[indexValue]['id'];
+
+                      EasyLoading.show(status: "กำลังโหลดข้อมูล");
+                      Provider.of<PlanData>(context, listen: false)
+                          .fetchFiveRank(dropdownyearvalue, _month_value);
+                      EasyLoading.dismiss();
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Icon(Icons.hourglass_empty),
+                // SizedBox(
+                //   height: 5,
+                // ),
+                Text(
+                  'ไม่พบข้อมูล กรูณาเลือกข้อมูลใหม่',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ]);
     }
 
     return _content;

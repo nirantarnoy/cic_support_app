@@ -43,6 +43,21 @@ class _FiveDetailPageState extends State<FiveDetailPage>
     "ธันวาคม",
   ];
 
+  List _stdmonth = [
+    {'id': "01", "name": "มกราคม"},
+    {'id': "02", "name": "กุมภาพันธ์"},
+    {'id': "03", "name": "มีนาคม"},
+    {'id': "04", "name": "เมษายน"},
+    {'id': "05", "name": "พฤษภาคม"},
+    {'id': "06", "name": "มิถุนายน"},
+    {'id': "07", "name": "กรกฎาคม"},
+    {'id': "08", "name": "สิงหาคม"},
+    {'id': "09", "name": "กันยายน"},
+    {'id': "10", "name": "ตุลาคม"},
+    {'id': "11", "name": "พฤศจิกายน"},
+    {'id': "12", "name": "ธันวาคม"},
+  ];
+
   // static String jsonStr = '''
   // [
   //   {"name":"a", "flag":"a1"},
@@ -168,7 +183,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          Expanded(
+          Container(
             child: Column(children: <Widget>[
               Expanded(
                 flex: 5,
@@ -181,12 +196,16 @@ class _FiveDetailPageState extends State<FiveDetailPage>
                     // ),
                     color: Colors.white,
                   ),
-                  child: Expanded(
-                    flex: 5,
-                    child: Consumer<PlanData>(
-                      builder: (context, value, child) =>
-                          getTabcontent("1", value, 98),
-                    ),
+                  child: Consumer<PlanData>(
+                    builder: (context, value, child) {
+                      if (value.listfiverankdata.length > 0) {
+                        return getTabcontent("1", value, 98);
+                      } else {
+                        return Center(
+                          child: Text("Loading Data"),
+                        );
+                      }
+                    },
                   ),
                 ),
               ),
@@ -262,20 +281,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
 
   Widget getTabcontent(String tab_id, PlanData value, int score_rank) {
     Widget _content;
-    List _stdmonth = [
-      {'id': "01", "name": "มกราคม"},
-      {'id': "02", "name": "กุมภาพันธ์"},
-      {'id': "03", "name": "มีนาคม"},
-      {'id': "04", "name": "เมษายน"},
-      {'id': "05", "name": "พฤษภาคม"},
-      {'id': "06", "name": "มิถุนายน"},
-      {'id': "07", "name": "กรกฎาคม"},
-      {'id': "08", "name": "สิงหาคม"},
-      {'id': "09", "name": "กันยายน"},
-      {'id': "10", "name": "ตุลาคม"},
-      {'id': "11", "name": "พฤศจิกายน"},
-      {'id': "12", "name": "ธันวาคม"},
-    ];
+    print("current tab is ${_tabController}");
     if (value.listfiverankdata.isNotEmpty) {
       List<FiveRankData> _tabvaluelist = [];
       double max_score = 0;

@@ -197,15 +197,8 @@ class _FiveDetailPageState extends State<FiveDetailPage>
                     color: Colors.white,
                   ),
                   child: Consumer<PlanData>(
-                    builder: (context, value, child) {
-                      if (value.listfiverankdata.length > 0) {
-                        return getTabcontent("1", value, 98);
-                      } else {
-                        return Center(
-                          child: Text("Loading Data"),
-                        );
-                      }
-                    },
+                    builder: (context, value, child) =>
+                        getTabcontent("1", value, 98),
                   ),
                 ),
               ),

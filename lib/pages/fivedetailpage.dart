@@ -168,7 +168,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          Expanded(
+          Container(
             child: Column(children: <Widget>[
               Expanded(
                 flex: 5,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_cic_support/main.dart';
 
 import 'package:flutter_cic_support/models/person.dart';
 import 'package:flutter_cic_support/models/teammerber.dart';
@@ -274,6 +275,7 @@ class UserData with ChangeNotifier {
     // prefs.remove('username');
     // prefs.remove('userId');
     // prefs.remove('studentId');
+
     _isLoading = false;
     return {'success': true};
   }

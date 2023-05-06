@@ -121,6 +121,7 @@ class MyApp extends StatelessWidget {
               ),
               home: LoginPage(),
               routes: {
+                LoginPage.routeName: (ctx) => LoginPage(),
                 ProfilePage.routeName: (ctx) => ProfilePage(),
               },
               builder: EasyLoading.init(),

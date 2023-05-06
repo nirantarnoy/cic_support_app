@@ -7,6 +7,7 @@ import 'package:flutter_cic_support/models/inspectionsafetytrans.dart';
 import 'package:flutter_cic_support/models/inspectiontrans.dart';
 import 'package:flutter_cic_support/models/jobcheckdetail.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
+import 'package:flutter_cic_support/models/jobplanareasaved.dart';
 import 'package:flutter_cic_support/models/jobsafetyplanarea.dart';
 import 'package:flutter_cic_support/models/nonconformtitle.dart';
 import 'package:flutter_cic_support/models/personcurrentplan.dart';
@@ -18,6 +19,8 @@ import 'package:http/http.dart' as http;
 class PlanData extends ChangeNotifier {
   final String url_to_getplanby_person =
       "http://172.16.0.231:1223/api/teaminspectionitem/findbyteam";
+  final String url_to_getplanby_person_saved =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findbyteamsaved";
   final String url_to_add_inspection_trans =
       "http://172.16.0.231:1223/api/plan/addinspection";
 
@@ -47,6 +50,9 @@ class PlanData extends ChangeNotifier {
 
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
+
+  late List<JobplanAreaSaved> _plansaved = [];
+  List<JobplanAreaSaved> get listJobplanAreaSaved => _plansaved;
 
   late List<JobSafetyplanArea> _safety_plan = [];
   List<JobSafetyplanArea> get listSafetyJobplanArea => _safety_plan;
@@ -87,6 +93,10 @@ class PlanData extends ChangeNotifier {
 
   set listJobplanArea(List<JobplanArea> val) {
     _plan = val;
+  }
+
+  set listJobplanAreaSaved(List<JobplanAreaSaved> val) {
+    _plansaved = val;
   }
 
   set listSafetyJobplanArea(List<JobSafetyplanArea> val) {
@@ -658,6 +668,58 @@ class PlanData extends ChangeNotifier {
           print("section code is ${data[0].section_code}");
           notifyListeners();
           return listJobplanArea;
+        } else {
+          print("No Data");
+        }
+      } catch (err) {
+        print("error na ja is ${err}");
+      }
+    }
+  }
+
+  Future<dynamic> fetchJobplanSaved() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
+    final String team_id = prefs.getString("team_id").toString();
+
+    notifyListeners();
+
+    print('current team is ${team_id}');
+
+    if (listJobplanArea.length == 0) {
+      try {
+        http.Response response;
+        response = await http.get(
+            Uri.parse(url_to_getplanby_person_saved + "/" + team_id),
+            headers: {"Authorization": token});
+
+        if (response.statusCode == 200) {
+          List<JobplanAreaSaved> data = [];
+          List<dynamic> res = json.decode(response.body);
+
+          if (res == null) {
+            print("no data");
+            return false;
+          }
+
+          print("data plan_num is ${res[0]["plan_num"]}");
+
+          for (var i = 0; i <= res.length - 1; i++) {
+            final JobplanAreaSaved _item = JobplanAreaSaved(
+              plan_id: res[i]["id"].toString(),
+              plan_date: res[i]["plan_target_date"].toString(),
+              plan_area_id: res[i]["area_inspection_id"].toString(),
+              plan_area_name: res[i]["area_inspection_name"].toString(),
+              status: "0",
+            );
+
+            data.add(_item);
+          }
+          listJobplanAreaSaved = data;
+
+          notifyListeners();
+          return listJobplanAreaSaved;
         } else {
           print("No Data");
         }

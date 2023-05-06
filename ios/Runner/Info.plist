@@ -49,5 +49,7 @@
 	<string>This app requires to access camera for take a photo</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Ahtheticate by using face id</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

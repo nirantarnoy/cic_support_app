@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/carlist.dart';
+import 'package:flutter_cic_support/pages/carcreatezone.dart';
 import 'package:flutter_cic_support/pages/cardetail.dart';
 import 'package:flutter_cic_support/pages/createcar.dart';
 import 'package:flutter_cic_support/providers/car.dart';
@@ -193,17 +194,12 @@ class _CarlistPageState extends State<CarlistPage>
       appBar: AppBar(
         title: Text("รายการใบ CAR"),
         backgroundColor: Color.fromARGB(153, 161, 12, 24),
-        // actions: [
-        //   IconButton(
-        //       onPressed: () => Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //               builder: (context) => CreateCar(
-        //                     plan_area_id: '',
-        //                     plan_area_name: '',
-        //                   ))),
-        //       icon: Icon(Icons.add_outlined))
-        // ],
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CarcreateZone())),
+              icon: Icon(Icons.new_label_outlined))
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: <Widget>[

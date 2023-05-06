@@ -114,7 +114,9 @@ class _ProfilePageState extends State<ProfilePage> {
       print('logout success');
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => LoginPage()));
-      Navigator.popUntil(context, (route) => route.isFirst);
+      //Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushNamedAndRemoveUntil(
+          context, 'loginpage', (Route<dynamic> route) => false);
     }
   }
 

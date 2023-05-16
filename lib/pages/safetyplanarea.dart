@@ -481,7 +481,7 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                                                   await Provider.of<PlanData>(
                                                           context,
                                                           listen: false)
-                                                      .submitInspection();
+                                                      .submitInspection("1");
                                               if (isSave == true) {
                                                 await EasyLoading.showSuccess(
                                                     'บันทึกรายการเรียบร้อย');

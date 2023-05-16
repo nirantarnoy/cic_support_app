@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/models/jobplanaraerepeat.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
 import 'package:flutter_cic_support/pages/carhistory.dart';
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/history.dart';
 import 'package:flutter_cic_support/pages/jobcheck.dart';
 import 'package:flutter_cic_support/pages/jobchecknew.dart';
+import 'package:flutter_cic_support/pages/jobchecknew_repeat.dart';
 import 'package:flutter_cic_support/pages/plancheckcomplete.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
@@ -14,17 +16,18 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
-class JobplanAreaPage extends StatefulWidget {
-  const JobplanAreaPage({Key? key}) : super(key: key);
+class JobplanAreaRepeatPage extends StatefulWidget {
+  const JobplanAreaRepeatPage({Key? key}) : super(key: key);
 
   @override
-  State<JobplanAreaPage> createState() => _JobplanAreaPageState();
+  State<JobplanAreaRepeatPage> createState() => _JobplanAreaRepeatPageState();
 }
 
-class _JobplanAreaPageState extends State<JobplanAreaPage> {
+class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
   String current_section_code = '';
   Future _obtainPlanArea() async {
-    return await Provider.of<PlanData>(context, listen: false).fetchJobplan();
+    return await Provider.of<PlanData>(context, listen: false)
+        .fetchJobplanRepeat();
   }
 
   // List<JobplanArea> _checklist = [
@@ -66,17 +69,17 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
     super.initState();
   }
 
-  Widget _buildList(List<JobplanArea> listcheck) {
+  Widget _buildList(List<JobplanAreaRepeat> listcheck) {
     Widget cardlist;
     if (listcheck.length > 0) {
       cardlist = ListView.builder(
           itemCount: listcheck.length,
           itemBuilder: (BuildContext contex, int index) {
             int total_topic = Provider.of<PlanData>(contex, listen: false)
-                .countTopicitem(listcheck[index].plan_area_id);
+                .countTopicitemRepeat(listcheck[index].plan_area_id);
             int total_topic_counted =
                 Provider.of<PlanData>(contex, listen: false)
-                    .countCheckedTopicitem(listcheck[index].plan_area_id);
+                    .countCheckedTopicitemRepeat(listcheck[index].plan_area_id);
 
             Color _bgcolor = Colors.green.shade50;
             Color _line_color = Colors.black;
@@ -213,7 +216,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                           ? null
                           : Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => JobCheckNewPage(
+                                builder: (context) => JobCheckNewRepeatPage(
                                   plan_area_id: listcheck[index].plan_area_id,
                                   plan_id: listcheck[index].plan_id,
                                   plan_area_name:
@@ -236,7 +239,8 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   void doNothing(BuildContext context) {}
   dynamic _removecheckeditem(String area_id) {
     //print("you press me ${area_id}");
-    Provider.of<PlanData>(context, listen: false).removeinspectionitem(area_id);
+    Provider.of<PlanData>(context, listen: false)
+        .removeinspectionitemRepeat(area_id);
   }
 
   @override
@@ -246,7 +250,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 45, 172, 123),
       appBar: AppBar(
-        title: Text("แผนพื้นที่ตรวจ 5ส."),
+        title: Text("แผนพื้นที่ตรวจ 5ส. (ซ้ำ)"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -314,7 +318,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                       ),
                     )
                   : _buildList(
-                      _plans.getAreaTitle(),
+                      _plans.getAreaRepeatTitle(),
                     )),
             ),
           ),
@@ -406,7 +410,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   bool isSave = await Provider
                                                           .of<PlanData>(context,
                                                               listen: false)
-                                                      .submitInspection("1");
+                                                      .submitInspection("2");
                                                   if (isSave == true) {
                                                     await EasyLoading.showSuccess(
                                                         'บันทึกรายการเรียบร้อย');
@@ -427,7 +431,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                     await Provider.of<PlanData>(
                                                             context,
                                                             listen: false)
-                                                        .submitInspection("1");
+                                                        .submitInspection("2");
                                                 if (isSave == true) {
                                                   await EasyLoading.showSuccess(
                                                       'บันทึกรายการเรียบร้อย');
@@ -563,7 +567,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   bool isSave = await Provider
                                                           .of<PlanData>(context,
                                                               listen: false)
-                                                      .submitInspection("1");
+                                                      .submitInspection("2");
                                                   if (isSave == true) {
                                                     await EasyLoading.showSuccess(
                                                         'บันทึกรายการเรียบร้อย');
@@ -584,7 +588,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                     await Provider.of<PlanData>(
                                                             context,
                                                             listen: false)
-                                                        .submitInspection("1");
+                                                        .submitInspection("2");
                                                 if (isSave == true) {
                                                   await EasyLoading.showSuccess(
                                                       'บันทึกรายการเรียบร้อย');

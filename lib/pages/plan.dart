@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_cic_support/models/personcurrentplanrepeat.dart';
+import 'package:flutter_cic_support/pages/jobplanarea_repeat.dart';
 import 'package:intl/intl.dart';
 import 'package:cell_calendar/cell_calendar.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,8 +35,10 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
     EasyLoading.show(status: "โหลดข้อมูล");
     Provider.of<PlanData>(context, listen: false).fetFinishedCheck();
     Provider.of<PlanData>(context, listen: false).fetchJobplan();
+    Provider.of<PlanData>(context, listen: false).fetchJobplanRepeat();
+    Provider.of<PlanData>(context, listen: false).fetFinishedRepeatCheck();
     EasyLoading.dismiss();
-    _tabController = TabController(initialIndex: 0, length: 2, vsync: this);
+    _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
   }
 
   List<CalendarEvent> _xx() {
@@ -125,6 +129,75 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
     }
   }
 
+  Widget _buildlistrepeate(
+      List<PersoncurrentPlanRepeat> listplan, int finishedcheck) {
+    Widget cards;
+    if (listplan.length > 0) {
+      // _createEvent(listplan);
+      cards = ListView.builder(
+          itemCount: listplan.length,
+          itemBuilder: (BuildContext context, int index) {
+            String module_type =
+                listplan[index].plan_type == "1" ? "5ส." : "Safety";
+            Icon plan_icon = finishedcheck <= 0
+                ? Icon(
+                    Icons.close,
+                    color: Colors.red,
+                  )
+                : Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                  );
+            String inspection_type_name = "";
+            Color inspection_type_color = Colors.black;
+            if (listplan[index].inspection_type_id == "1") {
+              inspection_type_name = "รอบตรวจปกติ";
+              inspection_type_color = Colors.green;
+            } else if (listplan[index].inspection_type_id == "2") {
+              inspection_type_name = "รอบตรวจซ้ำ";
+              inspection_type_color = Colors.blue;
+            }
+            // print("inspection type is ${listplan[index].inspection_type_id}");
+            return Card(
+              child: GestureDetector(
+                onTap: () => finishedcheck <= 0
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => JobplanAreaRepeatPage()))
+                    : null,
+                child: ListTile(
+                  leading: plan_icon,
+                  title: Text('${listplan[index].plan_no}'),
+                  subtitle: Text(
+                      '${dateFormatter.format(DateTime.parse(listplan[index].plan_date))}'),
+                  trailing: Column(
+                    children: <Widget>[
+                      Text(
+                        '${module_type}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "${inspection_type_name}",
+                        style: TextStyle(color: inspection_type_color),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          });
+      return cards;
+    } else {
+      return Center(
+        child: Text("No Data"),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +214,9 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
             ),
             Tab(
               icon: Icon(Icons.calendar_month),
+            ),
+            Tab(
+              icon: Icon(Icons.recycling),
             ),
           ],
         ),
@@ -243,6 +319,11 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
                 },
               ),
             ),
+            Container(
+                child: Consumer<PlanData>(
+              builder: (context, _plan, _) => _buildlistrepeate(
+                  _plan.listpersoncurrentplanRepeat, _plan.repeatcheck),
+            )),
           ],
         ),
       ),

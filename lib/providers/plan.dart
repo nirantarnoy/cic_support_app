@@ -6,11 +6,13 @@ import 'package:flutter_cic_support/models/fiverank.dart';
 import 'package:flutter_cic_support/models/inspectionsafetytrans.dart';
 import 'package:flutter_cic_support/models/inspectiontrans.dart';
 import 'package:flutter_cic_support/models/jobcheckdetail.dart';
+import 'package:flutter_cic_support/models/jobplanaraerepeat.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
 import 'package:flutter_cic_support/models/jobplanareasaved.dart';
 import 'package:flutter_cic_support/models/jobsafetyplanarea.dart';
 import 'package:flutter_cic_support/models/nonconformtitle.dart';
 import 'package:flutter_cic_support/models/personcurrentplan.dart';
+import 'package:flutter_cic_support/models/personcurrentplanrepeat.dart';
 import 'package:flutter_cic_support/models/planareagroup.dart';
 import 'package:flutter_cic_support/models/transhistoryemp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +23,8 @@ class PlanData extends ChangeNotifier {
       "http://172.16.0.231:1223/api/teaminspectionitem/findbyteam";
   final String url_to_getplanby_person_saved =
       "http://172.16.0.231:1223/api/teaminspectionitem/findbyteamsaved";
+  final String url_to_getplanby_person_repeat =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findbyteamrepeat";
   final String url_to_add_inspection_trans =
       "http://172.16.0.231:1223/api/plan/addinspection";
 
@@ -39,6 +43,9 @@ class PlanData extends ChangeNotifier {
   final String url_to_check_already_trans =
       "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyemp";
 
+  final String url_to_check_already_trans_repeat =
+      "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyemprepeat";
+
   final String url_to_histoty_trans_by_emp =
       "http://172.16.0.231:1223/api/teaminspectionitem/findtranshistorybyemp";
 
@@ -54,6 +61,9 @@ class PlanData extends ChangeNotifier {
   late List<JobplanAreaSaved> _plansaved = [];
   List<JobplanAreaSaved> get listJobplanAreaSaved => _plansaved;
 
+  late List<JobplanAreaRepeat> _planrepeat = [];
+  List<JobplanAreaRepeat> get listJobplanAreaRepeat => _planrepeat;
+
   late List<JobSafetyplanArea> _safety_plan = [];
   List<JobSafetyplanArea> get listSafetyJobplanArea => _safety_plan;
 
@@ -62,6 +72,10 @@ class PlanData extends ChangeNotifier {
 
   late List<PersoncurrentPlan> _personcurrentplan = [];
   List<PersoncurrentPlan> get listpersoncurrentplan => _personcurrentplan;
+
+  late List<PersoncurrentPlanRepeat> _personcurrentplan_repeat = [];
+  List<PersoncurrentPlanRepeat> get listpersoncurrentplanRepeat =>
+      _personcurrentplan_repeat;
 
   late List<TransHistoryEmp> _histoytrans = [];
   List<TransHistoryEmp> get listhistorytrans => _histoytrans;
@@ -73,8 +87,15 @@ class PlanData extends ChangeNotifier {
     _personcurrentplan = val;
   }
 
+  set listpersoncurrentplanRepeat(List<PersoncurrentPlanRepeat> val) {
+    _personcurrentplan_repeat = val;
+  }
+
   late int _finished_check = 0;
   int get finishedcheck => _finished_check;
+
+  late int _repeat_check = 0;
+  int get repeatcheck => _repeat_check;
 
   late int _finished_safety_check = 0;
   int get finishedsafetycheck => _finished_safety_check;
@@ -97,6 +118,10 @@ class PlanData extends ChangeNotifier {
 
   set listJobplanAreaSaved(List<JobplanAreaSaved> val) {
     _plansaved = val;
+  }
+
+  set listJobplanAreaRepeat(List<JobplanAreaRepeat> val) {
+    _planrepeat = val;
   }
 
   set listSafetyJobplanArea(List<JobSafetyplanArea> val) {
@@ -138,6 +163,47 @@ class PlanData extends ChangeNotifier {
       if (has_ > 0) {
       } else {
         JobplanArea _group = JobplanArea(
+          plan_id: element.plan_id,
+          plan_num: element.plan_num,
+          plan_date: "",
+          plan_area_id: element.plan_area_id,
+          plan_area_name: element.plan_area_name,
+          plan_topic_check_qty: "",
+          plan_topic_checked_qty: "",
+          status: "",
+          topic_id: "",
+          topic_name: "",
+          topic_item_id: "",
+          topic_item_name: "",
+          scored: "-1",
+          is_enable: element.is_enable,
+          seq_sort: element.seq_sort,
+          seq_sort_item: element.seq_sort_item,
+          department_code: element.department_code,
+          section_code: element.section_code,
+          inspection_type_id: element.inspection_type_id,
+        );
+        _newgroup.add(_group);
+      }
+    });
+    _newgroup.sort(
+      (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
+    );
+    return _newgroup.toSet().toList();
+  }
+
+  List<JobplanAreaRepeat> getAreaRepeatTitle() {
+    List<JobplanAreaRepeat> _newgroup = [];
+    listJobplanAreaRepeat.forEach((element) {
+      int has_ = 0;
+      _newgroup.forEach((item_check) {
+        if (item_check.plan_area_id == element.plan_area_id) {
+          has_ += 1;
+        }
+      });
+      if (has_ > 0) {
+      } else {
+        JobplanAreaRepeat _group = JobplanAreaRepeat(
           plan_id: element.plan_id,
           plan_num: element.plan_num,
           plan_date: "",
@@ -341,6 +407,53 @@ class PlanData extends ChangeNotifier {
     return _list;
   }
 
+  List<JobCheckDetail> getTopicitemNewRepeat(String area_id) {
+    // print('area is ${area_id}');
+
+    List<JobCheckDetail> _list = [];
+    List<JobCheckDetail> _list2 = [];
+
+    listJobplanAreaRepeat.forEach((element) {
+      // print('topic name enable is ${element.is_enable}');
+      if (element.plan_area_id == area_id && element.is_enable == "1") {
+        // JobCheckDetail _item = JobCheckDetail(
+        //   plan_id: element.plan_id,
+        //   topicid: element.topic_id,
+        //   topicname: element.topic_name,
+        //   topic_detail_id: element.topic_item_id,
+        //   topic_detail_name: element.topic_item_name,
+        //   status: element.status,
+        //   score: element.scored,
+        //   is_enable: element.is_enable,
+        //   seq_sort: element.seq_sort,
+        //   seq_sort_item: element.seq_sort_item,
+        // );
+        JobCheckDetail _item = JobCheckDetail(
+          plan_id: element.plan_id == null ? '' : element.plan_id,
+          topicid: element.topic_id == null ? '' : element.topic_id,
+          topicname: element.topic_name == null ? '' : element.topic_name,
+          topic_detail_id:
+              element.topic_item_id == null ? '' : element.topic_item_id,
+          topic_detail_name:
+              element.topic_item_name == null ? '' : element.topic_item_name,
+          status: element.status == null ? '0' : element.status,
+          score: element.scored == null ? '-1' : element.scored,
+          is_enable: element.is_enable == null ? '1' : element.is_enable,
+          seq_sort: element.seq_sort == null ? '0' : element.seq_sort,
+          seq_sort_item:
+              element.seq_sort_item == null ? '0' : element.seq_sort_item,
+        );
+        _list.add(_item);
+      }
+    });
+    // _list.sort(
+    //   (a, b) =>
+    //       int.parse(b.seq_sort_item).compareTo(int.parse(a.seq_sort_item)),
+    // );
+    notifyListeners();
+    return _list;
+  }
+
   int getTopicitemcountByTopic(String topic_id, String area_id) {
     int cnt = 0;
     listJobplanArea.forEach((element) {
@@ -477,6 +590,47 @@ class PlanData extends ChangeNotifier {
     }
   }
 
+  bool addInspectionTransRepeat(InspectionTrans data) {
+    if (data != null) {
+      if (listInspectiontrans.isNotEmpty) {
+        int has_update = 0;
+        listInspectiontrans.forEach((element) {
+          if (element.topic_item_id == data.topic_item_id &&
+              element.area_id == data.area_id) {
+            element.score = data.score.toString(); // update score if exist
+            print("have data to update trans");
+            has_update = 1;
+          } else {
+            has_update = 0; // if duplicate score please commit this line
+          }
+        });
+        if (has_update == 0) {
+          listInspectiontrans.add(data); // original line
+          print("loop new data to add trans");
+        }
+      } else {
+        listInspectiontrans.add(data); // original line
+        print("first new data to add trans");
+      }
+
+      listJobplanAreaRepeat.forEach((element) {
+        if (element.topic_item_id == data.topic_item_id &&
+            element.plan_area_id == data.area_id) {
+          element.status = "1";
+          element.scored = data.score.toString();
+        } else {
+          //print("no data to add");
+        }
+      });
+
+      notifyListeners();
+      return true;
+    } else {
+      //print("no data to add 2");
+      return false;
+    }
+  }
+
   bool removeinspectionitem(String area_id) {
     if (listJobplanArea.isNotEmpty && area_id != null) {
       // listInspectiontrans.forEach((element) {
@@ -484,6 +638,26 @@ class PlanData extends ChangeNotifier {
       // });
 
       listJobplanArea.forEach((element) {
+        if (element.plan_area_id == area_id) {
+          print("remove area id is ${area_id} and ${element.plan_area_id}");
+          element.scored = "-1";
+        }
+      });
+      //   listInspectiontrans.removeWhere((item) =>
+      //       item.area_id == area_id); // remove all checked score of this area
+      //   print("remove checked topic item");
+    }
+    notifyListeners();
+    return true;
+  }
+
+  bool removeinspectionitemRepeat(String area_id) {
+    if (listJobplanAreaRepeat.isNotEmpty && area_id != null) {
+      // listInspectiontrans.forEach((element) {
+      //   print(element.area_id);
+      // });
+
+      listJobplanAreaRepeat.forEach((element) {
         if (element.plan_area_id == area_id) {
           print("remove area id is ${area_id} and ${element.plan_area_id}");
           element.scored = "-1";
@@ -583,6 +757,26 @@ class PlanData extends ChangeNotifier {
     if (listJobplanArea.isNotEmpty) {
       listJobplanArea.clear();
     }
+  }
+
+  int countTopicitemRepeat(String area_id) {
+    int cnt = 0;
+    listJobplanAreaRepeat.forEach((element) {
+      if (element.plan_area_id == area_id) {
+        cnt += 1;
+      }
+    });
+    return cnt;
+  }
+
+  int countCheckedTopicitemRepeat(String area_id) {
+    int cnt = 0;
+    listJobplanAreaRepeat.forEach((element) {
+      if (element.plan_area_id == area_id && int.parse(element.scored) > -1) {
+        cnt += 1;
+      }
+    });
+    return cnt;
   }
 
   int checkhaschecklist(String area_id) {
@@ -729,6 +923,89 @@ class PlanData extends ChangeNotifier {
     }
   }
 
+  Future<dynamic> fetchJobplanRepeat() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
+    // final String team_id = prefs.getString("team_id").toString();
+
+    notifyListeners();
+
+    print('current find repeat user is ${user_id}');
+
+    //if (listJobplanAreaRepeat.length == 0) {
+    try {
+      http.Response response;
+      response = await http.get(
+          Uri.parse(url_to_getplanby_person_repeat + "/" + user_id),
+          headers: {"Authorization": token});
+
+      if (response.statusCode == 200) {
+        List<JobplanAreaRepeat> data = [];
+        List<PersoncurrentPlanRepeat> personplan_repeat_data = [];
+        List<dynamic> res = json.decode(response.body);
+
+        if (res == null) {
+          print("no data");
+          return false;
+        }
+
+        print("data repeat plan_num is ${res[0]["plan_num"]}");
+
+        for (var i = 0; i <= res.length - 1; i++) {
+          final JobplanAreaRepeat _item = JobplanAreaRepeat(
+            plan_id: res[i]["id"].toString(),
+            plan_num: res[i]["plan_num"].toString(),
+            plan_date: res[i]["plan_target_date"].toString(),
+            plan_area_id: res[i]["area_inspection_id"].toString(),
+            plan_area_name: res[i]["area_inspection_name"].toString(),
+            plan_topic_check_qty: "0",
+            plan_topic_checked_qty: "0",
+            status: "0",
+            topic_id: res[i]["topic_id"].toString(),
+            topic_name: res[i]["topic_name"].toString(),
+            topic_item_id: res[i]["topic_item_id"].toString(),
+            topic_item_name: res[i]["topic_item_name"].toString(),
+            scored: "-1",
+            is_enable: res[i]["is_enable"] == null
+                ? ''
+                : res[i]["is_enable"].toString(),
+            seq_sort: res[i]["seq_sort"].toString(),
+            seq_sort_item: res[i]["seq_sort_item"].toString(),
+            department_code: res[i]["department_code"].toString(),
+            section_code: res[i]["section_code"].toString(),
+            inspection_type_id: res[i]["inspection_type_id"].toString(),
+          );
+
+          if (i == 0) {
+            final PersoncurrentPlanRepeat personplan_repeat =
+                PersoncurrentPlanRepeat(
+              plan_id: res[i]["plan_id"].toString(),
+              plan_no: res[i]["plan_no"].toString(),
+              plan_date: res[i]["plan_target_date"].toString(),
+              plan_status: "0",
+              plan_type: res[i]["module_type_id"].toString(),
+              inspection_type_id: res[i]['inspection_type_id'].toString(),
+            );
+            personplan_repeat_data.add(personplan_repeat);
+          }
+
+          data.add(_item);
+        }
+        listJobplanAreaRepeat.clear();
+        listJobplanAreaRepeat = data;
+        listpersoncurrentplanRepeat = personplan_repeat_data;
+        notifyListeners();
+        return listJobplanAreaRepeat;
+      } else {
+        print("No Data");
+      }
+    } catch (err) {
+      print("error na ja is ${err}");
+    }
+    //}
+  }
+
   Future<dynamic> fetchFiveRank(String _year, String _month) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("user_id").toString();
@@ -857,7 +1134,7 @@ class PlanData extends ChangeNotifier {
     }
   }
 
-  Future<bool> submitInspection() async {
+  Future<bool> submitInspection(String action_type_id) async {
     print("list data is ${listInspectiontrans[0].area_id}");
     // return false;
     if (listInspectiontrans.isNotEmpty) {
@@ -883,6 +1160,7 @@ class PlanData extends ChangeNotifier {
                 'note': e.note,
                 'created_at': int.parse('0'),
                 'created_by': int.parse(user_id),
+                'action_type_id': int.parse(action_type_id),
               })
           .toList();
       // var addData = listInspectiontrans
@@ -1069,6 +1347,47 @@ class PlanData extends ChangeNotifier {
         finishedcheck = res;
         notifyListeners();
         return _finished_check;
+      } else {
+        print("No Data From Check");
+      }
+    } catch (err) {
+      print("error na is ${err}");
+    }
+  }
+
+  Future<dynamic> fetFinishedRepeatCheck() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String team_id = prefs.getString("team_id").toString();
+    final String token = prefs.getString("token").toString();
+
+    notifyListeners();
+
+    final Map<String, dynamic> checkData = {
+      'teamid': team_id,
+      'empid': user_id,
+    };
+    print('data find is ${checkData}');
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_check_already_trans_repeat),
+          headers: {'Content-Type': 'application/json', "Authorization": token},
+          body: json.encode(checkData));
+
+      print("response is ${response.statusCode}");
+      if (response.statusCode == 200) {
+        int res = json.decode(response.body);
+
+        // Map<String, dynamic> res = json.decode(response.body);
+        print("data res is check already ${res}");
+        // if (res == null) {
+        //   print("no data");
+        //   return false;
+        // }
+
+        _repeat_check = res;
+        notifyListeners();
+        return _repeat_check;
       } else {
         print("No Data From Check");
       }

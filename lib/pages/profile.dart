@@ -32,7 +32,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String current_username = "";
   String display_url =
-      "http://172.16.0.231/cicsupport/backend/web/photo_uploads/";
+      "http://172.16.0.231/cicsupport/backend/web/photo_uploads/"; //http://cic-support.net/uploads/
   String display_photo = "";
   String display_section_code = "";
 

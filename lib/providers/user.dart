@@ -11,12 +11,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData with ChangeNotifier {
-  final String url_to_login = "http://172.16.0.231:1223/api/auth/login";
-  final String url_to_profile = "http://172.16.0.231:1223/api/user/profile";
+  final String url_to_login = "http://cic-support.net:1223/api/auth/login";
+  final String url_to_profile = "http://cic-support.net:1223/api/user/profile";
   final String url_to_update_profile_photo =
-      "http://172.16.0.231:1223/api/user/updatephoto";
+      "http://cic-support.net:1223/api/user/updatephoto";
   final String url_to_teammember =
-      "http://172.16.0.231:1223/api/user/teammember";
+      "http://cic-support.net:1223/api/user/teammember";
 
   late User _authenticatedUser;
   late User _emptyauthenicatedUser;

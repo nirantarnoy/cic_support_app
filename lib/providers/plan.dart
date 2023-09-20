@@ -20,40 +20,40 @@ import 'package:http/http.dart' as http;
 
 class PlanData extends ChangeNotifier {
   final String url_to_getplanby_person =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findbyteam";
+      "http://cic-support.net:1223/api/teaminspectionitem/findbyteam";
   final String url_to_getplanby_person_saved =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findbyteamsaved";
+      "http://cic-support.net:1223/api/teaminspectionitem/findbyteamsaved";
   final String url_to_getplanby_person_repeat =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findbyteamrepeat";
+      "http://cic-support.net:1223/api/teaminspectionitem/findbyteamrepeat";
   final String url_to_add_inspection_trans =
-      "http://172.16.0.231:1223/api/plan/addinspection";
+      "http://cic-support.net:1223/api/plan/addinspection";
 
   final String url_to_add_safety_inspection_trans =
-      "http://172.16.0.231:1223/api/plan/addsafetyinspection";
+      "http://cic-support.net:1223/api/plan/addsafetyinspection";
 
   final String url_to_check_safety_already_trans =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyempsafety";
+      "http://cic-support.net:1223/api/teaminspectionitem/findtransbyempsafety";
 
   final String url_to_plan_by_emp =
-      "http://172.16.0.231:1223/api/plan/listplanbyemp";
+      "http://cic-support.net:1223/api/plan/listplanbyemp";
 
   final String url_to_noncomformall =
-      "http://172.16.0.231:1223/api/carinspection/findall";
+      "http://cic-support.net:1223/api/carinspection/findall";
 
   final String url_to_check_already_trans =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyemp";
+      "http://cic-support.net:1223/api/teaminspectionitem/findtransbyemp";
 
   final String url_to_check_already_trans_repeat =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findtransbyemprepeat";
+      "http://cic-support.net:1223/api/teaminspectionitem/findtransbyemprepeat";
 
   final String url_to_histoty_trans_by_emp =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findtranshistorybyemp";
+      "http://cic-support.net:1223/api/teaminspectionitem/findtranshistorybyemp";
 
   final String url_to_safety_plan =
-      "http://172.16.0.231:1223/api/teaminspectionitem/findsafetyplanbyteam";
+      "http://cic-support.net:1223/api/teaminspectionitem/findsafetyplanbyteam";
 
   final String url_to_five_monthly_summary =
-      "http://172.16.0.231:1223/api/plan/fivemonthlysummary";
+      "http://cic-support.net:1223/api/plan/fivemonthlysummary";
 
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
@@ -799,6 +799,7 @@ class PlanData extends ChangeNotifier {
 
     print('current team is ${team_id}');
 
+    //listJobplanArea.clear();
     if (listJobplanArea.length == 0) {
       try {
         http.Response response;

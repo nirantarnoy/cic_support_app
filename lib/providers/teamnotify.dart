@@ -7,9 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamnotifyData extends ChangeNotifier {
   final String url_to_get_notify =
-      "http://172.16.0.231:1223/api/teamnotify/findempnotify";
+      "http://cic-support.net:1223/api/teamnotify/findempnotify";
   final String url_to_get_team_notify =
-      "http://172.16.0.231:1223/api/teamnotify/findteamnotify";
+      "http://cic-support.net:1223/api/teamnotify/findteamnotify";
 
   List<Teamnotify> _teamnotify = [];
   List<Teamnotify> get listteamnotify => _teamnotify;

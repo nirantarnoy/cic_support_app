@@ -158,6 +158,7 @@ class _LoginPageState extends State<LoginPage> {
     final UserData users = Provider.of<UserData>(context, listen: false);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -256,14 +257,14 @@ class _LoginPageState extends State<LoginPage> {
             height: 20,
           ),
           Text(
-            'Build version 0.5',
+            'Build version 0.6',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
           const SizedBox(
             height: 5,
           ),
           Text(
-            'Release date 15-05-2023',
+            'Release date 21-07-2023',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
         ],

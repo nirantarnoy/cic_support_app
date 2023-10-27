@@ -8,6 +8,7 @@ import 'package:flutter_cic_support/pages/mainpage.dart';
 
 import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/profile.dart';
+import 'package:flutter_cic_support/pages/securitypoint.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
@@ -120,6 +121,7 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'Kanit-Regular',
               ),
               home: LoginPage(),
+              // home: SecurityPointPage(),
               routes: {
                 LoginPage.routeName: (ctx) => LoginPage(),
                 ProfilePage.routeName: (ctx) => ProfilePage(),

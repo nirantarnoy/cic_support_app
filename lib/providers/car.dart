@@ -12,15 +12,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CarData extends ChangeNotifier {
   // final String url_to_addcar = "http://192.168.60.85:1223/api/car/createcar";
-  final String url_to_addcar = "http://cic-support.net:1223/api/car/createcar";
+  final String url_to_addcar = "http://172.16.100.50:1223/api/car/createcar";
   final String url_to_listcar_by_emp =
-      "http://cic-support.net:1223/api/car/listcarbyemp";
+      "http://172.16.100.50:1223/api/car/listcarbyemp";
   final String url_to_carphoto_by_id =
-      "http://cic-support.net:1223/api/car/getcarphoto";
+      "http://172.16.100.50:1223/api/car/getcarphoto";
   final String url_to_car_close_photo_by_id =
-      "http://cic-support.net:1223/api/car/getcarclosephoto";
-  final String url_to_close_car =
-      "http://cic-support.net:1223/api/car/closecar";
+      "http://172.16.100.50:1223/api/car/getcarclosephoto";
+  final String url_to_close_car = "http://172.16.100.50:1223/api/car/closecar";
 
   late List<CarList> _carlist = [];
   late List<CarPhotoList> _carphotolist = [];

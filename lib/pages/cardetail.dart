@@ -525,7 +525,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
           // print(
           //     'car image list is http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}');
           String image_url =
-              'http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}';
+              'http://172.16.100.50/cicsupport/backend/web/uploads/${_carphoto[index].image}';
           return GestureDetector(
             onTap: () => Navigator.push(
                 context,
@@ -536,7 +536,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
               height: 100,
               width: 100,
               child: Image.network(
-                "http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}",
+                "http://172.16.100.50/cicsupport/backend/web/uploads/${_carphoto[index].image}",
                 fit: BoxFit.fill,
               ),
             ),
@@ -565,7 +565,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
           // print(
           //     'car image list is http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}');
           String image_url =
-              'http://cic-support.net/uploads/${_carphoto[index].image}';
+              'http://172.16.100.50/uploads/${_carphoto[index].image}';
           return GestureDetector(
             onTap: () => Navigator.push(
                 context,
@@ -576,7 +576,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
               height: 100,
               width: 100,
               child: Image.network(
-                "http://cic-support.net/uploads/${_carphoto[index].image}",
+                "http://172.16.100.50/uploads/${_carphoto[index].image}",
                 fit: BoxFit.fill,
               ),
             ),

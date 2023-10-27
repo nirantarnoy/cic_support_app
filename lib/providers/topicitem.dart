@@ -9,9 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TopicItemData extends ChangeNotifier {
   final String url_topic_item_list =
-      "http://cic-support.net:1223/api/topicitem/findtopicbyplan";
+      "http://172.16.100.50:1223/api/topicitem/findtopicbyplan";
   final String url_safety_topic_item_list =
-      "http://cic-support.net:1223/api/teaminspectionitem/safetytopiclist";
+      "http://172.16.100.50:1223/api/teaminspectionitem/safetytopiclist";
 
   late List<JobCheckDetail> _topicitem = [];
   // ignore: unnecessary_getters_setters

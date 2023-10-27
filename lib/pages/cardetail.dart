@@ -971,10 +971,10 @@ class _CarDetailPageState extends State<CarDetailPage> {
             ),
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: widget.car_status == "2"
-              ? Container(
+        widget.car_status == "2"
+            ? Expanded(
+                flex: 1,
+                child: Container(
                   height: 40,
                   alignment: Alignment.center,
                   color: Color.fromARGB(255, 45, 172, 123),
@@ -1073,9 +1073,8 @@ class _CarDetailPageState extends State<CarDetailPage> {
                       ),
                     ),
                   ),
-                )
-              : Text(""),
-        ),
+                ))
+            : Text(""),
       ]),
     );
   }

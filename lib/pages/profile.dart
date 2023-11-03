@@ -310,6 +310,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -355,340 +356,377 @@ class _ProfilePageState extends State<ProfilePage> {
                 topRight: Radius.circular(20),
               ),
             ),
-            child: SingleChildScrollView(
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            flex: 1,
-                            child: Text(''),
-                          ),
-                          Expanded(
-                            child: image2.isNotEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GestureDetector(
-                                      onTap: () => _updatephotofrofil(context),
-                                      child: Container(
-                                        width: 150,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color:
-                                              Color.fromARGB(255, 13, 103, 238),
-                                        ),
-                                        child: Text(
-                                          'Update Photo',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12 * textScale,
-                                          ),
-                                        ),
-                                      ),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Text(''),
+                      ),
+                      Expanded(
+                        child: image2.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () => _updatephotofrofil(context),
+                                  child: Container(
+                                    width: 150,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromARGB(255, 13, 103, 238),
                                     ),
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GestureDetector(
-                                      onTap: () => _editBottomSheet(context),
-                                      child: Container(
-                                        width: 150,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color:
-                                              Color.fromARGB(255, 45, 172, 123),
-                                        ),
-                                        child: Text(
-                                          'Change Photo',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12 * textScale,
-                                          ),
-                                        ),
+                                    child: Text(
+                                      'Update Photo',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12 * textScale,
                                       ),
                                     ),
                                   ),
+                                ),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () => _editBottomSheet(context),
+                                  child: Container(
+                                    width: 150,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromARGB(255, 45, 172, 123),
+                                    ),
+                                    child: Text(
+                                      'เปลี่ยนรูป',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12 * textScale,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: image2.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      this.image2.clear();
+                                      this.base64ImageList.clear();
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 150,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromARGB(255, 224, 63, 14),
+                                    ),
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Text(''),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  flex: 5,
+                  child: SingleChildScrollView(
+                    child: Column(children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.calendar_month,
+                                  color: Colors.lightBlue,
+                                )),
+                              ),
+                              title: Text(
+                                'แผนและตารางตรวจ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
+                              ),
+                            ),
                           ),
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: image2.isNotEmpty
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          this.image2.clear();
-                                          this.base64ImageList.clear();
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 150,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color:
-                                              Color.fromARGB(255, 224, 63, 14),
-                                        ),
-                                        child: Text(
-                                          'Cancel',
-                                          style: TextStyle(
+                          //  onTap: () {}
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PlanPage())),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.check_box_outlined,
+                                  color: Colors.amber,
+                                )),
+                              ),
+                              title: Text(
+                                'ตรวจกิจกรรม 5ส.',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
+                              ),
+                            ),
+                          ),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => JobplanAreaPage())),
+                        ),
+                      ),
+                      Consumer<UserData>(
+                          builder: (context, _userx, _) =>
+                              _userx.team_safety_display != null
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GestureDetector(
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.all(2),
+                                          height: 80,
+                                          alignment: Alignment.centerLeft,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             color: Colors.white,
                                           ),
+                                          child: ListTile(
+                                            leading: Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                color: Colors.grey.shade200,
+                                              ),
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.safety_check,
+                                                color: Colors.green,
+                                              )),
+                                            ),
+                                            title: Text(
+                                              'ตรวจ Safety',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            trailing: Icon(
+                                              Icons.keyboard_arrow_right,
+                                            ),
+                                          ),
                                         ),
+                                        onTap: () => Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SafetyplanAreaPage())),
+                                        // onTap: () => Navigator.of(context).push(
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) => SafetyCheckPage())),
                                       ),
                                     )
-                                  : Text(''),
+                                  : Text('')),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(2),
-                          height: 80,
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey.shade200,
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.cancel,
+                                  color: Colors.red,
+                                )),
                               ),
-                              child: Center(
-                                  child: Icon(
-                                Icons.calendar_month,
-                                color: Colors.lightBlue,
-                              )),
-                            ),
-                            title: Text(
-                              'แผนและตารางตรวจ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                              title: Text(
+                                'จัดการใบ CAR',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
                               ),
                             ),
-                            trailing: Icon(
-                              Icons.keyboard_arrow_right,
-                            ),
                           ),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => CarlistPage())),
                         ),
-                        //  onTap: () {}
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PlanPage())),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(2),
-                          height: 80,
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey.shade200,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.checklist_rounded,
+                                  color: Colors.lightGreen,
+                                )),
                               ),
-                              child: Center(
-                                  child: Icon(
-                                Icons.check_box_outlined,
-                                color: Colors.amber,
-                              )),
-                            ),
-                            title: Text(
-                              'ตรวจกิจกรรม 5ส.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                              title: Text(
+                                'ตรวจ Big Cleaning',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
                               ),
                             ),
-                            trailing: Icon(
-                              Icons.keyboard_arrow_right,
-                            ),
                           ),
+                          onTap: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MemberTeamPage(
+                                        team_id: '1',
+                                      ))),
                         ),
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => JobplanAreaPage())),
                       ),
-                    ),
-                    Consumer<UserData>(
-                        builder: (context, _userx, _) =>
-                            _userx.team_safety_display != null
-                                ? Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GestureDetector(
-                                      child: Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.all(2),
-                                        height: 80,
-                                        alignment: Alignment.centerLeft,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.white,
-                                        ),
-                                        child: ListTile(
-                                          leading: Container(
-                                            height: 50,
-                                            width: 50,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              color: Colors.grey.shade200,
-                                            ),
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.safety_check,
-                                              color: Colors.green,
-                                            )),
-                                          ),
-                                          title: Text(
-                                            'ตรวจ Safety',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          trailing: Icon(
-                                            Icons.keyboard_arrow_right,
-                                          ),
-                                        ),
-                                      ),
-                                      onTap: () => Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SafetyplanAreaPage())),
-                                      // onTap: () => Navigator.of(context).push(
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) => SafetyCheckPage())),
-                                    ),
-                                  )
-                                : Text('')),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(2),
-                          height: 80,
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey.shade200,
-                              ),
-                              child: Center(
-                                  child: Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              )),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
                             ),
-                            title: Text(
-                              'จัดการใบ CAR',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.person_search,
+                                  color: Colors.blueGrey,
+                                )),
+                              ),
+                              title: Text(
+                                'สมาชิกทีมตรวจ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
                               ),
                             ),
-                            trailing: Icon(
-                              Icons.keyboard_arrow_right,
-                            ),
                           ),
+                          onTap: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MemberTeamPage(
+                                        team_id: '1',
+                                      ))),
                         ),
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => CarlistPage())),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(2),
-                          height: 80,
-                          alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey.shade200,
-                              ),
-                              child: Center(
-                                  child: Icon(
-                                Icons.person_search,
-                                color: Colors.blueGrey,
-                              )),
-                            ),
-                            title: Text(
-                              'สมาชิกทีมตรวจ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.keyboard_arrow_right,
-                            ),
-                          ),
-                        ),
-                        onTap: () =>
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => MemberTeamPage(
-                                      team_id: '1',
-                                    ))),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Text(''),
-                    ),
-                  ],
+                    ]),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
           Positioned(

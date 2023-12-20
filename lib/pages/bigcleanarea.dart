@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/models/bigplanarea.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
+import 'package:flutter_cic_support/pages/bigcleancheckdetail.dart';
 import 'package:flutter_cic_support/pages/carhistory.dart';
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/history.dart';
@@ -14,17 +16,18 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
-class JobplanAreaPage extends StatefulWidget {
-  const JobplanAreaPage({Key? key}) : super(key: key);
+class BigcleanAreaPage extends StatefulWidget {
+  const BigcleanAreaPage({Key? key}) : super(key: key);
 
   @override
-  State<JobplanAreaPage> createState() => _JobplanAreaPageState();
+  State<BigcleanAreaPage> createState() => _BigcleanAreaPageState();
 }
 
-class _JobplanAreaPageState extends State<JobplanAreaPage> {
+class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
   String current_section_code = '';
   Future _obtainPlanArea() async {
-    return await Provider.of<PlanData>(context, listen: false).fetchJobplan();
+    return await Provider.of<PlanData>(context, listen: false)
+        .fetchBigcleanplan();
   }
 
   // List<JobplanArea> _checklist = [
@@ -57,33 +60,34 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   void initState() {
     // TODO: implement initState
     // Provider.of<PlanData>(context, listen: false).fetchJobplan();
-    // _obtainPlanArea();
+    //_obtainPlanArea();
     EasyLoading.show(status: "โหลดข้อมูล");
-    Provider.of<PlanData>(context, listen: false).fetFinishedCheck();
-    Provider.of<PlanData>(context, listen: false).fetchJobplan();
+    //Provider.of<PlanData>(context, listen: false).fetFinishedCheck();
+    Provider.of<PlanData>(context, listen: false).fetchBigcleanplan();
     EasyLoading.dismiss();
 
     super.initState();
   }
 
-  Widget _buildList(List<JobplanArea> listcheck) {
+  Widget _buildList(List<BigplanArea> listcheck) {
     Widget cardlist;
     if (listcheck.length > 0) {
       cardlist = ListView.builder(
           itemCount: listcheck.length,
           itemBuilder: (BuildContext contex, int index) {
-            int total_topic = Provider.of<PlanData>(contex, listen: false)
-                .countTopicitem(listcheck[index].plan_area_id);
-            int total_topic_counted =
-                Provider.of<PlanData>(contex, listen: false)
-                    .countCheckedTopicitem(listcheck[index].plan_area_id);
+            int total_topic = 3;
+            // int total_topic = Provider.of<PlanData>(contex, listen: false)
+            //     .countTopicitem(listcheck[index].plan_area_id);
+            int total_topic_counted = Provider.of<PlanData>(contex,
+                    listen: false)
+                .countCheckedTopicBigcleanitem(listcheck[index].plan_area_id);
 
             Color _bgcolor = Colors.green.shade50;
             Color _line_color = Colors.black;
 
-            if (current_section_code == listcheck[index].section_code) {
-              _line_color = Colors.red;
-            }
+            // if (current_section_code == listcheck[index].section_code) {
+            //   _line_color = Colors.red;
+            // }
             if (total_topic_counted <= 0) {
               _bgcolor = Colors.green.shade50;
             } else if (total_topic_counted > 0 &&
@@ -95,9 +99,6 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
             }
             return Slidable(
               key: const ValueKey(0),
-              enabled: current_section_code == listcheck[index].section_code
-                  ? false
-                  : true,
               startActionPane: ActionPane(
                 motion: const ScrollMotion(),
                 // dismissible: DismissiblePane(onDismissed: () {}),
@@ -164,10 +165,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                       padding: EdgeInsets.all(5),
                       margin: EdgeInsets.only(top: 1),
                       decoration: BoxDecoration(
-                          color: current_section_code ==
-                                  listcheck[index].section_code
-                              ? Colors.grey.shade300
-                              : _bgcolor,
+                          color: _bgcolor,
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                       child: ListTile(
                         leading: Container(
@@ -178,19 +176,13 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                             color: Colors.white,
                           ),
                           child: Center(
-                              child: current_section_code ==
-                                      listcheck[index].section_code
-                                  ? Icon(
-                                      Icons.home,
-                                      color: Colors.red,
-                                    )
-                                  : Text(
-                                      "${(index + 1).toString()}",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
+                              child: Text(
+                            "${(index + 1).toString()}",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
                         ),
                         title: Text(
                           '${listcheck[index].plan_area_name}',
@@ -209,19 +201,17 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                       ),
                     ),
                     onTap: () {
-                      current_section_code == listcheck[index].section_code
-                          ? null
-                          : Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => JobCheckNewPage(
-                                  plan_area_id: listcheck[index].plan_area_id,
-                                  plan_id: listcheck[index].plan_id,
-                                  plan_area_name:
-                                      listcheck[index].plan_area_name,
-                                  plan_num: listcheck[index].plan_num,
-                                ),
-                              ),
-                            );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => BigCleanCheckDetailPage(
+                            plan_area_id: listcheck[index].plan_area_id,
+                            plan_id: listcheck[index].plan_id,
+                            // plan_area_name: listcheck[index].plan_area_name,
+                            plan_num: listcheck[index].plan_id,
+                            plan_area_name: listcheck[index].plan_area_name,
+                          ),
+                        ),
+                      );
                     }),
               ),
             );
@@ -236,7 +226,8 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   void doNothing(BuildContext context) {}
   dynamic _removecheckeditem(String area_id) {
     //print("you press me ${area_id}");
-    Provider.of<PlanData>(context, listen: false).removeinspectionitem(area_id);
+    Provider.of<PlanData>(context, listen: false)
+        .removeBigCleaninspectionitem(area_id);
   }
 
   @override
@@ -244,31 +235,31 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
     current_section_code =
         Provider.of<UserData>(context, listen: false).getCurrenUserSection();
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: Color.fromARGB(255, 9, 111, 206),
       appBar: AppBar(
-        title: Text("แผนพื้นที่ตรวจ 5ส."),
+        title: Text("แผน Big cleaning"),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HistoryPage(),
-              ),
-            ),
-            icon: Icon(Icons.history),
-          ),
-          IconButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CarlistPage(),
-              ),
-            ),
-            icon: Icon(Icons.error_outline),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () => Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => HistoryPage(),
+        //       ),
+        //     ),
+        //     icon: Icon(Icons.history),
+        //   ),
+        //   IconButton(
+        //     onPressed: () => Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => CarlistPage(),
+        //       ),
+        //     ),
+        //     icon: Icon(Icons.error_outline),
+        //   ),
+        // ],
       ),
       body: Container(
         color: Colors.grey.shade100,
@@ -314,7 +305,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                       ),
                     )
                   : _buildList(
-                      _plans.getAreaTitle(),
+                      _plans.getBigAreaTitle(),
                     )),
             ),
           ),
@@ -324,7 +315,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                 ? Container(
                     height: 50,
                     width: double.infinity,
-                    color: Color.fromARGB(255, 45, 172, 123),
+                    color: Color.fromARGB(255, 9, 111, 206),
                     child: GestureDetector(
                       child: Center(
                         child: Text(
@@ -338,8 +329,8 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                       onTap: () {
                         // Provider.of<PlanData>(context, listen: false)
                         //     .submitInspection();
-                        int MustChekAll = _plans.getAllMushCheckTopic();
-                        int AllChecked = _plans.getAllCheckedTopic();
+                        int MustChekAll = _plans.getBigAllMushCheckTopic();
+                        int AllChecked = _plans.getBigAllCheckedTopic();
                         if (AllChecked < MustChekAll) {
                           showDialog(
                             context: context,
@@ -407,7 +398,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   bool isSave = await Provider
                                                           .of<PlanData>(context,
                                                               listen: false)
-                                                      .submitInspection("1");
+                                                      .submitBigcleanInspection();
                                                   if (isSave == true) {
                                                     await EasyLoading.showSuccess(
                                                         'บันทึกรายการเรียบร้อย');
@@ -424,11 +415,10 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                 await EasyLoading.show(
                                                     status:
                                                         "กำลังบันทึกข้อมูล");
-                                                bool isSave =
-                                                    await Provider.of<PlanData>(
-                                                            context,
-                                                            listen: false)
-                                                        .submitInspection("1");
+                                                bool isSave = await Provider.of<
+                                                            PlanData>(context,
+                                                        listen: false)
+                                                    .submitBigcleanInspection();
                                                 if (isSave == true) {
                                                   await EasyLoading.showSuccess(
                                                       'บันทึกรายการเรียบร้อย');
@@ -564,7 +554,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   bool isSave = await Provider
                                                           .of<PlanData>(context,
                                                               listen: false)
-                                                      .submitInspection("1");
+                                                      .submitBigcleanInspection();
                                                   if (isSave == true) {
                                                     await EasyLoading.showSuccess(
                                                         'บันทึกรายการเรียบร้อย');
@@ -581,11 +571,10 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                 await EasyLoading.show(
                                                     status:
                                                         "กำลังบันทึกข้อมูล");
-                                                bool isSave =
-                                                    await Provider.of<PlanData>(
-                                                            context,
-                                                            listen: false)
-                                                        .submitInspection("1");
+                                                bool isSave = await Provider.of<
+                                                            PlanData>(context,
+                                                        listen: false)
+                                                    .submitBigcleanInspection();
                                                 if (isSave == true) {
                                                   await EasyLoading.showSuccess(
                                                       'บันทึกรายการเรียบร้อย');

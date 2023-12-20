@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/pages/bigcleanarea.dart';
 
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/jobplanarea.dart';
@@ -672,11 +673,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MemberTeamPage(
-                                        team_id: '1',
-                                      ))),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => BigcleanAreaPage())),
                         ),
                       ),
                       Padding(

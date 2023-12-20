@@ -13,7 +13,7 @@ class PersonData extends ChangeNotifier {
     _person = val;
   }
 
-  Future<dynamic> fetchPersonx() async {
+  Future<dynamic> fetchPersonx0() async {
     notifyListeners();
 
     try {
@@ -31,6 +31,7 @@ class PersonData extends ChangeNotifier {
               id: res['data'][i]['id'].toString(),
               person_name: res['data'][i]['ad_User'].toString(),
               team_id: res['data'][i]['team_id'].toString(),
+              bigclean_team_id: res['data'][i]['bigclean_team_id'].toString(),
             );
             data.add(personRes);
           }

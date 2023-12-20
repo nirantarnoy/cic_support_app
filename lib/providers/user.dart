@@ -98,6 +98,7 @@ class UserData with ChangeNotifier {
           id: res['data']['id'].toString(),
           person_name: res['data']['dns_user'].toString(),
           team_id: res['data']['current_team_id'].toString(),
+          bigclean_team_id: res['data']['bigclean_current_team_id'].toString(),
         );
 
         data.add(user);
@@ -109,6 +110,8 @@ class UserData with ChangeNotifier {
         prefs.setString('user_id', res['data']['id'].toString());
         prefs.setString('user_name', res['data']['dns_user'].toString());
         prefs.setString('team_id', res['data']['current_team_id'].toString());
+        prefs.setString('bigclean_team_id',
+            res['data']['bigclean_current_team_id'].toString());
 
         username_display = res['data']['dns_user'].toString();
         prefs.setString('expiryTime', expiryTime.toIso8601String());
@@ -179,6 +182,8 @@ class UserData with ChangeNotifier {
         section_display = res['data']['section_code'].toString();
 
         prefs.setString('team_id', res['data']['current_team_id'].toString());
+        prefs.setString('bigclean_team_id',
+            res['data']['current_bigclean_team_id'].toString());
         prefs.setString(
             'team_safety_id', res['data']['current_safety_team_id'].toString());
         notifyListeners();

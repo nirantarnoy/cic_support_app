@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/models/bigcheckdetail.dart';
+import 'package:flutter_cic_support/models/bigplanarea.dart';
 import 'package:flutter_cic_support/models/fiverank.dart';
 import 'package:flutter_cic_support/models/inspectionsafetytrans.dart';
 import 'package:flutter_cic_support/models/inspectiontrans.dart';
@@ -55,6 +57,12 @@ class PlanData extends ChangeNotifier {
   final String url_to_five_monthly_summary =
       "http://cic-support.net:1223/api/plan/fivemonthlysummary";
 
+  final String url_to_bigplan_by_team =
+      "http://cic-support.net:1223/api/plan/findbigcleanplan";
+
+  final String url_to_add_bigclean_inspection_trans =
+      "http://cic-support.net:1223/api/plan/addinspection";
+
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;
 
@@ -83,8 +91,15 @@ class PlanData extends ChangeNotifier {
   late List<FiveRankData> _fiverank = [];
   List<FiveRankData> get listfiverankdata => _fiverank;
 
+  late List<BigplanArea> _bigplan = [];
+  List<BigplanArea> get listBigplanArea => _bigplan;
+
   set listpersoncurrentplan(List<PersoncurrentPlan> val) {
     _personcurrentplan = val;
+  }
+
+  set listBigplanArea(List<BigplanArea> val) {
+    _bigplan = val;
   }
 
   set listpersoncurrentplanRepeat(List<PersoncurrentPlanRepeat> val) {
@@ -182,6 +197,40 @@ class PlanData extends ChangeNotifier {
           department_code: element.department_code,
           section_code: element.section_code,
           inspection_type_id: element.inspection_type_id,
+        );
+        _newgroup.add(_group);
+      }
+    });
+    _newgroup.sort(
+      (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
+    );
+    return _newgroup.toSet().toList();
+  }
+
+  List<BigplanArea> getBigAreaTitle() {
+    List<BigplanArea> _newgroup = [];
+    listBigplanArea.forEach((element) {
+      int has_ = 0;
+      _newgroup.forEach((item_check) {
+        if (item_check.plan_area_id == element.plan_area_id) {
+          has_ += 1;
+        }
+      });
+      if (has_ > 0) {
+      } else {
+        BigplanArea _group = BigplanArea(
+          plan_id: element.plan_id,
+          plan_date: "",
+          plan_area_id: element.plan_area_id,
+          plan_area_name: element.plan_area_name,
+          plan_topic_check_qty: "",
+          plan_topic_checked_qty: "",
+          status: "",
+          scored: "-1",
+          topic_id: '',
+          topic_item_id: '',
+          topic_item_name: '',
+          topic_name: '',
         );
         _newgroup.add(_group);
       }
@@ -360,6 +409,38 @@ class PlanData extends ChangeNotifier {
     return _list;
   }
 
+  List<BigCheckDetail> getBigcleanTopicitem(String area_id) {
+    print('area is ${area_id}');
+
+    List<BigCheckDetail> _list = [];
+    var big_topic = ['สะสาง', 'สะดวก', 'สะอาด'];
+    listBigplanArea.forEach((element) {
+      if (element.plan_area_id == area_id) {
+        for (var i = 0; i <= 2; i++) {
+          BigCheckDetail _item = BigCheckDetail(
+            plan_id: element.plan_id == null ? '' : element.plan_id,
+            topicid: (i + 1).toString(),
+            topicname: big_topic[i],
+            topic_detail_id: (i + 1).toString(),
+            topic_detail_name: big_topic[i],
+            status: element.status == null ? '0' : element.status,
+            score: element.scored == null ? '-1' : element.scored,
+            is_enable: '',
+            seq_sort: '',
+            seq_sort_item: '',
+          );
+          _list.add(_item);
+        }
+      }
+    });
+    // _list.sort(
+    //   (a, b) =>
+    //       int.parse(b.seq_sort_item).compareTo(int.parse(a.seq_sort_item)),
+    // );
+    notifyListeners();
+    return _list;
+  }
+
   List<JobCheckDetail> getTopicitemNew(String area_id) {
     // print('area is ${area_id}');
 
@@ -520,6 +601,24 @@ class PlanData extends ChangeNotifier {
     return cnt;
   }
 
+  int getBigAllMushCheckTopic() {
+    int cnt = 0;
+    if (listBigplanArea != null) {
+      cnt = listBigplanArea.length * 3;
+    }
+    return cnt;
+  }
+
+  int getBigAllCheckedTopic() {
+    int cnt = 0;
+    listInspectiontrans.forEach((element) {
+      if (element.score != "-1") {
+        cnt += 1;
+      }
+    });
+    return cnt;
+  }
+
   int getAllMushCheckSafetyArea() {
     return listSafetyJobplanArea.length;
   }
@@ -590,6 +689,56 @@ class PlanData extends ChangeNotifier {
     }
   }
 
+  bool addBigInspectionTrans(InspectionTrans data) {
+    if (data != null) {
+      if (listInspectiontrans.isNotEmpty) {
+        int has_update = 0;
+        listInspectiontrans.forEach((element) {
+          if (element.topic_item_id == data.topic_item_id &&
+              element.area_id == data.area_id) {
+            element.score = data.score.toString(); // update score if exist
+            print("have data to update trans");
+            has_update = 1;
+          } else {
+            has_update = 0; // if duplicate score please commit this line
+          }
+        });
+        if (has_update == 0) {
+          listInspectiontrans.add(data); // original line
+          print("loop new data to add trans");
+        }
+      } else {
+        listInspectiontrans.add(data); // original line
+        print("first new data to add trans");
+      }
+
+      // listBigplanArea.forEach((element) {
+      //   if (element.plan_area_id == data.area_id) {
+      //     element.status = "1";
+      //     element.scored = data.score.toString();
+      //   } else {
+      //     print("no data to add");
+      //   }
+      // });
+
+      notifyListeners();
+      return true;
+    } else {
+      //print("no data to add 2");
+      return false;
+    }
+  }
+
+  String checkBigLineScore(String topic_id, String area_id) {
+    String score = '-1';
+    listInspectiontrans.forEach((element) {
+      if (element.area_id == area_id && element.topic_id == topic_id) {
+        score = element.score;
+      }
+    });
+    return score;
+  }
+
   bool addInspectionTransRepeat(InspectionTrans data) {
     if (data != null) {
       if (listInspectiontrans.isNotEmpty) {
@@ -641,6 +790,26 @@ class PlanData extends ChangeNotifier {
         if (element.plan_area_id == area_id) {
           print("remove area id is ${area_id} and ${element.plan_area_id}");
           element.scored = "-1";
+        }
+      });
+      //   listInspectiontrans.removeWhere((item) =>
+      //       item.area_id == area_id); // remove all checked score of this area
+      //   print("remove checked topic item");
+    }
+    notifyListeners();
+    return true;
+  }
+
+  bool removeBigCleaninspectionitem(String area_id) {
+    if (listInspectiontrans.isNotEmpty && area_id != null) {
+      // listInspectiontrans.forEach((element) {
+      //   print(element.area_id);
+      // });
+
+      listInspectiontrans.forEach((element) {
+        if (element.area_id == area_id) {
+          print("remove area id is ${area_id} and ${element.area_id}");
+          element.score = "-1";
         }
       });
       //   listInspectiontrans.removeWhere((item) =>
@@ -744,6 +913,16 @@ class PlanData extends ChangeNotifier {
     int cnt = 0;
     listJobplanArea.forEach((element) {
       if (element.plan_area_id == area_id && int.parse(element.scored) > -1) {
+        cnt += 1;
+      }
+    });
+    return cnt;
+  }
+
+  int countCheckedTopicBigcleanitem(String area_id) {
+    int cnt = 0;
+    listInspectiontrans.forEach((element) {
+      if (element.area_id == area_id && int.parse(element.score) > -1) {
         cnt += 1;
       }
     });
@@ -870,6 +1049,67 @@ class PlanData extends ChangeNotifier {
         print("error na ja is ${err}");
       }
     }
+  }
+
+  Future<dynamic> fetchBigcleanplan() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String user_id = prefs.getString("user_id").toString();
+    final String token = prefs.getString("token").toString();
+    final String team_id = prefs.getString("bigclean_team_id").toString();
+
+    notifyListeners();
+
+    print('current bigclean team is ${team_id}');
+
+    //listJobplanArea.clear();
+    //if (listBigplanArea.length == 0) {
+    listBigplanArea.clear();
+    try {
+      http.Response response;
+      response = await http.get(
+          Uri.parse(url_to_bigplan_by_team + "/" + team_id),
+          headers: {"Authorization": token});
+
+      if (response.statusCode == 200) {
+        List<BigplanArea> data = [];
+        //  List<PersoncurrentPlan> personplan_data = [];
+        List<dynamic> res = json.decode(response.body);
+
+        if (res == null) {
+          print("no data");
+          return false;
+        }
+
+        print("data plan_num is ${res[0]["plan_num"]}");
+
+        for (var i = 0; i <= res.length - 1; i++) {
+          final BigplanArea _item = BigplanArea(
+            plan_id: res[i]["id"].toString(),
+            plan_date: res[i]["bigplan_date"].toString(),
+            plan_area_id: res[i]["area_def_id"].toString(),
+            plan_area_name: res[i]["area_def_name"].toString(),
+            plan_topic_check_qty: "0",
+            plan_topic_checked_qty: "0",
+            status: "0",
+            scored: "-1",
+            topic_id: '',
+            topic_item_id: '',
+            topic_item_name: '',
+            topic_name: '',
+          );
+
+          data.add(_item);
+        }
+        listBigplanArea = data;
+        notifyListeners();
+        return listBigplanArea;
+      } else {
+        print("No Data");
+      }
+    } catch (err) {
+      print("error na ja is ${err}");
+    }
+    //}
   }
 
   Future<dynamic> fetchJobplanSaved() async {
@@ -1200,6 +1440,67 @@ class PlanData extends ChangeNotifier {
             return false;
           }
           print("save transaction ok");
+          clearInspectionTrans(); // clear list after save finished
+        }
+        return true;
+      } catch (err) {
+        print("has eerror is ${err.toString()}");
+        return false;
+      }
+    } else {
+      print("not save naja");
+      return false;
+    }
+  }
+
+  Future<bool> submitBigcleanInspection() async {
+    // print("list data is ${listInspectiontrans[0].area_id}");
+    // return false;
+    if (listInspectiontrans.isNotEmpty) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String user_id = prefs.getString("user_id").toString();
+      final String team_id = prefs.getString("bigclean_team_id").toString();
+      final String token = prefs.getString("token").toString();
+      // final String plan_num = prefs.getString("plan_num").toString();
+
+      var addData = listInspectiontrans
+          .map((e) => {
+                'module_type_id': 3,
+                'plan_id': int.parse(e.plan_num),
+                'trans_date': e.trans_date,
+                'emp_id': int.parse(user_id),
+                'area_group_id': int.parse(e.area_group_id),
+                'area_id': int.parse(e.area_id),
+                'team_id': int.parse(team_id),
+                'topic_id': int.parse(e.topic_id),
+                'topic_item_id': int.parse(e.topic_item_id),
+                'score': int.parse(e.score),
+                'status': int.parse(e.status),
+                'note': e.note,
+                'created_at': int.parse('0'),
+                'created_by': int.parse(user_id),
+                'action_type_id': 1,
+              })
+          .toList();
+
+      print('data bigclean save is ${json.encode(addData)}');
+      // return false;
+      try {
+        http.Response response;
+        response = await http.post(
+          Uri.parse(url_to_add_bigclean_inspection_trans),
+          headers: {"Authorization": token},
+          body: json.encode(addData),
+        );
+
+        if (response.statusCode == 200) {
+          // List<JobplanArea> data = [];
+          Map<String, dynamic> res = json.decode(response.body);
+          if (res == null) {
+            print("no data");
+            return false;
+          }
+          print("save big clean transaction ok");
           clearInspectionTrans(); // clear list after save finished
         }
         return true;

@@ -257,14 +257,14 @@ class _LoginPageState extends State<LoginPage> {
             height: 20,
           ),
           Text(
-            'Build version 0.7',
+            'Build version 0.8',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
           const SizedBox(
             height: 5,
           ),
           Text(
-            'Release date 20-09-2023',
+            'Release date 12-12-2023',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
         ],

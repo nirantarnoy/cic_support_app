@@ -311,7 +311,7 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
           ),
           //_plans.checkfinish()
           Consumer<PlanData>(
-            builder: ((context, _plans, _) => _plans.finishedcheck <= 0
+            builder: ((context, _plans, _) => _plans.hasBigcleanArea() > 0
                 ? Container(
                     height: 50,
                     width: double.infinity,

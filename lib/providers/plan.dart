@@ -968,6 +968,15 @@ class PlanData extends ChangeNotifier {
     return cnt;
   }
 
+  int hasBigcleanArea() {
+    int cnt = 0;
+    if (listBigplanArea != null) {
+      cnt = listBigplanArea.length;
+    }
+
+    return cnt;
+  }
+
   Future<dynamic> fetchJobplan() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("user_id").toString();
@@ -1057,6 +1066,11 @@ class PlanData extends ChangeNotifier {
     final String token = prefs.getString("token").toString();
     final String team_id = prefs.getString("bigclean_team_id").toString();
 
+    final Map<String, dynamic> filterData = {
+      'team_id': int.parse(team_id),
+      'user_id': int.parse(user_id),
+    };
+
     notifyListeners();
 
     print('current bigclean team is ${team_id}');
@@ -1066,9 +1080,13 @@ class PlanData extends ChangeNotifier {
     listBigplanArea.clear();
     try {
       http.Response response;
-      response = await http.get(
-          Uri.parse(url_to_bigplan_by_team + "/" + team_id),
-          headers: {"Authorization": token});
+      // response = await http.get(
+      //     Uri.parse(url_to_bigplan_by_team + "/" + team_id),
+      //     headers: {"Authorization": token});
+
+      response = await http.post(Uri.parse(url_to_bigplan_by_team),
+          headers: {"Authorization": token, 'Content-Type': 'application/json'},
+          body: json.encode(filterData));
 
       if (response.statusCode == 200) {
         List<BigplanArea> data = [];

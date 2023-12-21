@@ -58,10 +58,10 @@ class PlanData extends ChangeNotifier {
       "http://172.16.100.50:1223/api/plan/fivemonthlysummary";
 
   final String url_to_bigplan_by_team =
-      "http://cic-support.net:1223/api/plan/findbigcleanplan";
+      "http://172.16.100.50:1223/api/plan/findbigcleanplan";
 
   final String url_to_add_bigclean_inspection_trans =
-      "http://cic-support.net:1223/api/plan/addinspection";
+      "http://172.16.100.50:1223/api/plan/addinspection";
 
   late List<JobplanArea> _plan = [];
   List<JobplanArea> get listJobplanArea => _plan;

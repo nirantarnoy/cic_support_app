@@ -523,9 +523,13 @@ class _CarDetailPageState extends State<CarDetailPage> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
           // print(
-          //     'car image list is http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}');
+          //     'car image list is http://img.cicsupport.net/upload/${_carphoto[index].image}');
           String image_url =
+<<<<<<< HEAD
               'http://172.16.100.50/cicsupport/backend/web/uploads/${_carphoto[index].image}';
+=======
+              'http://img.cicsupport.net/upload/${_carphoto[index].image}';
+>>>>>>> 232f28f019db53806fa2783b854ff64846912bce
           return GestureDetector(
             onTap: () => Navigator.push(
                 context,
@@ -536,7 +540,11 @@ class _CarDetailPageState extends State<CarDetailPage> {
               height: 100,
               width: 100,
               child: Image.network(
+<<<<<<< HEAD
                 "http://172.16.100.50/cicsupport/backend/web/uploads/${_carphoto[index].image}",
+=======
+                "http://img.cicsupport.net/upload/${_carphoto[index].image}",
+>>>>>>> 232f28f019db53806fa2783b854ff64846912bce
                 fit: BoxFit.fill,
               ),
             ),
@@ -563,9 +571,9 @@ class _CarDetailPageState extends State<CarDetailPage> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
           // print(
-          //     'car image list is http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}');
+          //     'car image list is http://img.cicsupport.net/upload/${_carphoto[index].image}');
           String image_url =
-              'http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}';
+              'http://img.cicsupport.net/upload/${_carphoto[index].image}';
           return GestureDetector(
             onTap: () => Navigator.push(
                 context,
@@ -576,7 +584,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
               height: 100,
               width: 100,
               child: Image.network(
-                "http://172.16.0.231/cicsupport/backend/web/uploads/${_carphoto[index].image}",
+                "http://img.cicsupport.net/upload/${_carphoto[index].image}",
                 fit: BoxFit.fill,
               ),
             ),

@@ -525,11 +525,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
           // print(
           //     'car image list is http://img.cicsupport.net/upload/${_carphoto[index].image}');
           String image_url =
-<<<<<<< HEAD
-              'http://172.16.100.50/cicsupport/backend/web/uploads/${_carphoto[index].image}';
-=======
               'http://img.cicsupport.net/upload/${_carphoto[index].image}';
->>>>>>> 232f28f019db53806fa2783b854ff64846912bce
           return GestureDetector(
             onTap: () => Navigator.push(
                 context,
@@ -540,11 +536,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
               height: 100,
               width: 100,
               child: Image.network(
-<<<<<<< HEAD
-                "http://172.16.100.50/cicsupport/backend/web/uploads/${_carphoto[index].image}",
-=======
                 "http://img.cicsupport.net/upload/${_carphoto[index].image}",
->>>>>>> 232f28f019db53806fa2783b854ff64846912bce
                 fit: BoxFit.fill,
               ),
             ),

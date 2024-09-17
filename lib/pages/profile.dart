@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/models/storeissue.dart';
 import 'package:flutter_cic_support/pages/bigcleanarea.dart';
 
 import 'package:flutter_cic_support/pages/carlistpage.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
+import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
@@ -718,6 +720,50 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: () =>
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => MemberTeamPage(
+                                        team_id: '1',
+                                      ))),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.approval,
+                                  color: Colors.green,
+                                )),
+                              ),
+                              title: Text(
+                                'อนุมัติใบเบิก',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
+                              ),
+                            ),
+                          ),
+                          onTap: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => StoreissueApprovePage(
                                         team_id: '1',
                                       ))),
                         ),

@@ -9,12 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreissueData extends ChangeNotifier {
   final String url_issue_list =
-      "http://172.16.100.50:1223/api/storeissue/listbyemp";
+      "https://api.cicsupports.com/api/storeissue/listbyemp";
   final String url_issue_list_detail =
-      "http://172.16.100.50:1223/api/storeissue/fetchissuedetail";
+      "https://api.cicsupports.com/api/storeissue/fetchissuedetail";
 
   final String url_issue_approve =
-      "http://172.16.100.50:1223/api/storeissue/approveissue";
+      "https://api.cicsupports.com/api/storeissue/approveissue";
 
   late List<Storeissue> _issue;
   List<Storeissue> get listIssue => _issue;

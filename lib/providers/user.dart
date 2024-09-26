@@ -11,15 +11,15 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData with ChangeNotifier {
-  final String url_to_login = "http://172.16.100.50:1223/api/auth/login";
-  final String url_to_profile = "http://172.16.100.50:1223/api/user/profile";
+  final String url_to_login = "https://api.cicsupports.com/api/auth/login";
+  final String url_to_profile = "https://api.cicsupports.com/api/user/profile";
 
   final String url_to_login_exclude_dns =
-      "http://172.16.100.50:1223/api/auth/loginexcludedns";
+      "https://api.cicsupports.com/api/auth/loginexcludedns";
   final String url_to_update_profile_photo =
-      "http://172.16.100.50:1223/api/user/updatephoto";
+      "https://api.cicsupports.com/api/user/updatephoto";
   final String url_to_teammember =
-      "http://172.16.100.50:1223/api/user/teammember";
+      "https://api.cicsupports.com/api/user/teammember";
 
   late User _authenticatedUser;
   late User _emptyauthenicatedUser;

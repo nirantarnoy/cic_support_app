@@ -32,49 +32,58 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
     super.initState();
   }
 
+  Future<void> _getNewdata() async {
+    setState(() {
+      Provider.of<StoreissueData>(context, listen: false).fetchIssuelist();
+    });
+  }
+
   Widget _buildlist(List<Storeissue> _listcheck) {
     DateFormat dateformatter = DateFormat('dd-MM-yyyy hh:ss');
     Widget cards;
     if (_listcheck.length > 0) {
-      cards = new ListView.builder(
-          itemCount: _listcheck.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              child: GestureDetector(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => StoreissuedetailPage(
-                              issue_id: _listcheck[index].id,
-                            ))),
-                child: ListTile(
-                  leading: Icon(
-                    Icons.error_outlined,
-                    color: Color.fromARGB(255, 241, 84, 5),
-                  ),
-                  title: Text('${_listcheck[index].journal_no}'),
-                  subtitle: Column(
-                    children: [
-                      Align(
+      cards = RefreshIndicator(
+        onRefresh: _getNewdata,
+        child: new ListView.builder(
+            itemCount: _listcheck.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => StoreissuedetailPage(
+                                issue_id: _listcheck[index].id,
+                              ))),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.error_outlined,
+                      color: Color.fromARGB(255, 241, 84, 5),
+                    ),
+                    title: Text('${_listcheck[index].journal_no}'),
+                    subtitle: Column(
+                      children: [
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${_listcheck[index].emp_full_name}',
+                              style: TextStyle(color: Colors.green),
+                            )),
+                        Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            '${_listcheck[index].emp_full_name}',
-                            style: TextStyle(color: Colors.green),
-                          )),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${dateformatter.format(DateTime.parse(_listcheck[index].trans_date))}',
-                          style: TextStyle(fontSize: 10),
+                            '${dateformatter.format(DateTime.parse(_listcheck[index].trans_date))}',
+                            style: TextStyle(fontSize: 10),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    trailing: Text(""),
                   ),
-                  trailing: Text(""),
                 ),
-              ),
-            );
-          });
+              );
+            }),
+      );
 
       return cards;
     } else {

@@ -267,11 +267,15 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                                         //         (Route<dynamic> route) =>
                                         //             false);
 
-                                        Navigator.popUntil(
-                                            context,
-                                            (route) =>
-                                                route.settings.name ==
-                                                'storeissueapprove');
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        StoreissueApprovePage(
+                                                          team_id: "",
+                                                        )),
+                                                (Route<dynamic> route) =>
+                                                    false);
                                       },
                                       child: Text(
                                         'ใช่',

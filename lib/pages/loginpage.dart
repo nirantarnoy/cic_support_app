@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/appcache/appcache.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
+import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_cic_support/services/localnoti.dart';
@@ -83,73 +84,86 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 12,
-                ),
-                Icon(
-                  Icons.mood_bad_outlined,
-                  size: 32,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  'พบข้อผิดพลาด',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 8.0, right: 15.0, bottom: 8.0, left: 15.0),
-                  child: Text(
-                    'Username หรือ Password ไม่ถูกต้อง ลองใหม่อีกครั้งหรือติดต่อผู้ดูแล ?',
-                    style: TextStyle(fontWeight: FontWeight.normal),
+      bool res2 = await Provider.of<UserData>(context, listen: false)
+          .loginExcludeDNS(_formData['username'], _formData['password']);
+
+      if (res2 == true) {
+        if (isChecked) {
+          box1.put('username', _formData['username']);
+          box1.put('password', _formData['password']);
+
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ProfileNormalPage()));
+        }
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 12,
                   ),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: MaterialButton(
-                        color: Colors.red.shade300,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                        child: Text(
-                          'ตกลง',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  Icon(
+                    Icons.mood_bad_outlined,
+                    size: 32,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    'พบข้อผิดพลาด',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 8.0, right: 15.0, bottom: 8.0, left: 15.0),
+                    child: Text(
+                      'Username หรือ Password ไม่ถูกต้อง ลองใหม่อีกครั้งหรือติดต่อผู้ดูแล ?',
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: MaterialButton(
+                          color: Colors.red.shade300,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50)),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text(
+                            'ตกลง',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -257,14 +271,14 @@ class _LoginPageState extends State<LoginPage> {
             height: 20,
           ),
           Text(
-            'Build version 0.9',
+            'Build version 1.0',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
           const SizedBox(
             height: 5,
           ),
           Text(
-            'Release date 25-12-2023',
+            'Release date 26-09-2024',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
         ],

@@ -8,7 +8,9 @@ import 'package:flutter_cic_support/pages/mainpage.dart';
 
 import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/profile.dart';
+import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/pages/securitypoint.dart';
+import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
@@ -127,6 +129,9 @@ class MyApp extends StatelessWidget {
               routes: {
                 LoginPage.routeName: (ctx) => LoginPage(),
                 ProfilePage.routeName: (ctx) => ProfilePage(),
+                ProfileNormalPage.routeName: (ctx) => ProfileNormalPage(),
+                StoreissueApprovePage.routeName: (ctx) =>
+                    StoreissueApprovePage(team_id: ''),
               },
               builder: EasyLoading.init(),
             );

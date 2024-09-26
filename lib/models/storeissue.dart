@@ -5,6 +5,7 @@ class Storeissue {
   final String created_by;
   final String created_name;
   final String status;
+  final String emp_full_name;
 
   Storeissue({
     required this.id,
@@ -13,5 +14,6 @@ class Storeissue {
     required this.created_by,
     required this.created_name,
     required this.status,
+    required this.emp_full_name,
   });
 }

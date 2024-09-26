@@ -5,6 +5,7 @@ class Storeissueline {
   final String product_name;
   final String qty;
   final String remark;
+  final String unit_name;
 
   Storeissueline({
     required this.id,
@@ -13,5 +14,6 @@ class Storeissueline {
     required this.product_name,
     required this.qty,
     required this.remark,
+    required this.unit_name,
   });
 }

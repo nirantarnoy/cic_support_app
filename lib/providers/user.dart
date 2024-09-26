@@ -13,6 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserData with ChangeNotifier {
   final String url_to_login = "http://172.16.100.50:1223/api/auth/login";
   final String url_to_profile = "http://172.16.100.50:1223/api/user/profile";
+
+  final String url_to_login_exclude_dns =
+      "http://172.16.100.50:1223/api/auth/loginexcludedns";
   final String url_to_update_profile_photo =
       "http://172.16.100.50:1223/api/user/updatephoto";
   final String url_to_teammember =
@@ -46,6 +49,13 @@ class UserData with ChangeNotifier {
 
   late String _section_display = '';
   String get section_display => _section_display;
+
+  late String _empfullname = '';
+  String get empfullname => _empfullname;
+
+  set empfullname(String val) {
+    _empfullname = val;
+  }
 
   set team_display(String val) {
     _team_display = val;
@@ -129,6 +139,72 @@ class UserData with ChangeNotifier {
     }
   }
 
+  Future<dynamic> loginExcludeDNS(String username, String pwd) async {
+    final Map<String, dynamic> loginData = {
+      'username': username,
+      'password': pwd,
+    };
+
+    print("data login is ${loginData}");
+
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_login_exclude_dns),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(loginData));
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> res = json.decode(response.body);
+        List<Person> data = [];
+
+        if (res == null) {
+          notifyListeners();
+          return false;
+        }
+
+        if (res['data']['level_type_id'] == 3) {
+          return false;
+        }
+
+        final Person user = Person(
+          id: res['data']['id'].toString(),
+          person_name: res['data']['fname'].toString() +
+              " " +
+              res['data']['lname'].toString(),
+          team_id: "",
+          bigclean_team_id: "",
+        );
+
+        data.add(user);
+        final DateTime now = DateTime.now();
+        final DateTime expiryTime = now.add(Duration(seconds: 160000));
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        prefs.setString('token', res['data']['token'].toString());
+        prefs.setString('user_id', res['data']['id'].toString());
+        prefs.setString('emp_code', res['data']['emp_code'].toString());
+        prefs.setString('user_name', res['data']['dns_user'].toString());
+        prefs.setString('team_id', res['data']['current_team_id'].toString());
+        prefs.setString('bigclean_team_id',
+            res['data']['bigclean_current_team_id'].toString());
+
+        username_display = res['data']['dns_user'].toString();
+        empfullname = res['data']['fname'] + " " + res['data']['lname'];
+        prefs.setString('expiryTime', expiryTime.toIso8601String());
+
+        print("res data is ${res['data']}");
+        print("token is ${res['data']['token']}");
+        return true;
+      } else {
+        print(response.body);
+        return false;
+      }
+    } catch (err) {
+      print(err);
+      return false;
+    }
+  }
+
   String getCurrenUserName() {
     String c_username = '';
     if (username_display != '') {
@@ -180,6 +256,7 @@ class UserData with ChangeNotifier {
         team_safety_display = res['data']['current_safety_team_id'].toString();
         photo_display = res['data']['photo'].toString();
         section_display = res['data']['section_code'].toString();
+        prefs.setString('emp_code', res['data']['emp_code'].toString());
 
         prefs.setString('team_id', res['data']['current_team_id'].toString());
         prefs.setString('bigclean_team_id',

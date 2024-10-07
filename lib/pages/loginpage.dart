@@ -92,8 +92,9 @@ class _LoginPageState extends State<LoginPage> {
           box1.put('username', _formData['username']);
           box1.put('password', _formData['password']);
 
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ProfileNormalPage()));
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => ProfileNormalPage()));
+          Navigator.pushReplacementNamed(context, "profilenormal");
         }
       } else {
         showDialog(

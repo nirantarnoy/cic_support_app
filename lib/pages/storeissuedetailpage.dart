@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/storeissueline.dart';
+import 'package:flutter_cic_support/pages/profile.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -7,7 +8,9 @@ import 'package:provider/provider.dart';
 
 class StoreissuedetailPage extends StatefulWidget {
   final issue_id;
-  StoreissuedetailPage({Key? key, this.issue_id}) : super(key: key);
+  final team_id;
+  StoreissuedetailPage({Key? key, this.issue_id, this.team_id})
+      : super(key: key);
 
   @override
   State<StoreissuedetailPage> createState() => _StoreissuedetailPageState();
@@ -139,14 +142,25 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                                       //         builder: (context) =>
                                       //             PlancheckcompletePage()));
                                     }
+
                                     EasyLoading.dismiss();
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                StoreissueApprovePage(
-                                                  team_id: "",
-                                                )),
-                                        (Route<dynamic> route) => false);
+                                    if (widget.team_id == "") {
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  StoreissueApprovePage(
+                                                    team_id: "",
+                                                  )),
+                                          (Route<dynamic> route) => false);
+                                    } else {
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  StoreissueApprovePage(
+                                                    team_id: widget.team_id,
+                                                  )),
+                                          (Route<dynamic> route) => false);
+                                    }
                                   },
                                   child: Text(
                                     'ใช่',
@@ -267,15 +281,28 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                                         //         (Route<dynamic> route) =>
                                         //             false);
 
-                                        Navigator.of(context)
-                                            .pushAndRemoveUntil(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        StoreissueApprovePage(
-                                                          team_id: "",
-                                                        )),
-                                                (Route<dynamic> route) =>
-                                                    false);
+                                        if (widget.team_id == "") {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          StoreissueApprovePage(
+                                                            team_id: "",
+                                                          )),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        } else {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          StoreissueApprovePage(
+                                                            team_id:
+                                                                widget.team_id,
+                                                          )),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        }
                                       },
                                       child: Text(
                                         'ใช่',

@@ -402,7 +402,9 @@ class _JobCheckNewPageState extends State<JobCheckNewPage> {
       );
 
       // print("data to add inspect is ${_inspec}");
-      Provider.of<PlanData>(context, listen: false).addInspectionTrans(_inspec);
+      // Provider.of<PlanData>(context, listen: false).addInspectionTrans(_inspec);
+      Provider.of<PlanData>(context, listen: false)
+          .addInspectionTransDB(_inspec);
 
       //Navigator.of(context).pop();
     }

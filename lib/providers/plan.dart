@@ -17,8 +17,11 @@ import 'package:flutter_cic_support/models/personcurrentplan.dart';
 import 'package:flutter_cic_support/models/personcurrentplanrepeat.dart';
 import 'package:flutter_cic_support/models/planareagroup.dart';
 import 'package:flutter_cic_support/models/transhistoryemp.dart';
+import 'package:flutter_cic_support/sqlite/inspectionmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
+import 'package:flutter_cic_support/sqlite/dbprovider.dart';
 
 class PlanData extends ChangeNotifier {
   final String url_to_getplanby_person =
@@ -669,6 +672,56 @@ class PlanData extends ChangeNotifier {
       } else {
         listInspectiontrans.add(data); // original line
         print("first new data to add trans");
+      }
+
+      listJobplanArea.forEach((element) {
+        if (element.topic_item_id == data.topic_item_id &&
+            element.plan_area_id == data.area_id) {
+          element.status = "1";
+          element.scored = data.score.toString();
+        } else {
+          //print("no data to add");
+        }
+      });
+
+      notifyListeners();
+      return true;
+    } else {
+      //print("no data to add 2");
+      return false;
+    }
+  }
+
+  Future<bool> addInspectionTransDB(InspectionTrans data) async {
+    if (data != null) {
+      // List<InspectionTransDB> data = [];
+      List<Map<String, dynamic>> queryrow;
+      List<Map<String, dynamic>> queryrowAll;
+
+      String find_topic_item_id = data.topic_item_id;
+      String find_area_id = data.area_id;
+
+      int has_update = 0;
+
+      List<String> tables = await DbProvider.instance.getAllTableNames();
+      print('table all are ${tables}');
+
+      queryrowAll = await DbProvider.instance.readinspectionAll();
+
+      print("All rows is ${queryrowAll.length}");
+
+      queryrow = await DbProvider.instance
+          .readinspectionWithTopic(find_topic_item_id, find_area_id);
+      if (queryrow.length > 0) {
+        print("Update OK");
+        String id_update = queryrow[0]['id'];
+        bool res =
+            await DbProvider.instance.updateTransScore(id_update, data.score);
+        has_update = 1;
+      } else {
+        bool res = await DbProvider.instance.addinspectionWithTopic(data);
+        print("Add new OK");
+        has_update = 0;
       }
 
       listJobplanArea.forEach((element) {
@@ -1806,5 +1859,32 @@ class PlanData extends ChangeNotifier {
     } catch (err) {
       print("error na ja is ${err}");
     }
+  }
+
+  Future<bool> addInspectionTransSqlite(InspectionTransDB data) async {
+    if (data != null) {
+      final topic_item_id = data.topic_item_id;
+      final area_id = data.area_id;
+      int check_id = 0;
+      String new_score = '0';
+      Database db = await DbProvider.instance.database;
+      List<Map> old_data = await db.rawQuery(
+          'SELEC id FROM event_trans WHERE topic_item_id=? AND area_id=?',
+          [topic_item_id, area_id]);
+
+      check_id = int.parse(old_data[0]['id']);
+      if (check_id > 0) {
+        new_score = data.score;
+        final update_id = await db.rawQuery(
+            'UPDATE event_trans SET score=? WHERE id=?', [new_score, check_id]);
+      } else {
+        final save_id = await db.insert('event_trans', data.toJson());
+        return save_id > 0 ? true : false;
+      }
+    } else {
+      return false;
+    }
+
+    return false;
   }
 }

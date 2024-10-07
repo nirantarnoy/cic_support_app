@@ -132,6 +132,7 @@ class MyApp extends StatelessWidget {
                 ProfileNormalPage.routeName: (ctx) => ProfileNormalPage(),
                 StoreissueApprovePage.routeName: (ctx) =>
                     StoreissueApprovePage(team_id: ''),
+                MainPage.routeName: (ctx) => MainPage(),
               },
               builder: EasyLoading.init(),
             );

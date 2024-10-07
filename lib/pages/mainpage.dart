@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
+  static const routeName = 'mainpage';
   @override
   State<MainPage> createState() => _MainPageState();
 }

@@ -330,7 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Icons.arrow_back,
             color: Colors.white,
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.pushNamed(context, "mainpage"),
         ),
         actions: [
           Consumer<UserData>(

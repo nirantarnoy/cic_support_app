@@ -351,8 +351,9 @@ class UserData with ChangeNotifier {
     _authTimer.cancel();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
-    // prefs.remove('token');
-    // prefs.remove('emp_id');
+    prefs.remove('token');
+    prefs.remove('emp_id');
+    prefs.remove('emp_code');
 
     // prefs.remove('username');
     // prefs.remove('userId');

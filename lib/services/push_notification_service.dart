@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:googleapis_auth/auth_io.dart' as auth;
@@ -57,5 +59,40 @@ class PushNotificationService {
         }
       }
     };
+  }
+
+  static sendNotificationToSelectedPerson(
+      String deviceToken, BuildContext context, String tripID) async {
+    final String serverAcessTokenKey = await getAccessToken();
+    String endpointFirebaseCloudMessaging =
+        'https://fcm.googleapis.com/v1/projects/fmcflutter-ed115/messages:send';
+
+    final Map<String, dynamic> message = {
+      'message': {
+        'token': deviceToken,
+        'notification': {
+          'title': "TEST",
+          'body': "Pickup",
+        },
+        'data': {
+          'tripID': 'xxx',
+        }
+      }
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse(endpointFirebaseCloudMessaging),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $serverAcessTokenKey'
+      },
+      body: jsonEncode(message),
+    );
+
+    if (response.statusCode == 200) {
+      print("send success");
+    } else {
+      print("send error");
+    }
   }
 }

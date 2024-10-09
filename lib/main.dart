@@ -18,9 +18,11 @@ import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/providers/topicitem.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_cic_support/services/localnoti.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -30,9 +32,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
 
-  print("Handling a background message: ${message.messageId}");
+  print("Handling a background message: ${message.notification!.body}");
 }
 
 void main() async {
@@ -44,48 +46,74 @@ void main() async {
     Hive.init(dir.path);
     Hive.initFlutter('hive_db');
 
+    print("not is web platform");
+
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions
             .currentPlatform); // flutterfire configure and generate Default option
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    // FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      sound: true,
-    );
+    // NotificationSettings settings = await messaging.requestPermission(
+    //   alert: true,
+    //   announcement: false,
+    //   badge: true,
+    //   carPlay: false,
+    //   criticalAlert: false,
+    //   sound: true,
+    // );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message in the foreground');
-      print('Message data: ${message.data}');
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print('Got a message in the foreground');
+    //   print('Message data: ${message.data}');
 
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-      }
-    });
+    //   if (message.notification != null) {
+    //     print('Message also contained a notification: ${message.notification}');
+    //   }
+    // });
   }
 
   runApp(const MyApp());
-  void configLoading() {
-    EasyLoading.instance
-      ..displayDuration = const Duration(milliseconds: 5000)
-      ..indicatorType = EasyLoadingIndicatorType.fadingCircle
-      ..loadingStyle = EasyLoadingStyle.dark
-      ..indicatorSize = 45.0
-      ..radius = 10.0
-      ..progressColor = Colors.yellow
-      ..backgroundColor = Colors.green
-      ..indicatorColor = Colors.yellow
-      ..textColor = Colors.yellow
-      ..maskColor = Colors.blue.withOpacity(0.5)
-      ..userInteractions = true
-      ..dismissOnTap = false;
-    //..customAnimation = CustomAnimation();
-  }
+  configLoading();
+  setupNotification();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 5000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.green
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = true
+    ..dismissOnTap = false;
+  //..customAnimation = CustomAnimation();
+}
+
+void setupNotification() {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // messaging.getAPNSToken().then((value) {
+  messaging.getToken().then((value) {
+    print('Device token is ${value}');
+  });
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage _msg) {
+    print("message received");
+    print(_msg.notification!.body);
+
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    LocalNoti.initialize(flutterLocalNotificationsPlugin);
+    LocalNoti.showBigTextNotification(
+        title: 'แจ้งเตือน',
+        body: '${_msg.notification!.body}',
+        fln: flutterLocalNotificationsPlugin);
+  });
 }
 
 class MyApp extends StatelessWidget {

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cic_support/main.dart';
 
@@ -16,10 +17,15 @@ class UserData with ChangeNotifier {
 
   final String url_to_login_exclude_dns =
       "https://api.cicsupports.com/api/auth/loginexcludedns";
+  // final String url_to_login_exclude_dns =
+  //     "http://192.168.60.197:1223/api/auth/loginexcludedns";
   final String url_to_update_profile_photo =
       "https://api.cicsupports.com/api/user/updatephoto";
   final String url_to_teammember =
       "https://api.cicsupports.com/api/user/teammember";
+
+  final String url_to_add_device_token =
+      "http://api.cicsupports.com/api/user/adddevicetoken";
 
   late User _authenticatedUser;
   late User _emptyauthenicatedUser;
@@ -393,6 +399,48 @@ class UserData with ChangeNotifier {
     } catch (err) {
       print('has error na ja ${err}');
       return false;
+    }
+  }
+
+  Future<bool> addDeviceToken() async {
+    String _user_id = "";
+    bool _iscompleted = false;
+
+    String? _device_token = await FirebaseMessaging.instance.getToken();
+
+    if (_device_token != null || _device_token != "") {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      _user_id = prefs.getString('user_id') ?? "";
+      final String? token = prefs.getString('token');
+      final Map<String, dynamic> addData = {
+        'user_id': int.parse(_user_id),
+        'device_token': _device_token,
+      };
+      print('device token is ${_device_token}');
+
+      print('data will save device token is ${addData}');
+      try {
+        http.Response response;
+        response = await http.post(Uri.parse(url_to_add_device_token),
+            headers: {
+              "Authorization": token!,
+              'Content-Type': 'application/json'
+            },
+            body: json.encode(addData));
+
+        if (response.statusCode == 200) {
+          Map<String, dynamic> res = json.decode(response.body);
+          print('add device token is ${res}');
+          _iscompleted = true;
+        } else {
+          _iscompleted = false;
+        }
+      } catch (error) {
+        _iscompleted = false;
+      }
+      return _iscompleted;
+    } else {
+      return _iscompleted;
     }
   }
 }

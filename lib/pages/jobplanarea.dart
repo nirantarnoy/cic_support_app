@@ -68,344 +68,8 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   }
 
   Future<int> getAreacheckCount(String area_id) async {
-    int cnt = await DbProvider.instance.countCheckedTopicitem(area_id);
+    int cnt = await DbProvider.instance.countCheckedTopicitemX(area_id);
     return cnt;
-  }
-
-  Widget _buildList(List<JobplanArea> listcheck) {
-    Widget cardlist;
-    if (listcheck.length > 0) {
-      cardlist = ListView.builder(
-          itemCount: listcheck.length,
-          itemBuilder: (BuildContext contex, int index) {
-            return FutureBuilder<int>(
-                future: getAreacheckCount(listcheck[index].plan_area_id),
-                builder: (contex, snapshot) {
-                  if (snapshot.hasData &&
-                      snapshot.connectionState == ConnectionState.done) {
-                    int total_topic =
-                        Provider.of<PlanData>(contex, listen: false)
-                            .countTopicitem(listcheck[index].plan_area_id);
-                    int? total_topic_counted = snapshot.data;
-
-                    Color _bgcolor = Colors.green.shade50;
-                    Color _line_color = Colors.black;
-
-                    if (current_section_code == listcheck[index].section_code) {
-                      _line_color = Colors.red;
-                    }
-                    if (total_topic_counted! <= 0) {
-                      _bgcolor = Colors.green.shade50;
-                    } else if (total_topic_counted > 0 &&
-                        total_topic_counted < total_topic) {
-                      _bgcolor = Color.fromARGB(255, 235, 177, 17);
-                    }
-                    if (total_topic_counted == total_topic) {
-                      _bgcolor = Colors.green.shade400;
-                    }
-                    return Slidable(
-                      key: const ValueKey(0),
-                      enabled:
-                          current_section_code == listcheck[index].section_code
-                              ? false
-                              : true,
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        // dismissible: DismissiblePane(onDismissed: () {}),
-                        children: [
-                          SlidableAction(
-                            onPressed: doNothing,
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Clear',
-                          ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.red,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.delete,
-                          //   label: 'Delete',
-                          // ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.green,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.share,
-                          //   label: 'Share',
-                          // )
-                        ],
-                      ),
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            // flex: 2,
-                            // onPressed:
-                            //     _removecheckeditem(listcheck[index].plan_area_id),
-                            onPressed: (BuildContext context) {
-                              print("you pressed meeee");
-                              _removecheckeditem(listcheck[index].plan_area_id);
-                            },
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Clear',
-                          ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.red,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.delete,
-                          //   label: 'Delete',
-                          // ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.green,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.share,
-                          //   label: 'Share',
-                          // )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: GestureDetector(
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              margin: EdgeInsets.only(top: 1),
-                              decoration: BoxDecoration(
-                                  color: current_section_code ==
-                                          listcheck[index].section_code
-                                      ? Colors.grey.shade300
-                                      : _bgcolor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5))),
-                              child: ListTile(
-                                leading: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.white,
-                                  ),
-                                  child: Center(
-                                      child: current_section_code ==
-                                              listcheck[index].section_code
-                                          ? Icon(
-                                              Icons.home,
-                                              color: Colors.red,
-                                            )
-                                          : Text(
-                                              "${(index + 1).toString()}",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )),
-                                ),
-                                title: Text(
-                                  '${listcheck[index].plan_area_name}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _line_color,
-                                  ),
-                                ),
-                                trailing: Text(
-                                  "${total_topic_counted}/${total_topic}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _line_color,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              current_section_code ==
-                                      listcheck[index].section_code
-                                  ? null
-                                  : Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => JobCheckNewPage(
-                                          plan_area_id:
-                                              listcheck[index].plan_area_id,
-                                          plan_id: listcheck[index].plan_id,
-                                          plan_area_name:
-                                              listcheck[index].plan_area_name,
-                                          plan_num: listcheck[index].plan_num,
-                                        ),
-                                      ),
-                                    );
-                            }),
-                      ),
-                    );
-                  } else {
-                    int total_topic =
-                        Provider.of<PlanData>(contex, listen: false)
-                            .countTopicitem(listcheck[index].plan_area_id);
-                    int total_topic_counted = Provider.of<PlanData>(contex,
-                            listen: false)
-                        .countCheckedTopicitem(listcheck[index].plan_area_id);
-
-                    Color _bgcolor = Colors.green.shade50;
-                    Color _line_color = Colors.black;
-
-                    if (current_section_code == listcheck[index].section_code) {
-                      _line_color = Colors.red;
-                    }
-                    if (total_topic_counted! <= 0) {
-                      _bgcolor = Colors.green.shade50;
-                    } else if (total_topic_counted > 0 &&
-                        total_topic_counted < total_topic) {
-                      _bgcolor = Color.fromARGB(255, 235, 177, 17);
-                    }
-                    if (total_topic_counted == total_topic) {
-                      _bgcolor = Colors.green.shade400;
-                    }
-                    return Slidable(
-                      key: const ValueKey(0),
-                      enabled:
-                          current_section_code == listcheck[index].section_code
-                              ? false
-                              : true,
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        // dismissible: DismissiblePane(onDismissed: () {}),
-                        children: [
-                          SlidableAction(
-                            onPressed: doNothing,
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Clear',
-                          ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.red,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.delete,
-                          //   label: 'Delete',
-                          // ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.green,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.share,
-                          //   label: 'Share',
-                          // )
-                        ],
-                      ),
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            // flex: 2,
-                            // onPressed:
-                            //     _removecheckeditem(listcheck[index].plan_area_id),
-                            onPressed: (BuildContext context) {
-                              print("you pressed meeee");
-                              _removecheckeditem(listcheck[index].plan_area_id);
-                            },
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Clear',
-                          ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.red,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.delete,
-                          //   label: 'Delete',
-                          // ),
-                          // SlidableAction(
-                          //   onPressed: doNothing,
-                          //   backgroundColor: Colors.green,
-                          //   foregroundColor: Colors.white,
-                          //   icon: Icons.share,
-                          //   label: 'Share',
-                          // )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: GestureDetector(
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              margin: EdgeInsets.only(top: 1),
-                              decoration: BoxDecoration(
-                                  color: current_section_code ==
-                                          listcheck[index].section_code
-                                      ? Colors.grey.shade300
-                                      : _bgcolor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5))),
-                              child: ListTile(
-                                leading: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.white,
-                                  ),
-                                  child: Center(
-                                      child: current_section_code ==
-                                              listcheck[index].section_code
-                                          ? Icon(
-                                              Icons.home,
-                                              color: Colors.red,
-                                            )
-                                          : Text(
-                                              "${(index + 1).toString()}",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )),
-                                ),
-                                title: Text(
-                                  '${listcheck[index].plan_area_name}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _line_color,
-                                  ),
-                                ),
-                                trailing: Text(
-                                  "${total_topic_counted}/${total_topic}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _line_color,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              current_section_code ==
-                                      listcheck[index].section_code
-                                  ? null
-                                  : Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => JobCheckNewPage(
-                                          plan_area_id:
-                                              listcheck[index].plan_area_id,
-                                          plan_id: listcheck[index].plan_id,
-                                          plan_area_name:
-                                              listcheck[index].plan_area_name,
-                                          plan_num: listcheck[index].plan_num,
-                                        ),
-                                      ),
-                                    );
-                            }),
-                      ),
-                    );
-                  }
-                });
-          });
-      return cardlist;
-      //return Text('data');
-    } else {
-      return Text('No data');
-    }
   }
 
   // Widget _buildList(List<JobplanArea> listcheck) {
@@ -414,162 +78,328 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   //     cardlist = ListView.builder(
   //         itemCount: listcheck.length,
   //         itemBuilder: (BuildContext contex, int index) {
-  //           int total_topic = Provider.of<PlanData>(contex, listen: false)
-  //               .countTopicitem(listcheck[index].plan_area_id);
-  //           // int total_topic_counted =
-  //           //     Provider.of<PlanData>(contex, listen: false)
-  //           //         .countCheckedTopicitem(listcheck[index].plan_area_id);
+  //           return FutureBuilder<int>(
+  //               future: getAreacheckCount(listcheck[index].plan_area_id),
+  //               builder: (contex, snapshot) {
+  //                 if (snapshot.hasData &&
+  //                     snapshot.connectionState == ConnectionState.done) {
+  //                   int total_topic =
+  //                       Provider.of<PlanData>(contex, listen: false)
+  //                           .countTopicitem(listcheck[index].plan_area_id);
+  //                   int? total_topic_counted = snapshot.data;
 
-  //           int total_topic_counted =
-  //               getAreacheckCount(listcheck[index].plan_area_id);
+  //                   Color _bgcolor = Colors.green.shade50;
+  //                   Color _line_color = Colors.black;
 
-  //           Color _bgcolor = Colors.green.shade50;
-  //           Color _line_color = Colors.black;
-
-  //           if (current_section_code == listcheck[index].section_code) {
-  //             _line_color = Colors.red;
-  //           }
-  //           if (total_topic_counted <= 0) {
-  //             _bgcolor = Colors.green.shade50;
-  //           } else if (total_topic_counted > 0 &&
-  //               total_topic_counted < total_topic) {
-  //             _bgcolor = Color.fromARGB(255, 235, 177, 17);
-  //           }
-  //           if (total_topic_counted == total_topic) {
-  //             _bgcolor = Colors.green.shade400;
-  //           }
-  //           return Slidable(
-  //             key: const ValueKey(0),
-  //             enabled: current_section_code == listcheck[index].section_code
-  //                 ? false
-  //                 : true,
-  //             startActionPane: ActionPane(
-  //               motion: const ScrollMotion(),
-  //               // dismissible: DismissiblePane(onDismissed: () {}),
-  //               children: [
-  //                 SlidableAction(
-  //                   onPressed: doNothing,
-  //                   backgroundColor: Colors.red,
-  //                   foregroundColor: Colors.white,
-  //                   icon: Icons.delete,
-  //                   label: 'Clear',
-  //                 ),
-  //                 // SlidableAction(
-  //                 //   onPressed: doNothing,
-  //                 //   backgroundColor: Colors.red,
-  //                 //   foregroundColor: Colors.white,
-  //                 //   icon: Icons.delete,
-  //                 //   label: 'Delete',
-  //                 // ),
-  //                 // SlidableAction(
-  //                 //   onPressed: doNothing,
-  //                 //   backgroundColor: Colors.green,
-  //                 //   foregroundColor: Colors.white,
-  //                 //   icon: Icons.share,
-  //                 //   label: 'Share',
-  //                 // )
-  //               ],
-  //             ),
-  //             endActionPane: ActionPane(
-  //               motion: const ScrollMotion(),
-  //               children: [
-  //                 SlidableAction(
-  //                   // flex: 2,
-  //                   // onPressed:
-  //                   //     _removecheckeditem(listcheck[index].plan_area_id),
-  //                   onPressed: (BuildContext context) {
-  //                     print("you pressed meeee");
-  //                     _removecheckeditem(listcheck[index].plan_area_id);
-  //                   },
-  //                   backgroundColor: Colors.red,
-  //                   foregroundColor: Colors.white,
-  //                   icon: Icons.delete,
-  //                   label: 'Clear',
-  //                 ),
-  //                 // SlidableAction(
-  //                 //   onPressed: doNothing,
-  //                 //   backgroundColor: Colors.red,
-  //                 //   foregroundColor: Colors.white,
-  //                 //   icon: Icons.delete,
-  //                 //   label: 'Delete',
-  //                 // ),
-  //                 // SlidableAction(
-  //                 //   onPressed: doNothing,
-  //                 //   backgroundColor: Colors.green,
-  //                 //   foregroundColor: Colors.white,
-  //                 //   icon: Icons.share,
-  //                 //   label: 'Share',
-  //                 // )
-  //               ],
-  //             ),
-  //             child: Padding(
-  //               padding: const EdgeInsets.all(5.0),
-  //               child: GestureDetector(
-  //                   child: Container(
-  //                     padding: EdgeInsets.all(5),
-  //                     margin: EdgeInsets.only(top: 1),
-  //                     decoration: BoxDecoration(
-  //                         color: current_section_code ==
-  //                                 listcheck[index].section_code
-  //                             ? Colors.grey.shade300
-  //                             : _bgcolor,
-  //                         borderRadius: BorderRadius.all(Radius.circular(5))),
-  //                     child: ListTile(
-  //                       leading: Container(
-  //                         height: 30,
-  //                         width: 30,
-  //                         decoration: BoxDecoration(
-  //                           borderRadius: BorderRadius.circular(50),
-  //                           color: Colors.white,
+  //                   if (current_section_code == listcheck[index].section_code) {
+  //                     _line_color = Colors.red;
+  //                   }
+  //                   if (total_topic_counted! <= 0) {
+  //                     _bgcolor = Colors.green.shade50;
+  //                   } else if (total_topic_counted > 0 &&
+  //                       total_topic_counted < total_topic) {
+  //                     _bgcolor = Color.fromARGB(255, 235, 177, 17);
+  //                   }
+  //                   if (total_topic_counted == total_topic) {
+  //                     _bgcolor = Colors.green.shade400;
+  //                   }
+  //                   return Slidable(
+  //                     key: const ValueKey(0),
+  //                     enabled:
+  //                         current_section_code == listcheck[index].section_code
+  //                             ? false
+  //                             : true,
+  //                     startActionPane: ActionPane(
+  //                       motion: const ScrollMotion(),
+  //                       // dismissible: DismissiblePane(onDismissed: () {}),
+  //                       children: [
+  //                         SlidableAction(
+  //                           onPressed: doNothing,
+  //                           backgroundColor: Colors.red,
+  //                           foregroundColor: Colors.white,
+  //                           icon: Icons.delete,
+  //                           label: 'Clear',
   //                         ),
-  //                         child: Center(
-  //                             child: current_section_code ==
-  //                                     listcheck[index].section_code
-  //                                 ? Icon(
-  //                                     Icons.home,
-  //                                     color: Colors.red,
-  //                                   )
-  //                                 : Text(
-  //                                     "${(index + 1).toString()}",
-  //                                     style: TextStyle(
-  //                                       color: Colors.black,
-  //                                       fontWeight: FontWeight.bold,
-  //                                     ),
-  //                                   )),
-  //                       ),
-  //                       title: Text(
-  //                         '${listcheck[index].plan_area_name}',
-  //                         style: TextStyle(
-  //                           fontWeight: FontWeight.bold,
-  //                           color: _line_color,
-  //                         ),
-  //                       ),
-  //                       trailing: Text(
-  //                         "${total_topic_counted}/${total_topic}",
-  //                         style: TextStyle(
-  //                           fontWeight: FontWeight.bold,
-  //                           color: _line_color,
-  //                         ),
-  //                       ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.red,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.delete,
+  //                         //   label: 'Delete',
+  //                         // ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.green,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.share,
+  //                         //   label: 'Share',
+  //                         // )
+  //                       ],
   //                     ),
-  //                   ),
-  //                   onTap: () {
-  //                     current_section_code == listcheck[index].section_code
-  //                         ? null
-  //                         : Navigator.of(context).push(
-  //                             MaterialPageRoute(
-  //                               builder: (context) => JobCheckNewPage(
-  //                                 plan_area_id: listcheck[index].plan_area_id,
-  //                                 plan_id: listcheck[index].plan_id,
-  //                                 plan_area_name:
-  //                                     listcheck[index].plan_area_name,
-  //                                 plan_num: listcheck[index].plan_num,
+  //                     endActionPane: ActionPane(
+  //                       motion: const ScrollMotion(),
+  //                       children: [
+  //                         SlidableAction(
+  //                           // flex: 2,
+  //                           // onPressed:
+  //                           //     _removecheckeditem(listcheck[index].plan_area_id),
+  //                           onPressed: (BuildContext context) {
+  //                             print("you pressed meeee");
+  //                             _removecheckeditem(listcheck[index].plan_area_id);
+  //                           },
+  //                           backgroundColor: Colors.red,
+  //                           foregroundColor: Colors.white,
+  //                           icon: Icons.delete,
+  //                           label: 'Clear',
+  //                         ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.red,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.delete,
+  //                         //   label: 'Delete',
+  //                         // ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.green,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.share,
+  //                         //   label: 'Share',
+  //                         // )
+  //                       ],
+  //                     ),
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(5.0),
+  //                       child: GestureDetector(
+  //                           child: Container(
+  //                             padding: EdgeInsets.all(5),
+  //                             margin: EdgeInsets.only(top: 1),
+  //                             decoration: BoxDecoration(
+  //                                 color: current_section_code ==
+  //                                         listcheck[index].section_code
+  //                                     ? Colors.grey.shade300
+  //                                     : _bgcolor,
+  //                                 borderRadius:
+  //                                     BorderRadius.all(Radius.circular(5))),
+  //                             child: ListTile(
+  //                               leading: Container(
+  //                                 height: 30,
+  //                                 width: 30,
+  //                                 decoration: BoxDecoration(
+  //                                   borderRadius: BorderRadius.circular(50),
+  //                                   color: Colors.white,
+  //                                 ),
+  //                                 child: Center(
+  //                                     child: current_section_code ==
+  //                                             listcheck[index].section_code
+  //                                         ? Icon(
+  //                                             Icons.home,
+  //                                             color: Colors.red,
+  //                                           )
+  //                                         : Text(
+  //                                             "${(index + 1).toString()}",
+  //                                             style: TextStyle(
+  //                                               color: Colors.black,
+  //                                               fontWeight: FontWeight.bold,
+  //                                             ),
+  //                                           )),
+  //                               ),
+  //                               title: Text(
+  //                                 '${listcheck[index].plan_area_name}',
+  //                                 style: TextStyle(
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: _line_color,
+  //                                 ),
+  //                               ),
+  //                               trailing: Text(
+  //                                 "${total_topic_counted}/${total_topic}",
+  //                                 style: TextStyle(
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: _line_color,
+  //                                 ),
   //                               ),
   //                             ),
-  //                           );
-  //                   }),
-  //             ),
-  //           );
+  //                           ),
+  //                           onTap: () {
+  //                             current_section_code ==
+  //                                     listcheck[index].section_code
+  //                                 ? null
+  //                                 : Navigator.of(context).push(
+  //                                     MaterialPageRoute(
+  //                                       builder: (context) => JobCheckNewPage(
+  //                                         plan_area_id:
+  //                                             listcheck[index].plan_area_id,
+  //                                         plan_id: listcheck[index].plan_id,
+  //                                         plan_area_name:
+  //                                             listcheck[index].plan_area_name,
+  //                                         plan_num: listcheck[index].plan_num,
+  //                                       ),
+  //                                     ),
+  //                                   );
+  //                           }),
+  //                     ),
+  //                   );
+  //                 } else {
+  //                   int total_topic =
+  //                       Provider.of<PlanData>(contex, listen: false)
+  //                           .countTopicitem(listcheck[index].plan_area_id);
+  //                   int total_topic_counted = Provider.of<PlanData>(contex,
+  //                           listen: false)
+  //                       .countCheckedTopicitem(listcheck[index].plan_area_id);
+
+  //                   Color _bgcolor = Colors.green.shade50;
+  //                   Color _line_color = Colors.black;
+
+  //                   if (current_section_code == listcheck[index].section_code) {
+  //                     _line_color = Colors.red;
+  //                   }
+  //                   if (total_topic_counted! <= 0) {
+  //                     _bgcolor = Colors.green.shade50;
+  //                   } else if (total_topic_counted > 0 &&
+  //                       total_topic_counted < total_topic) {
+  //                     _bgcolor = Color.fromARGB(255, 235, 177, 17);
+  //                   }
+  //                   if (total_topic_counted == total_topic) {
+  //                     _bgcolor = Colors.green.shade400;
+  //                   }
+  //                   return Slidable(
+  //                     key: const ValueKey(0),
+  //                     enabled:
+  //                         current_section_code == listcheck[index].section_code
+  //                             ? false
+  //                             : true,
+  //                     startActionPane: ActionPane(
+  //                       motion: const ScrollMotion(),
+  //                       // dismissible: DismissiblePane(onDismissed: () {}),
+  //                       children: [
+  //                         SlidableAction(
+  //                           onPressed: doNothing,
+  //                           backgroundColor: Colors.red,
+  //                           foregroundColor: Colors.white,
+  //                           icon: Icons.delete,
+  //                           label: 'Clear',
+  //                         ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.red,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.delete,
+  //                         //   label: 'Delete',
+  //                         // ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.green,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.share,
+  //                         //   label: 'Share',
+  //                         // )
+  //                       ],
+  //                     ),
+  //                     endActionPane: ActionPane(
+  //                       motion: const ScrollMotion(),
+  //                       children: [
+  //                         SlidableAction(
+  //                           // flex: 2,
+  //                           // onPressed:
+  //                           //     _removecheckeditem(listcheck[index].plan_area_id),
+  //                           onPressed: (BuildContext context) {
+  //                             print("you pressed meeee");
+  //                             _removecheckeditem(listcheck[index].plan_area_id);
+  //                           },
+  //                           backgroundColor: Colors.red,
+  //                           foregroundColor: Colors.white,
+  //                           icon: Icons.delete,
+  //                           label: 'Clear',
+  //                         ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.red,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.delete,
+  //                         //   label: 'Delete',
+  //                         // ),
+  //                         // SlidableAction(
+  //                         //   onPressed: doNothing,
+  //                         //   backgroundColor: Colors.green,
+  //                         //   foregroundColor: Colors.white,
+  //                         //   icon: Icons.share,
+  //                         //   label: 'Share',
+  //                         // )
+  //                       ],
+  //                     ),
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(5.0),
+  //                       child: GestureDetector(
+  //                           child: Container(
+  //                             padding: EdgeInsets.all(5),
+  //                             margin: EdgeInsets.only(top: 1),
+  //                             decoration: BoxDecoration(
+  //                                 color: current_section_code ==
+  //                                         listcheck[index].section_code
+  //                                     ? Colors.grey.shade300
+  //                                     : _bgcolor,
+  //                                 borderRadius:
+  //                                     BorderRadius.all(Radius.circular(5))),
+  //                             child: ListTile(
+  //                               leading: Container(
+  //                                 height: 30,
+  //                                 width: 30,
+  //                                 decoration: BoxDecoration(
+  //                                   borderRadius: BorderRadius.circular(50),
+  //                                   color: Colors.white,
+  //                                 ),
+  //                                 child: Center(
+  //                                     child: current_section_code ==
+  //                                             listcheck[index].section_code
+  //                                         ? Icon(
+  //                                             Icons.home,
+  //                                             color: Colors.red,
+  //                                           )
+  //                                         : Text(
+  //                                             "${(index + 1).toString()}",
+  //                                             style: TextStyle(
+  //                                               color: Colors.black,
+  //                                               fontWeight: FontWeight.bold,
+  //                                             ),
+  //                                           )),
+  //                               ),
+  //                               title: Text(
+  //                                 '${listcheck[index].plan_area_name}',
+  //                                 style: TextStyle(
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: _line_color,
+  //                                 ),
+  //                               ),
+  //                               trailing: Text(
+  //                                 "${total_topic_counted}/${total_topic}",
+  //                                 style: TextStyle(
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: _line_color,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           onTap: () {
+  //                             current_section_code ==
+  //                                     listcheck[index].section_code
+  //                                 ? null
+  //                                 : Navigator.of(context).push(
+  //                                     MaterialPageRoute(
+  //                                       builder: (context) => JobCheckNewPage(
+  //                                         plan_area_id:
+  //                                             listcheck[index].plan_area_id,
+  //                                         plan_id: listcheck[index].plan_id,
+  //                                         plan_area_name:
+  //                                             listcheck[index].plan_area_name,
+  //                                         plan_num: listcheck[index].plan_num,
+  //                                       ),
+  //                                     ),
+  //                                   );
+  //                           }),
+  //                     ),
+  //                   );
+  //                 }
+  //               });
   //         });
   //     return cardlist;
   //     //return Text('data');
@@ -577,6 +407,177 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
   //     return Text('No data');
   //   }
   // }
+
+  Widget _buildList(List<JobplanArea> listcheck) {
+    print('current section code is ${current_section_code}');
+    Widget cardlist;
+    if (listcheck.length > 0) {
+      cardlist = ListView.builder(
+          itemCount: listcheck.length,
+          itemBuilder: (BuildContext contex, int index) {
+            int total_topic = Provider.of<PlanData>(contex, listen: false)
+                .countTopicitem(listcheck[index].plan_area_id);
+            int total_topic_counted =
+                Provider.of<PlanData>(contex, listen: false)
+                    .countCheckedTopicitem(listcheck[index].plan_area_id);
+
+            // int total_topic_counted =
+            //     getAreacheckCount(listcheck[index].plan_area_id);
+
+            Color _bgcolor = Colors.green.shade50;
+            Color _line_color = Colors.black;
+
+            if (current_section_code == listcheck[index].section_code) {
+              _line_color = Colors.red;
+            }
+            if (total_topic_counted <= 0) {
+              _bgcolor = Colors.green.shade50;
+            } else if (total_topic_counted > 0 &&
+                total_topic_counted < total_topic) {
+              _bgcolor = Color.fromARGB(255, 235, 177, 17);
+            }
+            if (total_topic_counted == total_topic) {
+              _bgcolor = Colors.green.shade400;
+            }
+            return Slidable(
+              key: const ValueKey(0),
+              enabled: current_section_code == listcheck[index].section_code
+                  ? false
+                  : true,
+              startActionPane: ActionPane(
+                motion: const ScrollMotion(),
+                // dismissible: DismissiblePane(onDismissed: () {}),
+                children: [
+                  SlidableAction(
+                    onPressed: doNothing,
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Clear',
+                  ),
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.red,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.delete,
+                  //   label: 'Delete',
+                  // ),
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.green,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.share,
+                  //   label: 'Share',
+                  // )
+                ],
+              ),
+              endActionPane: ActionPane(
+                motion: const ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    // flex: 2,
+                    // onPressed:
+                    //     _removecheckeditem(listcheck[index].plan_area_id),
+                    onPressed: (BuildContext context) {
+                      print("you pressed meeee");
+                      _removecheckeditem(listcheck[index].plan_area_id);
+                    },
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Clear',
+                  ),
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.red,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.delete,
+                  //   label: 'Delete',
+                  // ),
+                  // SlidableAction(
+                  //   onPressed: doNothing,
+                  //   backgroundColor: Colors.green,
+                  //   foregroundColor: Colors.white,
+                  //   icon: Icons.share,
+                  //   label: 'Share',
+                  // )
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: GestureDetector(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.only(top: 1),
+                      decoration: BoxDecoration(
+                          color: current_section_code ==
+                                  listcheck[index].section_code
+                              ? Colors.grey.shade300
+                              : _bgcolor,
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                      child: ListTile(
+                        leading: Container(
+                          height: 30,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Colors.white,
+                          ),
+                          child: Center(
+                              child: current_section_code ==
+                                      listcheck[index].section_code
+                                  ? Icon(
+                                      Icons.home,
+                                      color: Colors.red,
+                                    )
+                                  : Text(
+                                      "${(index + 1).toString()}",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )),
+                        ),
+                        title: Text(
+                          '${listcheck[index].plan_area_name}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: _line_color,
+                          ),
+                        ),
+                        trailing: Text(
+                          "${total_topic_counted}/${total_topic}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: _line_color,
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      current_section_code == listcheck[index].section_code
+                          ? null
+                          : Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => JobCheckNewPage(
+                                  plan_area_id: listcheck[index].plan_area_id,
+                                  plan_id: listcheck[index].plan_id,
+                                  plan_area_name:
+                                      listcheck[index].plan_area_name,
+                                  plan_num: listcheck[index].plan_num,
+                                ),
+                              ),
+                            );
+                    }),
+              ),
+            );
+          });
+      return cardlist;
+      //return Text('data');
+    } else {
+      return Text('No data');
+    }
+  }
 
   void doNothing(BuildContext context) {}
   dynamic _removecheckeditem(String area_id) {

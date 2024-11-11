@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StoreissueData extends ChangeNotifier {
   final String url_issue_list =
       "https://api.cicsupports.com/api/storeissue/listbyemp";
+  // final String url_issue_list =
+  //     "http://192.168.60.197:1223/api/storeissue/listbyemp";
   final String url_issue_list_detail =
       "https://api.cicsupports.com/api/storeissue/fetchissuedetail";
 

@@ -35,7 +35,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String current_username = "";
   String display_url =
-      "http://172.16.0.231/cicsupport/backend/web/photo_uploads/"; //http://cic-support.net/uploads/
+      "https://img.cicsupports.com/profile/"; //http://cic-support.net/uploads/
   String display_photo = "";
   String display_section_code = "";
 
@@ -307,9 +307,11 @@ class _ProfilePageState extends State<ProfilePage> {
         Provider.of<UserData>(context, listen: false).getCurrenUserPhoto();
     display_photo = display_url + display_photo;
 
+    //print('photo profile is ${display_photo}');
+
     display_section_code =
         Provider.of<UserData>(context, listen: false).getCurrenUserSection();
-    //print("image is ${display_photo}");
+    // print("image is ${display_photo}");
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 45, 172, 123),
@@ -452,7 +454,90 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 5,
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Row(children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 50,
+                          child: Column(
+                            children: [
+                              Center(child: Text('5s.')),
+                              Center(
+                                child: Text(
+                                  '10',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 50,
+                          child: Column(
+                            children: [
+                              Center(child: Text('Safety')),
+                              Center(
+                                child: Text(
+                                  '10',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 50,
+                          child: Column(
+                            children: [
+                              Center(child: Text('Kaizen')),
+                              Center(
+                                child: Text(
+                                  '5',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
                 ),
                 Expanded(
                   flex: 5,

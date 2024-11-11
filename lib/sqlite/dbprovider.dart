@@ -121,7 +121,7 @@ class DbProvider {
     return true;
   }
 
-  Future<int> countCheckedTopicitem(String area_id) async {
+  Future<int> countCheckedTopicitemX(String area_id) async {
     Database db = await instance.database;
     int cnt = 0;
     final result = await db.rawQuery(

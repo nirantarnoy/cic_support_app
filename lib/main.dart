@@ -29,6 +29,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:hive_flutter/hive_flutter.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -52,7 +53,14 @@ void main() async {
         options: DefaultFirebaseOptions
             .currentPlatform); // flutterfire configure and generate Default option
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    // FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        print("have data from firebase");
+        navigatorKey.currentState!.pushNamed("storeissueapprove");
+      }
+    });
+    //FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     // NotificationSettings settings = await messaging.requestPermission(
     //   alert: true,
@@ -95,8 +103,18 @@ void configLoading() {
   //..customAnimation = CustomAnimation();
 }
 
-void setupNotification() {
+void setupNotification() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  await messaging.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
   // messaging.getAPNSToken().then((value) {
   messaging.getToken().then((value) {
     print('Device token is ${value}');

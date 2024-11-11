@@ -692,7 +692,7 @@ class PlanData extends ChangeNotifier {
     }
   }
 
-  Future<bool> addInspectionTransDB(InspectionTrans data) async {
+  Future<bool> addInspectionTransDBX(InspectionTrans data) async {
     if (data != null) {
       // List<InspectionTransDB> data = [];
       List<Map<String, dynamic>> queryrow;

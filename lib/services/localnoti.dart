@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/main.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNoti {
@@ -18,9 +20,17 @@ class LocalNoti {
       iOS: IOSInitialize,
     );
 
+    // await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    //     onDidReceiveNotificationResponse:
+    //         (NotificationResponse notificationReasponse) async {});
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
-            (NotificationResponse notificationReasponse) async {});
+            (NotificationResponse notificationReasponse) async {},
+        onDidReceiveBackgroundNotificationResponse: onNotificationTap);
+  }
+
+  static void onNotificationTap(NotificationResponse notificationResponse) {
+    navigatorKey.currentState!.pushNamed("storeissueapprove");
   }
 
   static Future showBigTextNotification(

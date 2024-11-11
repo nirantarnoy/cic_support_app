@@ -63,6 +63,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void _registerDevice() async {
+    await Provider.of<UserData>(context, listen: false)
+        .addDeviceToken(); // register device token
+  }
+
   void _submitForm(Function login) async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -75,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
         .login(_formData['username'], _formData['password']);
 
     if (res == true) {
+      _registerDevice();
       if (isChecked) {
         box1.put('username', _formData['username']);
         box1.put('password', _formData['password']);
@@ -88,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
           .loginExcludeDNS(_formData['username'], _formData['password']);
 
       if (res2 == true) {
+        _registerDevice();
         if (isChecked) {
           box1.put('username', _formData['username']);
           box1.put('password', _formData['password']);
@@ -279,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 5,
           ),
           Text(
-            'Release date 26-09-2024',
+            'Release date 25-10-2024',
             style: TextStyle(color: Colors.grey.withOpacity(0.8)),
           ),
         ],

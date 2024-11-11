@@ -241,7 +241,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                         ],
                       ),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 45, 172, 123),
+                          primary: Color.fromARGB(255, 45, 172, 123),
                           minimumSize: const Size.fromHeight(50)),
                     ),
                   ),
@@ -263,7 +263,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                         ],
                       ),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 45, 172, 123),
+                          primary: Color.fromARGB(255, 45, 172, 123),
                           minimumSize: const Size.fromHeight(50)),
                     ),
                   ),

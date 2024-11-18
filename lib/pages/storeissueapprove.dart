@@ -40,8 +40,9 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
 
   Widget _buildlist(List<Storeissue> _listcheck) {
     DateFormat dateformatter = DateFormat('dd-MM-yyyy hh:ss');
+    // print("list len is ${_listcheck.length}");
     Widget cards;
-    if (_listcheck.length > 0) {
+    if (_listcheck.isNotEmpty) {
       cards = RefreshIndicator(
         onRefresh: _getNewdata,
         child: new ListView.builder(
@@ -54,6 +55,7 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
                       MaterialPageRoute(
                           builder: (context) => StoreissuedetailPage(
                                 issue_id: _listcheck[index].id,
+                                team_id: widget.team_id,
                               ))),
                   child: ListTile(
                     leading: Icon(
@@ -87,7 +89,7 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
 
       return cards;
     } else {
-      return Center(child: Text("No Data"));
+      return Center(child: Text("ไม่พบรายการ"));
     }
   }
 
@@ -99,8 +101,9 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
             icon: Icon(Icons.arrow_back),
             color: Colors.white,
             onPressed: () {
-              widget.team_id == ''
-                  ? Navigator.of(context).pushNamed("profilenormal")
+              widget.team_id == ""
+                  ? Navigator.of(context).pushNamedAndRemoveUntil(
+                      "profilenormal", (Route<dynamic> route) => false)
                   : Navigator.of(context).pushNamed("profile");
             }),
         title: Consumer<UserData>(

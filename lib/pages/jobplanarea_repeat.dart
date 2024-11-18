@@ -284,7 +284,8 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
           Expanded(
             flex: 5,
             child: Consumer<PlanData>(
-              builder: ((context, _plans, _) => _plans.finishedcheck > 0
+              //  builder: ((context, _plans, _) => _plans.finishedcheck > 0
+              builder: ((context, _plans, _) => 0 > 0
                   ? Center(
                       child: Column(
                         children: <Widget>[
@@ -324,7 +325,8 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
           ),
           //_plans.checkfinish()
           Consumer<PlanData>(
-            builder: ((context, _plans, _) => _plans.finishedcheck <= 0
+            // builder: ((context, _plans, _) => _plans.finishedcheck <= 0
+            builder: ((context, _plans, _) => 0 <= 0
                 ? Container(
                     height: 50,
                     width: double.infinity,

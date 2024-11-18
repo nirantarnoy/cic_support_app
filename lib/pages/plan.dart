@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_cic_support/models/personcurrentplanrepeat.dart';
 import 'package:flutter_cic_support/pages/jobplanarea_repeat.dart';
+import 'package:flutter_cic_support/sqlite/dbprovider.dart';
 import 'package:intl/intl.dart';
 import 'package:cell_calendar/cell_calendar.dart';
 import 'package:flutter/cupertino.dart';
@@ -95,6 +96,9 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
             // print("inspection type is ${listplan[index].inspection_type_id}");
             return Card(
               child: GestureDetector(
+                onLongPress: () async {
+                  await DbProvider.instance.clearTransData();
+                },
                 onTap: () => Navigator.push(context,
                     MaterialPageRoute(builder: (context) => JobplanAreaPage())),
                 child: ListTile(

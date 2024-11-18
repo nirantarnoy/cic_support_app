@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StoreissueData extends ChangeNotifier {
   final String url_issue_list =
       "https://api.cicsupports.com/api/storeissue/listbyemp";
+  // final String url_issue_list =
+  //     "http://192.168.60.197:1223/api/storeissue/listbyemp";
   final String url_issue_list_detail =
       "https://api.cicsupports.com/api/storeissue/fetchissuedetail";
 
@@ -31,6 +33,7 @@ class StoreissueData extends ChangeNotifier {
   }
 
   Future<dynamic> fetchIssuelist() async {
+    listIssue = [];
     notifyListeners();
 
     final pref = await SharedPreferences.getInstance();
@@ -54,6 +57,7 @@ class StoreissueData extends ChangeNotifier {
           print('no data');
         } else {
           print(res);
+          // listIssue.clear();
           // print("ok");
           for (var i = 0; i < res.length; i++) {
             final Storeissue personRes = Storeissue(
@@ -68,10 +72,14 @@ class StoreissueData extends ChangeNotifier {
           }
 
           listIssue = data;
+          notifyListeners();
           return listIssue;
         }
       } else {
         print('error');
+        listIssue.clear();
+        notifyListeners();
+        return listIssue;
       }
     } catch (err) {
       print("error naja is ${err}");
@@ -79,6 +87,7 @@ class StoreissueData extends ChangeNotifier {
   }
 
   Future<dynamic> fetchIssueline(String _issueid) async {
+    listIssueLine = [];
     notifyListeners();
 
     final pref = await SharedPreferences.getInstance();
@@ -100,6 +109,11 @@ class StoreissueData extends ChangeNotifier {
           print('no data');
         } else {
           print(res);
+          if (res.length == 0) {
+            listIssue.clear();
+            notifyListeners();
+            return listIssue;
+          }
           // print("ok");
           for (var i = 0; i < res.length; i++) {
             final Storeissueline personRes = Storeissueline(
@@ -118,7 +132,9 @@ class StoreissueData extends ChangeNotifier {
           return listIssueLine;
         }
       } else {
-        print('error');
+        listIssue.clear();
+        notifyListeners();
+        return listIssue;
       }
     } catch (err) {
       print("error naja is ${err}");

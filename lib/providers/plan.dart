@@ -62,6 +62,8 @@ class PlanData extends ChangeNotifier {
 
   final String url_to_bigplan_by_team =
       "https://api.cicsupports.com/api/plan/findbigcleanplan";
+  // final String url_to_bigplan_by_team =
+  //     "http://192.168.60.192:1223/api/plan/findbigcleanplan";
 
   final String url_to_add_bigclean_inspection_trans =
       "https://api.cicsupports.com/api/plan/addinspection";
@@ -1127,6 +1129,7 @@ class PlanData extends ChangeNotifier {
     notifyListeners();
 
     print('current bigclean team is ${team_id}');
+    print('data will save is ${filterData}');
 
     //listJobplanArea.clear();
     //if (listBigplanArea.length == 0) {
@@ -1448,7 +1451,7 @@ class PlanData extends ChangeNotifier {
 
   Future<bool> submitInspection(String action_type_id) async {
     print("list data is ${listInspectiontrans[0].area_id}");
-    // return false;
+    //return false;
     if (listInspectiontrans.isNotEmpty) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String user_id = prefs.getString("user_id").toString();

@@ -14,6 +14,7 @@ import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
+import 'package:flutter_cic_support/providers/securityplan.dart';
 import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/providers/topicitem.dart';
@@ -149,7 +150,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<CarData>.value(value: CarData()),
           ChangeNotifierProvider<TeamnotifyData>.value(value: TeamnotifyData()),
           ChangeNotifierProvider<PersonData>.value(value: PersonData()),
-          ChangeNotifierProvider<StoreissueData>.value(value: StoreissueData())
+          ChangeNotifierProvider<StoreissueData>.value(value: StoreissueData()),
+          ChangeNotifierProvider<SecurityplanData>.value(
+              value: SecurityplanData())
         ],
         child: Consumer<UserData>(
           builder: (context, _users, _) {

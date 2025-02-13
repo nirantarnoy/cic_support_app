@@ -15,10 +15,10 @@ class UserData with ChangeNotifier {
   final String url_to_login = "https://api.cicsupports.com/api/auth/login";
   final String url_to_profile = "https://api.cicsupports.com/api/user/profile";
 
-  final String url_to_login_exclude_dns =
-      "https://api.cicsupports.com/api/auth/loginexcludedns";
   // final String url_to_login_exclude_dns =
-  //     "http://192.168.60.197:1223/api/auth/loginexcludedns";
+  //     "https://api.cicsupports.com/api/auth/loginexcludedns";
+  final String url_to_login_exclude_dns =
+      "http://192.168.60.196:1223/api/auth/loginexcludedns";
   final String url_to_update_profile_photo =
       "https://api.cicsupports.com/api/user/updatephoto";
   final String url_to_teammember =
@@ -179,6 +179,7 @@ class UserData with ChangeNotifier {
               res['data']['lname'].toString(),
           team_id: "",
           bigclean_team_id: "",
+          emp_key: res['data']['emp_ref_id'].toString(),
         );
 
         data.add(user);
@@ -191,6 +192,7 @@ class UserData with ChangeNotifier {
         prefs.setString('emp_code', res['data']['emp_code'].toString());
         prefs.setString('user_name', res['data']['dns_user'].toString());
         prefs.setString('team_id', res['data']['current_team_id'].toString());
+        prefs.setString('emp_key', res['data']['emp_ref_id'].toString());
         prefs.setString('bigclean_team_id',
             res['data']['bigclean_current_team_id'].toString());
 
@@ -198,8 +200,10 @@ class UserData with ChangeNotifier {
         empfullname = res['data']['fname'] + " " + res['data']['lname'];
         prefs.setString('expiryTime', expiryTime.toIso8601String());
 
-        print("res data is ${res['data']}");
-        print("token is ${res['data']['token']}");
+        // print("res data is ${res['data']}");
+        // print("token is ${res['data']['token']}");
+
+        print("emp key is ${res['data']['emp_ref_id'].toString()}");
         return true;
       } else {
         print(response.body);
@@ -263,6 +267,7 @@ class UserData with ChangeNotifier {
         photo_display = res['data']['photo'].toString();
         section_display = res['data']['section_code'].toString();
         prefs.setString('emp_code', res['data']['emp_code'].toString());
+        prefs.setString('emp_key', res['data']['emp_key'].toString());
 
         prefs.setString('team_id', res['data']['current_team_id'].toString());
         prefs.setString('bigclean_team_id',

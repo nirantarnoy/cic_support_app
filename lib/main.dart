@@ -10,11 +10,13 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/profile.dart';
 import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/pages/securitypoint.dart';
+import 'package:flutter_cic_support/pages/shirtorderpage.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_cic_support/providers/securityplan.dart';
+import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/providers/topicitem.dart';
@@ -152,7 +154,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<PersonData>.value(value: PersonData()),
           ChangeNotifierProvider<StoreissueData>.value(value: StoreissueData()),
           ChangeNotifierProvider<SecurityplanData>.value(
-              value: SecurityplanData())
+              value: SecurityplanData()),
+          ChangeNotifierProvider<ShirtempData>.value(value: ShirtempData())
         ],
         child: Consumer<UserData>(
           builder: (context, _users, _) {
@@ -182,6 +185,7 @@ class MyApp extends StatelessWidget {
                 StoreissueApprovePage.routeName: (ctx) =>
                     StoreissueApprovePage(team_id: ''),
                 MainPage.routeName: (ctx) => MainPage(),
+                ShirtorderPage.routeName: (ctx) => ShirtorderPage(),
               },
               builder: EasyLoading.init(),
             );

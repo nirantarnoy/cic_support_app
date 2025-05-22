@@ -5,9 +5,11 @@ import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_cic_support/services/localnoti.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity/connectivity.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = "loginpage";
@@ -25,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordText = TextEditingController();
 
   bool isChecked = false;
+  bool _networkisok = false;
 
   late Box box1;
 
@@ -34,9 +37,42 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     //Provider.of<PersonData>(context, listen: false).fetchPerson();
+    _checkInternet();
     createBox();
     // LocalNoti.initialize(flutterLocalNotificationsPlugin);
     super.initState();
+  }
+
+  Future<void> _checkInternet() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      setState(() {
+        _networkisok = false;
+      });
+      //_showConnectionFail();
+    } else {
+      setState(() {
+        _networkisok = true;
+      });
+    }
+  }
+
+  void _showConnectionFail() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('No Internet Connection'),
+        content: Text('Please check your internet connection'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
   }
 
   void shownoti() {
@@ -76,8 +112,10 @@ class _LoginPageState extends State<LoginPage> {
 
     // bool res = await Provider.of<UserData>(context, listen: false)
     //     .login('donpisit.s', 'Tara0874038565');
+    EasyLoading.show(status: "กําลังเข้าสู่ระบบ");
     bool res = await Provider.of<UserData>(context, listen: false)
         .login(_formData['username'], _formData['password']);
+    EasyLoading.dismiss();
 
     if (res == true) {
       _registerDevice();
@@ -181,116 +219,132 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RichText(
-                  text: const TextSpan(children: [
-                TextSpan(
-                  text: "CIC",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.grey,
-                        blurRadius: 8.0,
-                      ),
-                    ],
-                  ),
-                ),
-                TextSpan(
-                  text: "SUPPORT",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 45, 172, 123),
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.grey,
-                        blurRadius: 8.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ])),
-            ],
-          ),
-          const SizedBox(
-            height: 50,
-          ),
-          Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  buildUsernameField(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  buildPasswordField(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  builRememberMe(),
-                ],
-              )),
-          const SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 45, 172, 123),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Material(
-                child: InkWell(
-                  onTap: () => _submitForm(users.login),
-                  // onTap: () {
-                  //   shownoti();
-                  // },
-                  child: Container(
-                    width: double.infinity,
-                    height: 60,
-                    child: const Center(
-                      child: Text(
-                        "Login",
+      body: _networkisok
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RichText(
+                        text: const TextSpan(children: [
+                      TextSpan(
+                        text: "CIC",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
+                          color: Colors.black,
+                          fontSize: 30,
                           fontWeight: FontWeight.bold,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(1, 1),
+                              color: Colors.grey,
+                              blurRadius: 8.0,
+                            ),
+                          ],
                         ),
                       ),
+                      TextSpan(
+                        text: "SUPPORT",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 45, 172, 123),
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(1, 1),
+                              color: Colors.grey,
+                              blurRadius: 8.0,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ])),
+                  ],
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        buildUsernameField(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        buildPasswordField(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        builRememberMe(),
+                      ],
+                    )),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 45, 172, 123),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Material(
+                      child: InkWell(
+                        onTap: () => _submitForm(users.login),
+                        // onTap: () {
+                        //   shownoti();
+                        // },
+                        child: Container(
+                          width: double.infinity,
+                          height: 60,
+                          child: const Center(
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      color: Colors.transparent,
                     ),
                   ),
                 ),
-                color: Colors.transparent,
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Build version 1.2',
+                  style: TextStyle(color: Colors.grey.withOpacity(0.8)),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Release date 22-05-2025',
+                  style: TextStyle(color: Colors.grey.withOpacity(0.8)),
+                ),
+              ],
+            )
+          : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Center(
+                child: Icon(
+                  Icons.error,
+                  color: Colors.red[300],
+                  size: 100,
+                ),
               ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Build version 1.0',
-            style: TextStyle(color: Colors.grey.withOpacity(0.8)),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            'Release date 26-12-2024',
-            style: TextStyle(color: Colors.grey.withOpacity(0.8)),
-          ),
-        ],
-      ),
+              Center(
+                child: Text(
+                  'ไม่สามารถเชื่อมต่อกับเซิฟเวอร์ได้ ตรวจสอบการเชื่อมต่ออินเตอร์เน็ต',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ]),
     );
   }
 

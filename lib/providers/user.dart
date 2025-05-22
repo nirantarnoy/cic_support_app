@@ -15,14 +15,18 @@ class UserData with ChangeNotifier {
   final String url_to_login = "https://api.cicsupports.com/api/auth/login";
   final String url_to_profile = "https://api.cicsupports.com/api/user/profile";
 
-  // final String url_to_login_exclude_dns =
-  //     "https://api.cicsupports.com/api/auth/loginexcludedns";
   final String url_to_login_exclude_dns =
-      "http://192.168.60.196:1223/api/auth/loginexcludedns";
+      "https://api.cicsupports.com/api/auth/loginexcludedns";
+  // final String url_to_login_exclude_dns =
+  //     "http://192.168.60.196:1223/api/auth/loginexcludedns";
   final String url_to_update_profile_photo =
       "https://api.cicsupports.com/api/user/updatephoto";
+  final String url_to_update_profile_photo_normal =
+      "https://api.cicsupports.com/api/user/updatephotonormal";
   final String url_to_teammember =
       "https://api.cicsupports.com/api/user/teammember";
+  final String url_to_teamsafetymember =
+      "https://api.cicsupports.com/api/user/teamsafetymember";
 
   final String url_to_add_device_token =
       "http://api.cicsupports.com/api/user/adddevicetoken";
@@ -37,9 +41,18 @@ class UserData with ChangeNotifier {
   // List<User> get listuserlogin => _userlogin;
   bool _isLoading = false;
   bool _isauthenuser = false;
+  int _isUniformSelected = 0;
+  int _emp_salary_type = 0;
+  int _emp_level = 0;
+  int _emp_gender = 0;
+  int _emp_shirt_qty = 0;
+  int _userlogin_type = 0;
 
   late List<TeamMember> _memberTeam = [];
   List<TeamMember> get listmemberteam => _memberTeam;
+
+  late List<TeamMember> _memberSafetyTeam = [];
+  List<TeamMember> get listmembersafetyteam => _memberSafetyTeam;
 
   late String _username_display = '';
   String get username_display => _username_display;
@@ -58,6 +71,27 @@ class UserData with ChangeNotifier {
 
   late String _empfullname = '';
   String get empfullname => _empfullname;
+
+  int get unitformSelected => _isUniformSelected;
+
+  int get empsalarytype => _emp_salary_type;
+
+  int get emplevel => _emp_level;
+
+  int get empgender => _emp_gender;
+
+  int get empshirtqty => _emp_shirt_qty;
+
+  int _emp_department_id = 0;
+  int get empdepartmentid => _emp_department_id;
+
+  int get userlogintype => _userlogin_type;
+
+  String _emp_department_name = '';
+  String get emp_department_name => _emp_department_name;
+
+  String _emp_position_name = '';
+  String get emppositionname => _emp_position_name;
 
   set empfullname(String val) {
     _empfullname = val;
@@ -85,6 +119,46 @@ class UserData with ChangeNotifier {
 
   set listmemberteam(List<TeamMember> val) {
     _memberTeam = val;
+  }
+
+  set listmembersafetyteam(List<TeamMember> val) {
+    _memberSafetyTeam = val;
+  }
+
+  set unitformSelected(int val) {
+    _isUniformSelected = val;
+  }
+
+  set empsalarytype(int val) {
+    _emp_salary_type = val;
+  }
+
+  set emplevel(int val) {
+    _emp_level = val;
+  }
+
+  set empdepartmentid(int val) {
+    _emp_department_id = val;
+  }
+
+  set empdepartmentname(String val) {
+    _emp_department_name = val;
+  }
+
+  set emppositionname(String val) {
+    _emp_position_name = val;
+  }
+
+  set empgender(int val) {
+    _emp_gender = val;
+  }
+
+  set empshirtqty(int val) {
+    _emp_shirt_qty = val;
+  }
+
+  set userlogintype(int val) {
+    _userlogin_type = val;
   }
 
   Future<dynamic> login(String username, String pwd) async {
@@ -132,8 +206,11 @@ class UserData with ChangeNotifier {
         username_display = res['data']['dns_user'].toString();
         prefs.setString('expiryTime', expiryTime.toIso8601String());
 
+        userlogintype = 1; // AD User
+
         print("res data is ${res['data']}");
         print("token is ${res['data']['token']}");
+
         return true;
       } else {
         print(response.body);
@@ -169,7 +246,7 @@ class UserData with ChangeNotifier {
         }
 
         if (res['data']['level_type_id'] == 3) {
-          return false;
+          // return false;
         }
 
         final Person user = Person(
@@ -193,6 +270,12 @@ class UserData with ChangeNotifier {
         prefs.setString('user_name', res['data']['dns_user'].toString());
         prefs.setString('team_id', res['data']['current_team_id'].toString());
         prefs.setString('emp_key', res['data']['emp_ref_id'].toString());
+        prefs.setString('salary_type', res['data']['salary_type'].toString());
+        prefs.setString(
+            'department_id', res['data']['department_id'].toString());
+        prefs.setString('position_id', res['data']['position_id'].toString());
+        prefs.setString(
+            'position_name', res['data']['position_name'].toString());
         prefs.setString('bigclean_team_id',
             res['data']['bigclean_current_team_id'].toString());
 
@@ -200,10 +283,23 @@ class UserData with ChangeNotifier {
         empfullname = res['data']['fname'] + " " + res['data']['lname'];
         prefs.setString('expiryTime', expiryTime.toIso8601String());
 
-        // print("res data is ${res['data']}");
+        print("res data is ${res['data']}");
         // print("token is ${res['data']['token']}");
 
         print("emp key is ${res['data']['emp_ref_id'].toString()}");
+
+        unitformSelected = res['data']['uniform_selected'];
+        empsalarytype = res['data']['salary_type'];
+        emplevel = res['data']['level_type_id'];
+        empdepartmentid = int.parse(res['data']['department_id'].toString());
+        emppositionname = res['data']['position_name'].toString();
+        empgender = res['data']['emp_gender'];
+        empshirtqty = res['data']['shirt_qty'];
+
+        photo_display = '';
+
+        userlogintype = 2; // Employee
+
         return true;
       } else {
         print(response.body);
@@ -244,6 +340,7 @@ class UserData with ChangeNotifier {
     final String token = prefs.getString("token").toString();
     final String user_ad = prefs.getString("user_name").toString();
 
+    photo_display = '';
     try {
       http.Response response;
       response = await http.get(
@@ -260,7 +357,7 @@ class UserData with ChangeNotifier {
           return false;
         }
 
-        print("profile team new data is ${res['data']}");
+        //print("profile team new data is ${res['data']}");
 
         team_display = res['data']['current_team_id'].toString();
         team_safety_display = res['data']['current_safety_team_id'].toString();
@@ -274,6 +371,15 @@ class UserData with ChangeNotifier {
             res['data']['current_bigclean_team_id'].toString());
         prefs.setString(
             'team_safety_id', res['data']['current_safety_team_id'].toString());
+
+        empsalarytype = res['data']['salary_type'];
+        emplevel = res['data']['level_type_id'];
+        empdepartmentid = int.parse(res['data']['department_id'].toString());
+        emppositionname = res['data']['position_name'].toString();
+        empgender = res['data']['emp_gender'];
+        empshirtqty = res['data']['shirt_qty'];
+        print('emp photo profile is ${photo_display}');
+
         notifyListeners();
         return true;
       } else {
@@ -319,6 +425,49 @@ class UserData with ChangeNotifier {
         notifyListeners();
         print("data is ${data[0].fname}");
         return listmemberteam;
+      } else {
+        print(response.body);
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<dynamic> findTeamSafetyMember() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token").toString();
+    final String safety_team_id = prefs.getString("team_safety_id").toString();
+
+    try {
+      http.Response response;
+      response = await http.get(
+        Uri.parse(url_to_teamsafetymember + "/" + safety_team_id),
+        headers: {'Authorization': token},
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> res = json.decode(response.body);
+        List<TeamMember> data = [];
+
+        if (res == null) {
+          notifyListeners();
+          return false;
+        }
+        print("member safety team data is ${res}");
+
+        for (var i = 0; i <= res.length - 1; i++) {
+          TeamMember _item = TeamMember(
+            current_team_id: res[i]['current_safety_team_id'].toString(),
+            fname: res[i]['fname'].toString(),
+            lname: res[i]['lname'].toString(),
+            team_leader: res[i]['is_head'].toString(),
+          );
+          data.add(_item);
+        }
+        listmembersafetyteam = data;
+        notifyListeners();
+        //  print("data is ${data[0].fname}");
+        return listmembersafetyteam;
       } else {
         print(response.body);
       }
@@ -388,11 +537,40 @@ class UserData with ChangeNotifier {
       'profile_photo': profilephoto,
       'ad_user': user_ad.toString(),
     };
-    //print('photo profile are ${json.encode(photoJson)}');
+    print('photo profile are ${json.encode(photoJson)}');
     print('user id is ${user_ad}');
     try {
       http.Response response;
       response = await http.post(Uri.parse(url_to_update_profile_photo),
+          headers: {"Authorization": token, 'Content-Type': 'application/json'},
+          body: json.encode(insertData));
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      print('has error na ja ${err}');
+      return false;
+    }
+  }
+
+  Future<dynamic> updatePhotoprofilenormal(List<String> profilephoto) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String emp_key = prefs.getString("emp_key").toString();
+    final String token = prefs.getString("token").toString();
+
+    final photoJson = profilephoto.map((e) => {'photo': e}).toList();
+    final Map<String, dynamic> insertData = {
+      'profile_photo': profilephoto,
+      'emp_ref_id': emp_key.toString(),
+    };
+    print('photo profile are ${json.encode(photoJson)}');
+    print('emp key id is ${emp_key}');
+    try {
+      http.Response response;
+      response = await http.post(Uri.parse(url_to_update_profile_photo_normal),
           headers: {"Authorization": token, 'Content-Type': 'application/json'},
           body: json.encode(insertData));
 

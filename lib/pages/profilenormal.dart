@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/storeissue.dart';
 import 'package:flutter_cic_support/pages/bigcleanarea.dart';
@@ -16,11 +17,15 @@ import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
 import 'package:flutter_cic_support/pages/securitycheckarea.dart';
+import 'package:flutter_cic_support/pages/shirtemp.dart';
+import 'package:flutter_cic_support/pages/shirtorderinform.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
+import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:googleapis/mybusinesslodging/v1.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,10 +40,12 @@ class ProfileNormalPage extends StatefulWidget {
 
 class _ProfileNormalPageState extends State<ProfileNormalPage> {
   String current_username = "";
-  String display_url =
-      "http://172.16.0.231/cicsupport/backend/web/photo_uploads/"; //http://cic-support.net/uploads/
+  String display_url = "https://img.cicsupports.com/profile/";
   String display_photo = "";
   String display_section_code = "";
+
+  int _uniform_selected = 0;
+  String _emp_level = "0";
 
   late Future<XFile> file;
   List<File> image2 = [];
@@ -56,6 +63,8 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
     // Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
     current_username =
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
+    _emp_level =
+        Provider.of<UserData>(context, listen: false).emplevel.toString();
 
     // display_section_code =
     //     Provider.of<UserData>(context, listen: false).getCurrenUserSection();
@@ -279,7 +288,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
     if (base64ImageList.isNotEmpty) {
       EasyLoading.show(status: "กำลังบันทึก");
       bool isSave = await Provider.of<UserData>(context, listen: false)
-          .updatePhotoprofile(
+          .updatePhotoprofilenormal(
         base64ImageList,
       );
       EasyLoading.dismiss();
@@ -382,7 +391,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                       'Update Photo',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 12 * textScale,
+                                        fontSize: 11 * textScale,
                                       ),
                                     ),
                                   ),
@@ -452,6 +461,98 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   flex: 5,
                   child: SingleChildScrollView(
                     child: Column(children: <Widget>[
+                      _emp_level != "3"
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(2),
+                                  height: 80,
+                                  alignment: Alignment.centerLeft,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                  ),
+                                  child: ListTile(
+                                    leading: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.grey.shade200,
+                                      ),
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.approval,
+                                        color: Colors.green,
+                                      )),
+                                    ),
+                                    title: Text(
+                                      'อนุมัติใบเบิก',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.keyboard_arrow_right,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            StoreissueApprovePage(
+                                              team_id: '',
+                                            ))),
+                              ),
+                            )
+                          : Text(''),
+                      _emp_level != "3"
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(2),
+                                  height: 80,
+                                  alignment: Alignment.centerLeft,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                  ),
+                                  child: ListTile(
+                                    leading: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.grey.shade200,
+                                      ),
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.fire_extinguisher,
+                                        color: Colors.red,
+                                      )),
+                                    ),
+                                    title: Text(
+                                      'ตรวจถังดับเพลิง',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.keyboard_arrow_right,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SecuritycheckAreaPage())),
+                              ),
+                            )
+                          : Text(''),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
@@ -474,12 +575,12 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                 ),
                                 child: Center(
                                     child: Icon(
-                                  Icons.approval,
-                                  color: Colors.green,
+                                  Icons.accessibility_new_outlined,
+                                  color: Colors.lightBlue,
                                 )),
                               ),
                               title: Text(
-                                'อนุมัติใบเบิก',
+                                'ระบุเบอร์เสื้อ',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -489,54 +590,28 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                               ),
                             ),
                           ),
-                          onTap: () =>
+                          onTap: () async {
+                            await Provider.of<ShirtempData>(context,
+                                    listen: false)
+                                .fetchEmpuniform();
+                            _uniform_selected = await Provider.of<ShirtempData>(
+                                    context,
+                                    listen: false)
+                                .shirtselected;
+
+                            print("selected is ${_uniform_selected}");
+                            if (_uniform_selected == 1) {
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) =>
+                              //         ShirtorderInformPage()));
+
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => StoreissueApprovePage(
-                                        team_id: '',
-                                      ))),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.fire_extinguisher,
-                                  color: Colors.red,
-                                )),
-                              ),
-                              title: Text(
-                                'ตรวจถังดับเพลิง',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SecuritycheckAreaPage())),
+                                  builder: (context) => ShirtempPage()));
+                            } else {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ShirtempPage()));
+                            }
+                          },
                         ),
                       ),
                     ]),

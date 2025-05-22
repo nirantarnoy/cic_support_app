@@ -27,10 +27,10 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter_cic_support/sqlite/dbprovider.dart';
 
 class SecurityplanData extends ChangeNotifier {
-  final String url_to_security_checkplan_by_emp =
-      "http://192.168.60.196:1223/api/securitycheck/findtopicbyemp";
   // final String url_to_security_checkplan_by_emp =
-  //     "https://api.cicsupports.com/api/securitycheck/findtopicbyemp";
+  //     "http://192.168.60.196:1223/api/securitycheck/findtopicbyemp";
+  final String url_to_security_checkplan_by_emp =
+      "https://api.cicsupports.com/api/securitycheck/findtopicbyemp";
   final String url_to_getplanby_person_saved =
       "https://api.cicsupports.com/api/teaminspectionitem/findbyteamsaved";
   // final String url_to_add_security_check_trans =

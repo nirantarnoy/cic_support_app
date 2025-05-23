@@ -11,7 +11,7 @@
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
    <application
         android:label="flutter_cic_support"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

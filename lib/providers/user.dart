@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserData with ChangeNotifier {
   final String url_to_login = "https://api.cicsupports.com/api/auth/login";
   final String url_to_profile = "https://api.cicsupports.com/api/user/profile";
+  final String url_to_profile_normal =
+      "https://api.cicsupports.com/api/user/profilenormal";
 
   final String url_to_login_exclude_dns =
       "https://api.cicsupports.com/api/auth/loginexcludedns";
@@ -296,10 +298,10 @@ class UserData with ChangeNotifier {
         empgender = res['data']['emp_gender'];
         empshirtqty = res['data']['shirt_qty'];
 
-        photo_display = '';
+        photo_display = res['data']['photo'].toString();
 
         userlogintype = 2; // Employee
-
+        notifyListeners();
         return true;
       } else {
         print(response.body);
@@ -340,7 +342,7 @@ class UserData with ChangeNotifier {
     final String token = prefs.getString("token").toString();
     final String user_ad = prefs.getString("user_name").toString();
 
-    photo_display = '';
+    //photo_display = '';
     try {
       http.Response response;
       response = await http.get(
@@ -379,6 +381,41 @@ class UserData with ChangeNotifier {
         empgender = res['data']['emp_gender'];
         empshirtqty = res['data']['shirt_qty'];
         print('emp photo profile is ${photo_display}');
+
+        notifyListeners();
+        return true;
+      } else {
+        print(response.body);
+      }
+    } catch (err) {
+      print('error is ${err}');
+    }
+  }
+
+  Future<dynamic> fetchProfileNormal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token").toString();
+    final String emp_key = prefs.getString("emp_key").toString();
+
+    //photo_display = '';
+    try {
+      http.Response response;
+      response = await http.get(
+        Uri.parse(url_to_profile_normal + "/" + emp_key),
+        headers: {'Authorization': token},
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> res = json.decode(response.body);
+        List<TeamMember> data = [];
+
+        if (res == null) {
+          notifyListeners();
+          return false;
+        }
+
+        photo_display = res['data']['photo'].toString();
+        print("normal photo is ${photo_display}");
 
         notifyListeners();
         return true;
@@ -564,7 +601,7 @@ class UserData with ChangeNotifier {
     final photoJson = profilephoto.map((e) => {'photo': e}).toList();
     final Map<String, dynamic> insertData = {
       'profile_photo': profilephoto,
-      'emp_ref_id': emp_key.toString(),
+      'emp_ref_id': int.parse(emp_key),
     };
     print('photo profile are ${json.encode(photoJson)}');
     print('emp key id is ${emp_key}');

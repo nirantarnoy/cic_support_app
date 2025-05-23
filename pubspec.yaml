@@ -1,5 +1,5 @@
 name: flutter_cic_support
-description: A new Flutter project.
+description: A new Flutter project from calmel tire company.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -77,6 +77,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+#   flutter_launcher_icons: ^0.12.0
+# flutter_icons:
+#   image_path: "assets/logo/logo.png"
+#   ios: true,
+#   android: "launcher_icon"
+#   min_sdk_android: 21
+
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -99,6 +106,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

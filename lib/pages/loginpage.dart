@@ -325,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 5,
                 ),
                 Text(
-                  'Release date 22-05-2025',
+                  'Release date 23-05-2025',
                   style: TextStyle(color: Colors.grey.withOpacity(0.8)),
                 ),
               ],

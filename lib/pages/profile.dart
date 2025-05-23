@@ -459,89 +459,291 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   height: 5,
                 ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text('ข้อมูลพนักงาน',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal,
+                          ))),
+                ),
                 Expanded(
                   flex: 1,
-                  child: Row(children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Container(
-                          height: 50,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(child: Text('5s.')),
+                              Center(
+                                child: Icon(Icons.local_hospital_outlined,
+                                    color: Colors.red, size: 30),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Center(
                                 child: Text(
-                                  '10',
+                                  'สถานพยาบาล',
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 11,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Container(
-                          height: 50,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(child: Text('Safety')),
+                              Center(
+                                child: Icon(
+                                  Icons.school_outlined,
+                                  color: Colors.blue,
+                                  size: 30,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Center(
                                 child: Text(
-                                  '10',
+                                  'อบรม',
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 11,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Container(
-                          height: 50,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(child: Text('Kaizen')),
+                              Center(
+                                child: Icon(Icons.data_exploration,
+                                    color: Color.fromARGB(205, 76, 66, 221),
+                                    size: 30),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Center(
                                 child: Text(
-                                  '5',
+                                  'เช็ควันลา',
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 11,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                  ]),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Icon(
+                                  Icons.health_and_safety_outlined,
+                                  color: Colors.green,
+                                  size: 30,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Center(
+                                child: Text(
+                                  'ตรวจสุขภาพ',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Icon(
+                                    Icons.account_balance_wallet_outlined,
+                                    color: Color.fromARGB(235, 224, 142, 43),
+                                    size: 30),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Center(
+                                child: Text(
+                                  'เงินกู้สวัสดิการ',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text('ข้อมูลกิจกรรม',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal,
+                          ))),
+                ),
+                // Expanded(
+                //   flex: 1,
+                //   child: Row(children: <Widget>[
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Container(
+                //           height: 50,
+                //           child: Column(
+                //             children: [
+                //               Center(child: Text('5s.')),
+                //               Center(
+                //                 child: Text(
+                //                   '10',
+                //                   style: TextStyle(
+                //                     fontSize: 10,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Container(
+                //           height: 50,
+                //           child: Column(
+                //             children: [
+                //               Center(child: Text('Safety')),
+                //               Center(
+                //                 child: Text(
+                //                   '10',
+                //                   style: TextStyle(
+                //                     fontSize: 10,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Container(
+                //           height: 50,
+                //           child: Column(
+                //             children: [
+                //               Center(child: Text('Kaizen')),
+                //               Center(
+                //                 child: Text(
+                //                   '5',
+                //                   style: TextStyle(
+                //                     fontSize: 10,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ]),
+                // ),
                 Expanded(
                   flex: 5,
                   child: SingleChildScrollView(

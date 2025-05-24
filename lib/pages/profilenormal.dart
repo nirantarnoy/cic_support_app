@@ -24,6 +24,7 @@ import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_cic_support/widgets/newswidget.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:googleapis/mybusinesslodging/v1.dart';
 import 'package:image_picker/image_picker.dart';
@@ -461,12 +462,26 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   alignment: Alignment.centerLeft,
                   child: Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Text('ข้อมูลพนักงาน',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
-                          ))),
+                      child: Row(
+                        children: [
+                          Text(
+                            'ข้อมูลพนักงาน',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          Text(
+                            ' (ยังไม่เปิดใช้งาน)',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 9,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      )),
                 ),
                 Expanded(
                   flex: 1,
@@ -474,7 +489,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                     scrollDirection: Axis.horizontal,
                     child: Row(children: [
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -506,7 +521,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -541,7 +556,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -574,7 +589,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -609,7 +624,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -802,6 +817,24 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           },
                         ),
                       ),
+                      Row(
+                        children: <Widget>[
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'กิจกรรม/ข่าวสาร',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      newswidget(),
                     ]),
                   ),
                 ),

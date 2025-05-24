@@ -12,6 +12,7 @@ import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/pages/securitypoint.dart';
 import 'package:flutter_cic_support/pages/shirtorderpage.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
+import 'package:flutter_cic_support/pages/test2fa.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
@@ -23,8 +24,6 @@ import 'package:flutter_cic_support/providers/topicitem.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_cic_support/services/localnoti.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_cic_support/providers/person.dart';
-import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hive/hive.dart';
@@ -178,6 +177,7 @@ class MyApp extends StatelessWidget {
               ),
               home: LoginPage(),
               // home: SecurityPointPage(),
+              //home: Test2FaPage(),
               routes: {
                 LoginPage.routeName: (ctx) => LoginPage(),
                 ProfilePage.routeName: (ctx) => ProfilePage(),

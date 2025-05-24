@@ -463,12 +463,26 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerLeft,
                   child: Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Text('ข้อมูลพนักงาน',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
-                          ))),
+                      child: Row(
+                        children: [
+                          Text(
+                            'ข้อมูลพนักงาน',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          Text(
+                            ' (ยังไม่เปิดใช้งาน)',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 9,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      )),
                 ),
                 Expanded(
                   flex: 1,
@@ -476,7 +490,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     scrollDirection: Axis.horizontal,
                     child: Row(children: [
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -508,7 +522,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -543,7 +557,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -576,7 +590,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,
@@ -611,7 +625,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
                           width: 80,
                           height: 80,

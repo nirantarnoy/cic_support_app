@@ -71,6 +71,9 @@ dependencies:
   fluttertoast: ^8.0.6
   barcode_widget:
   permission_handler:
+  firebase_core: ^2.11.0
+  firebase_auth: ^4.0.1
+ 
   
 
 dev_dependencies:

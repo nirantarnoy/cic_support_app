@@ -175,9 +175,9 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.blue,
                 fontFamily: 'Kanit-Regular',
               ),
-              home: LoginPage(),
+              //home: LoginPage(),
               // home: SecurityPointPage(),
-              //home: Test2FaPage(),
+              home: Test2FaPage(),
               routes: {
                 LoginPage.routeName: (ctx) => LoginPage(),
                 ProfilePage.routeName: (ctx) => ProfilePage(),

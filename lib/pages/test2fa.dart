@@ -15,7 +15,7 @@ class _Test2FaPageState extends State<Test2FaPage> {
 
   @override
   void initState() {
-    sendOTP('+66 088 7692818');
+    sendOTP("+66 0887692818");
 
     super.initState();
   }

@@ -341,6 +341,14 @@ class _ProfilePageState extends State<ProfilePage> {
           Consumer<UserData>(
             builder: (context, _users, _) => IconButton(
                 icon: const Icon(
+                  Icons.settings_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () => _logout(_users)),
+          ),
+          Consumer<UserData>(
+            builder: (context, _users, _) => IconButton(
+                icon: const Icon(
                   Icons.logout_rounded,
                   color: Colors.white,
                 ),

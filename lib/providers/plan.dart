@@ -1144,6 +1144,7 @@ class PlanData extends ChangeNotifier {
           headers: {"Authorization": token, 'Content-Type': 'application/json'},
           body: json.encode(filterData));
 
+      print('response big clean is ${response.statusCode}');
       if (response.statusCode == 200) {
         List<BigplanArea> data = [];
         //  List<PersoncurrentPlan> personplan_data = [];

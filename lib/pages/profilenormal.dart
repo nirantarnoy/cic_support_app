@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/storeissue.dart';
+import 'package:flutter_cic_support/pages/ai_assistant_page.dart';
 import 'package:flutter_cic_support/pages/bigcleanarea.dart';
+import 'package:flutter_cic_support/widgets/draggable_fab.dart';
 
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/jobplanarea.dart';
@@ -217,72 +219,88 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
   }
 
   void _editBottomSheet(context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.75;
-
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              //  height: MediaQuery.of(context).size.height * 0.9,
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 20,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  Text(
-                    'เลือกรูปจาก',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () => chooseCameraImage(),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Icon(Icons.camera),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'เลือกรูปโปรไฟล์จาก / Select photo from',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => chooseCameraImage(),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey.shade200),
                           ),
-                          Expanded(
-                            child: Text('กล้องถ่ายรูป'),
+                          child: Column(
+                            children: const [
+                              Icon(Icons.camera_alt_rounded, size: 36, color: Color(0xFF2DAC7B)),
+                              SizedBox(height: 12),
+                              Text('กล้องถ่ายรูป / Camera', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 45, 172, 123),
-                          minimumSize: const Size.fromHeight(50)),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () => chooseGalleryImage(),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Icon(Icons.photo),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => chooseGalleryImage(),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey.shade200),
                           ),
-                          Expanded(
-                            child: Text('คลังภาพ'),
+                          child: Column(
+                            children: const [
+                              Icon(Icons.photo_library_rounded, size: 36, color: Color(0xFF2DAC7B)),
+                              SizedBox(height: 12),
+                              Text('คลังภาพ / Gallery', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 45, 172, 123),
-                          minimumSize: const Size.fromHeight(50)),
                     ),
-                  ),
-                ],
-              ),
-            );
-          });
-        });
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future _updatephotofrofil(BuildContext context) async {
@@ -299,8 +317,6 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
           Provider.of<UserData>(context, listen: false).fetchProfileNormal();
           image2.clear();
         });
-        // Navigator.of(context).pop();
-        //Navigator.popAndPushNamed(context, '/profile');
       } else {
         print("nooooooooooooooooo");
         image2.clear();
@@ -308,28 +324,160 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
     }
   }
 
+  Widget _buildEmployeeInfoItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+  }) {
+    return Container(
+      width: 100,
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            EasyLoading.showInfo('ระบบกำลังพัฒนา\nจะเปิดให้ใช้งานเร็วๆ นี้');
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuCard({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              children: [
+                Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color: iconColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.grey[400],
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   appBar: AppBar(title: Text("hlllo")),
-    // );
-    final textScale = MediaQuery.of(context).textScaleFactor;
-    display_photo =
-        Provider.of<UserData>(context, listen: false).getCurrenUserPhoto();
+    final user = Provider.of<UserData>(context);
+    
+    display_photo = user.getCurrenUserPhoto();
     display_photo = display_url + display_photo;
 
-    display_section_code =
-        Provider.of<UserData>(context, listen: false).getCurrenUserSection();
-    //print("image is ${display_photo}");
+    display_section_code = user.getCurrenUserSection();
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: Colors.grey.shade50,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF073F2F),
         elevation: 0,
         title: const Text(
-          'User Profile',
+          'User Profile / ข้อมูลผู้ใช้งาน',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -337,581 +485,297 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
           ),
         ),
         actions: [
-          Consumer<UserData>(
-            builder: (context, _users, _) => IconButton(
-                icon: const Icon(
-                  Icons.logout_rounded,
-                  color: Colors.white,
-                ),
-                onPressed: () => _logout(_users)),
+          IconButton(
+            icon: const Icon(
+              Icons.logout_rounded,
+              color: Colors.white,
+            ),
+            onPressed: () => _logout(user),
           ),
         ],
       ),
       body: Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.centerLeft,
-        children: <Widget>[
-          //Initialize the chart widget
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            //  height: 60,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.only(
-                // topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
+        children: [
+          SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: Text(''),
-                      ),
-                      Expanded(
-                        child: image2.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () => _updatephotofrofil(context),
-                                  child: Container(
-                                    width: 150,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromARGB(255, 13, 103, 238),
-                                    ),
-                                    child: Text(
-                                      'Update Photo',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11 * textScale,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () => _editBottomSheet(context),
-                                  child: Container(
-                                    width: 150,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromARGB(255, 45, 172, 123),
-                                    ),
-                                    child: Text(
-                                      'เปลี่ยนรูป',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12 * textScale,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: image2.isNotEmpty
-                              ? GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      this.image2.clear();
-                                      this.base64ImageList.clear();
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 150,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromARGB(255, 224, 63, 14),
-                                    ),
-                                    child: Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Text(''),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Row(
-                        children: [
-                          Text(
-                            'ข้อมูลพนักงาน',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          Text(
-                            ' (ยังไม่เปิดใช้งาน)',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 9,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(children: [
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(Icons.local_hospital_outlined,
-                                    color: Colors.red, size: 30),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'สถานพยาบาล',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(
-                                  Icons.school_outlined,
-                                  color: Colors.blue,
-                                  size: 30,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'อบรม',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(Icons.data_exploration,
-                                    color: Color.fromARGB(205, 76, 66, 221),
-                                    size: 30),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'เช็ควันลา',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(
-                                  Icons.health_and_safety_outlined,
-                                  color: Colors.green,
-                                  size: 30,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'ตรวจสุขภาพ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(
-                                    Icons.account_balance_wallet_outlined,
-                                    color: Color.fromARGB(235, 224, 142, 43),
-                                    size: 30),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'เงินกู้สวัสดิการ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: SingleChildScrollView(
-                    child: Column(children: <Widget>[
-                      _emp_level != "3"
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(2),
-                                  height: 80,
-                                  alignment: Alignment.centerLeft,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                  ),
-                                  child: ListTile(
-                                    leading: Container(
-                                      height: 50,
-                                      width: 50,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: Colors.grey.shade200,
-                                      ),
-                                      child: Center(
-                                          child: Icon(
-                                        Icons.approval,
-                                        color: Colors.green,
-                                      )),
-                                    ),
-                                    title: Text(
-                                      'อนุมัติใบเบิก',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    trailing: Icon(
-                                      Icons.keyboard_arrow_right,
-                                    ),
-                                  ),
-                                ),
-                                onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            StoreissueApprovePage(
-                                              team_id: '',
-                                            ))),
-                              ),
-                            )
-                          : Text(''),
-                      _emp_level != "3"
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(2),
-                                  height: 80,
-                                  alignment: Alignment.centerLeft,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                  ),
-                                  child: ListTile(
-                                    leading: Container(
-                                      height: 50,
-                                      width: 50,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: Colors.grey.shade200,
-                                      ),
-                                      child: Center(
-                                          child: Icon(
-                                        Icons.fire_extinguisher,
-                                        color: Colors.red,
-                                      )),
-                                    ),
-                                    title: Text(
-                                      'ตรวจถังดับเพลิง',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    trailing: Icon(
-                                      Icons.keyboard_arrow_right,
-                                    ),
-                                  ),
-                                ),
-                                onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            SecuritycheckAreaPage())),
-                              ),
-                            )
-                          : Text(''),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.accessibility_new_outlined,
-                                  color: Colors.lightBlue,
-                                )),
-                              ),
-                              title: Text(
-                                'ระบุเบอร์เสื้อ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () async {
-                            await Provider.of<ShirtempData>(context,
-                                    listen: false)
-                                .fetchEmpuniform();
-                            _uniform_selected = await Provider.of<ShirtempData>(
-                                    context,
-                                    listen: false)
-                                .shirtselected;
-
-                            print("selected is ${_uniform_selected}");
-                            if (_uniform_selected == 1) {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         ShirtorderInformPage()));
-
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ShirtempPage()));
-                            } else {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ShirtempPage()));
-                            }
-                          },
-                        ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'กิจกรรม/ข่าวสาร',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black54),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      newswidget(),
-                    ]),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 5,
-            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  height: 100,
-                  width: 100,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(
-                      50,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF073F2F), Color(0xFF1E8F68)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(1, 1),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(32),
+                      bottomRight: Radius.circular(32),
+                    ),
+                  ),
+                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 16),
+                  child: Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 4),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 54,
+                              backgroundColor: Colors.grey.shade200,
+                              backgroundImage: image2.isNotEmpty
+                                  ? FileImage(image2[0]) as ImageProvider
+                                  : NetworkImage(display_photo),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => _editBottomSheet(context),
+                            child: Container(
+                              height: 36,
+                              width: 36,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2DAC7B),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        user.empfullname,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      if (user.emppositionname.isNotEmpty || user.emp_department_name.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          '${user.emppositionname}${user.emppositionname.isNotEmpty && user.emp_department_name.isNotEmpty ? " • " : ""}${user.emp_department_name}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white.withOpacity(0.85),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                      if (image2.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1565C0),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              ),
+                              onPressed: () => _updatephotofrofil(context),
+                              icon: const Icon(Icons.check_circle_outline, size: 16),
+                              label: const Text('Update Photo'),
+                            ),
+                            const SizedBox(width: 12),
+                            OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                side: const BorderSide(color: Colors.white70),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  image2.clear();
+                                  base64ImageList.clear();
+                                });
+                              },
+                              icon: const Icon(Icons.cancel_outlined, size: 16),
+                              label: const Text('Cancel'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 24, bottom: 12),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'ข้อมูลพนักงาน',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.amber.shade200),
+                        ),
+                        child: Text(
+                          'ยังไม่เปิดใช้งาน',
+                          style: TextStyle(
+                            color: Colors.amber.shade800,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  child: image2.isNotEmpty
-                      ? CircleAvatar(
-                          radius: 45,
-                          child: CircleAvatar(
-                              radius: 45,
-                              backgroundImage:
-                                  Image.file(File(image2[0].path)).image),
-                        )
-                      : CircleAvatar(
-                          radius: 45,
-                          backgroundImage: NetworkImage(display_photo),
-                          // backgroundImage:
-                          //     NetworkImage("172.16.0.240/uploads/1635j0541.jpg"),
+                ),
+                SizedBox(
+                  height: 105,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _buildEmployeeInfoItem(
+                        icon: Icons.local_hospital_rounded,
+                        color: Colors.red.shade400,
+                        title: 'สถานพยาบาล',
+                      ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.school_rounded,
+                        color: Colors.blue.shade400,
+                        title: 'อบรม',
+                      ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.date_range_rounded,
+                        color: Colors.purple.shade400,
+                        title: 'เช็ควันลา',
+                      ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.health_and_safety_rounded,
+                        color: Colors.green.shade400,
+                        title: 'ตรวจสุขภาพ',
+                      ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.account_balance_wallet_rounded,
+                        color: Colors.orange.shade400,
+                        title: 'เงินกู้สวัสดิการ',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                  child: Column(
+                    children: [
+                      if (_emp_level != "3")
+                        Column(
+                          children: [
+                            _buildMenuCard(
+                              icon: Icons.approval_rounded,
+                              iconColor: Colors.green,
+                              title: 'อนุมัติใบเบิก',
+                              subtitle: 'ตรวจสอบและอนุมัติใบเบิกวัสดุอุปกรณ์',
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const StoreissueApprovePage(
+                                    team_id: '',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildMenuCard(
+                              icon: Icons.fire_extinguisher_rounded,
+                              iconColor: Colors.red,
+                              title: 'ตรวจถังดับเพลิง',
+                              subtitle: 'บันทึกการตรวจสอบความปลอดภัยของถังดับเพลิง',
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SecuritycheckAreaPage(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                         ),
-                  // child: const Icon(
-                  //   Icons.person,
-                  //   color: Colors.purple,
-                  //   size: 50,
-                  // ),
+                      _buildMenuCard(
+                        icon: Icons.accessibility_new_rounded,
+                        iconColor: Colors.blue,
+                        title: 'ระบุเบอร์เสื้อ',
+                        subtitle: 'บันทึกข้อมูลและเลือกขนาดเสื้อเครื่องแบบพนักงาน',
+                        onTap: () async {
+                          await Provider.of<ShirtempData>(context, listen: false).fetchEmpuniform();
+                          _uniform_selected = Provider.of<ShirtempData>(context, listen: false).shirtselected;
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ShirtempPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Consumer<UserData>(
-                  builder: (context, _user, _) => Text(
-                    "${_user.empfullname}",
+                const Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 12),
+                  child: Text(
+                    'กิจกรรม/ข่าวสาร',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
-                // FutureBuilder(
-                //     future: _displayname(),
-                //     builder: (context, snapshort) {
-                //       if (!snapshort.hasData) {}
-                //       return Text(
-                //         "${snapshort.data}",
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           fontWeight: FontWeight.bold,
-                //           color: Colors.white,
-                //         ),
-                //       );
-                //     }),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: newswidget(),
+                ),
+                const SizedBox(height: 80),
               ],
             ),
+          ),
+          DraggableFAB(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AIAssistantPage(),
+                ),
+              );
+            },
           ),
         ],
       ),

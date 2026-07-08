@@ -206,6 +206,7 @@ class UserData with ChangeNotifier {
             res['data']['bigclean_current_team_id'].toString());
 
         username_display = res['data']['dns_user'].toString();
+        team_display = res['data']['current_team_id'].toString();
         prefs.setString('expiryTime', expiryTime.toIso8601String());
 
         userlogintype = 1; // AD User
@@ -282,6 +283,7 @@ class UserData with ChangeNotifier {
             res['data']['bigclean_current_team_id'].toString());
 
         username_display = res['data']['dns_user'].toString();
+        team_display = res['data']['current_team_id'].toString();
         empfullname = res['data']['fname'] + " " + res['data']['lname'];
         prefs.setString('expiryTime', expiryTime.toIso8601String());
 
@@ -516,26 +518,43 @@ class UserData with ChangeNotifier {
   void autoAuthenticate() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     //   final String token = prefs.getString('token');
-    final String? expiryTimeString = prefs.getString('expiryTime').toString();
+    final String? expiryTimeString = prefs.getString('expiryTime');
+
+    if (expiryTimeString == null || expiryTimeString == 'null') {
+      notifyListeners();
+      return;
+    }
 
     final DateTime now = DateTime.now();
-    final parsedExpiryTime = DateTime.parse(expiryTimeString!);
+    final parsedExpiryTime = DateTime.parse(expiryTimeString);
     if (parsedExpiryTime.isBefore(now)) {
       // _authenticatedUser = _emptyauthenicatedUser;
       notifyListeners();
       return;
     }
-    final String? emp_id = prefs.getString('emp_id').toString();
-    final String? userId = prefs.getString('user_id').toString();
-    final String? adUsername = prefs.getString('dns_user').toString();
+    final String? emp_id = prefs.getString('emp_id');
+    final String? userId = prefs.getString('user_id');
+    final String? adUsername = prefs.getString('user_name');
+    final String? teamId = prefs.getString('team_id');
+    final String? teamSafetyId = prefs.getString('team_safety_id');
 
     final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
     _authenticatedUser = User(
-      id: userId!,
-      user_id: userId,
-      team_id: "0",
-      username: adUsername!,
+      id: userId ?? '',
+      user_id: userId ?? '',
+      team_id: teamId ?? '0',
+      username: adUsername ?? '',
     );
+
+    if (adUsername != null) {
+      username_display = adUsername;
+    }
+    if (teamId != null) {
+      team_display = teamId;
+    }
+    if (teamSafetyId != null) {
+      team_safety_display = teamSafetyId;
+    }
 
     _isauthenuser = true;
     setAuthTimeout(tokenLifespan);

@@ -383,10 +383,10 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () async {
-                                              final isAvailable =
-                                                  await LocalAuthApi
-                                                      .hasBiometrics();
-                                              if (isAvailable) {
+                                              //   final isAvailable =
+                                              //      await LocalAuthApi
+                                              //         .hasBiometrics();
+                                              /* if (isAvailable) {
                                                 final isAuthenticated =
                                                     await LocalAuthApi
                                                         .authenticate();
@@ -410,26 +410,25 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
                                                   }
                                                   EasyLoading.dismiss();
                                                 }
-                                              } else {
-                                                print("no bio auth");
-                                                await EasyLoading.show(
-                                                    status:
-                                                        "กำลังบันทึกข้อมูล");
-                                                bool isSave = await Provider.of<
-                                                            PlanData>(context,
-                                                        listen: false)
-                                                    .submitBigcleanInspection();
-                                                if (isSave == true) {
-                                                  await EasyLoading.showSuccess(
-                                                      'บันทึกรายการเรียบร้อย');
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlancheckcompletePage()));
-                                                }
-                                                EasyLoading.dismiss();
+                                              } else {*/
+                                              print("no bio auth");
+                                              await EasyLoading.show(
+                                                  status: "กำลังบันทึกข้อมูล");
+                                              bool isSave = await Provider.of<
+                                                          PlanData>(context,
+                                                      listen: false)
+                                                  .submitBigcleanInspection();
+                                              if (isSave == true) {
+                                                await EasyLoading.showSuccess(
+                                                    'บันทึกรายการเรียบร้อย');
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlancheckcompletePage()));
                                               }
+                                              EasyLoading.dismiss();
+                                              //}
                                               //  _timer?.cancel();
                                               // await EasyLoading.show(
                                               //     status: "กำลังบันทึกข้อมูล");
@@ -539,14 +538,14 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () async {
-                                              final isAvailable =
-                                                  await LocalAuthApi
-                                                      .hasBiometrics();
-                                              if (isAvailable) {
-                                                final isAuthenticated =
-                                                    await LocalAuthApi
-                                                        .authenticate();
-                                                if (isAuthenticated) {
+                                              //  final isAvailable =
+                                              //      await LocalAuthApi
+                                              //         .hasBiometrics();
+                                              // if (isAvailable) {
+                                              //  final isAuthenticated =
+                                              //       await LocalAuthApi
+                                              //           .authenticate();
+                                              /*    if (isAuthenticated) {
                                                   print("success");
                                                   await EasyLoading.show(
                                                       status:
@@ -565,27 +564,26 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
                                                                 PlancheckcompletePage()));
                                                   }
                                                   EasyLoading.dismiss();
-                                                }
-                                              } else {
-                                                print("no bio auth");
-                                                await EasyLoading.show(
-                                                    status:
-                                                        "กำลังบันทึกข้อมูล");
-                                                bool isSave = await Provider.of<
-                                                            PlanData>(context,
-                                                        listen: false)
-                                                    .submitBigcleanInspection();
-                                                if (isSave == true) {
-                                                  await EasyLoading.showSuccess(
-                                                      'บันทึกรายการเรียบร้อย');
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlancheckcompletePage()));
-                                                }
-                                                EasyLoading.dismiss();
+                                                }*/
+                                              //  } else {
+                                              print("no bio auth");
+                                              await EasyLoading.show(
+                                                  status: "กำลังบันทึกข้อมูล");
+                                              bool isSave = await Provider.of<
+                                                          PlanData>(context,
+                                                      listen: false)
+                                                  .submitBigcleanInspection();
+                                              if (isSave == true) {
+                                                await EasyLoading.showSuccess(
+                                                    'บันทึกรายการเรียบร้อย');
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlancheckcompletePage()));
                                               }
+                                              EasyLoading.dismiss();
+                                              // }
                                               // final biometrics =
                                               //     await LocalAuthApi
                                               //         .getBiometrics();

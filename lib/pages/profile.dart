@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/storeissue.dart';
+import 'package:flutter_cic_support/pages/ai_assistant_page.dart';
 import 'package:flutter_cic_support/pages/bigcleanarea.dart';
+import 'package:flutter_cic_support/widgets/draggable_fab.dart';
 
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/jobplanarea.dart';
@@ -992,92 +994,96 @@ class _ProfilePageState extends State<ProfilePage> {
                                   builder: (context) => BigcleanAreaPage())),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
+                      Consumer<UserData>(
+                        builder: (context, _userx, _) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(2),
+                              height: 80,
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: ListTile(
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.person_search,
+                                    color: Colors.blueGrey,
+                                  )),
                                 ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.person_search,
-                                  color: Colors.blueGrey,
-                                )),
-                              ),
-                              title: Text(
-                                'สมาชิกทีมตรวจ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                title: Text(
+                                  'สมาชิกทีมตรวจ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  Icons.keyboard_arrow_right,
                                 ),
                               ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
                             ),
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MemberTeamPage(
+                                          team_id: _userx.team_display,
+                                        ))),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MemberTeamPage(
-                                        team_id: '1',
-                                      ))),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
+                      Consumer<UserData>(
+                        builder: (context, _userx, _) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(2),
+                              height: 80,
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: ListTile(
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.approval,
+                                    color: Colors.green,
+                                  )),
                                 ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.approval,
-                                  color: Colors.green,
-                                )),
-                              ),
-                              title: Text(
-                                'อนุมัติใบเบิก',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                title: Text(
+                                  'อนุมัติใบเบิก',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  Icons.keyboard_arrow_right,
                                 ),
                               ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
                             ),
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => StoreissueApprovePage(
+                                          team_id: _userx.team_display,
+                                        ))),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => StoreissueApprovePage(
-                                        team_id: '1',
-                                      ))),
                         ),
                       ),
                       Padding(
@@ -1243,6 +1249,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 //     }),
               ],
             ),
+          ),
+          DraggableFAB(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AIAssistantPage(),
+                ),
+              );
+            },
           ),
         ],
       ),

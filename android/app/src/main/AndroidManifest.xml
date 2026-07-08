@@ -9,6 +9,7 @@
    <uses-permission android:name="android.permission.USE_ECACT_ALARM"/>
    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+   <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
    <application
         android:label="flutter_cic_support"
         android:icon="@mipmap/launcher_icon">

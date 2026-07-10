@@ -1,17 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/bigcheckdetail.dart';
 import 'package:flutter_cic_support/models/inspectiontrans.dart';
-import 'package:flutter_cic_support/models/jobcheck.dart';
-import 'package:flutter_cic_support/models/jobcheckdetail.dart';
-
-import 'package:flutter_cic_support/models/jobplanarea.dart';
-import 'package:flutter_cic_support/pages/createcar.dart';
-import 'package:flutter_cic_support/pages/jobcheckdetail.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 class BigCleanCheckDetailPage extends StatefulWidget {
@@ -33,303 +24,176 @@ class BigCleanCheckDetailPage extends StatefulWidget {
 }
 
 class _BigCleanCheckDetailPageState extends State<BigCleanCheckDetailPage> {
-  // final List<JobCheck> check_list = [
-  //   JobCheck(
-  //     person_id: '1',
-  //     check_date: '2022-06-22',
-  //     area_id: '1',
-  //     area_name: 'ตู้/ชั้นเก็บอุปกรณ์/เครื่องมือ/สิ่งของ',
-  //     total_check_count: '20',
-  //     total_finish_check_count: '10',
-  //     seq_no: 1,
-  //   ),
-  //   JobCheck(
-  //     person_id: '1',
-  //     check_date: '2022-06-22',
-  //     area_id: '2',
-  //     area_name: 'ตู้/ชั้นเก็บเอกสาร',
-  //     total_check_count: '20',
-  //     total_finish_check_count: '10',
-  //     seq_no: 2,
-  //   ),
-  //   JobCheck(
-  //     person_id: '1',
-  //     check_date: '2022-06-22',
-  //     area_id: '2',
-  //     area_name: 'บอร์ดติดประกาศและหรือโครงสร้างองค์กร',
-  //     total_check_count: '20',
-  //     total_finish_check_count: '10',
-  //     seq_no: 3,
-  //   ),
-  //   JobCheck(
-  //     person_id: '1',
-  //     check_date: '2022-06-22',
-  //     area_id: '2',
-  //     area_name: 'พื้นที่ปฏิบัติงาน ห้องทำงาน',
-  //     total_check_count: '20',
-  //     total_finish_check_count: '10',
-  //     seq_no: 4,
-  //   ),
-  // ];
 
   @override
   void initState() {
-    // TODO: implement initState
-    print("area id is ${widget.plan_area_id}");
     super.initState();
-  }
-
-  Widget _buildList(List<JobplanArea> listcheck) {
-    Widget cardlist;
-    if (listcheck.length > 0) {
-      cardlist = new ListView.builder(
-          itemCount: listcheck.length,
-          itemBuilder: (BuildContext contex, int index) {
-            int child_cnt = Provider.of<PlanData>(contex, listen: false)
-                .getTopicitemcountByTopic(
-                    listcheck[index].topic_id, listcheck[index].plan_area_id);
-            int child_counted = Provider.of<PlanData>(contex, listen: false)
-                .getTopicitemcountedByTopic(
-                    listcheck[index].topic_id, listcheck[index].plan_area_id);
-
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  margin: EdgeInsets.only(top: 1),
-                  decoration: BoxDecoration(
-                      color: child_counted == child_cnt
-                          ? Colors.green.shade400
-                          : Colors.green.shade50,
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: ListTile(
-                    leading: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.white,
-                      ),
-                      child: Center(
-                          child: Text(
-                        "${(index + 1).toString()}",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
-                    ),
-                    title: Text('${listcheck[index].topic_name}'),
-                    trailing: Text('${child_counted} / ${child_cnt}'),
-                  ),
-                ),
-                // onTap: () {}
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => JobCheckDetailPage(
-                          plan_id: widget.plan_id,
-                          topic_id: listcheck[index].topic_id,
-                          plan_area_id: listcheck[index].plan_area_id,
-                          plan_num: listcheck[index].plan_num,
-                        ))),
-              ),
-            );
-          });
-      return cardlist;
-      //return Text('data');
-    } else {
-      return Text('No data');
-    }
   }
 
   Widget _buildlist(List<BigCheckDetail> _elementsx) {
     Widget carditem;
-    if (_elementsx.length > 0) {
-      carditem = new ListView.builder(
+    if (_elementsx.isNotEmpty) {
+      carditem = ListView.builder(
         itemCount: _elementsx.length,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        physics: const BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
           String has_line_score = Provider.of<PlanData>(context, listen: false)
               .checkBigLineScore(
                   _elementsx[index].topicid, widget.plan_area_id);
-          return Slidable(
-            key: const ValueKey(0),
-            endActionPane: ActionPane(
-              extentRatio: 1.0,
-              motion: const ScrollMotion(),
-              children: [
-                SlidableAction(
-                  // flex: 2,
-                  // onPressed:
-                  //     _removecheckeditem(listcheck[index].plan_area_id),
-                  onPressed: (BuildContext context) {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => Dialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Icon(
-                                Icons.privacy_tip_outlined,
-                                size: 32,
-                                color: Colors.red,
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'ยืนยันการทำรายการ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'ต้องการให้คะแนนเป็น 0 ใช่หรือไม่ ?',
-                                style: TextStyle(fontWeight: FontWeight.normal),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.green.shade300,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
-                                      onPressed: () async {
-                                        await _addselected(
-                                            "0",
-                                            _elementsx[index].topicid,
-                                            _elementsx[index].topicid);
+          
+          bool isScored = int.parse(has_line_score) > -1;
 
-                                        Navigator.of(context).pop(false);
-                                      },
-                                      child: Text(
-                                        'ใช่',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isScored ? const Color(0xFFE8F5E9) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isScored ? Colors.green.shade100 : Colors.grey.shade200,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.015),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Slidable(
+                  key: ValueKey(_elementsx[index].topicid),
+                  endActionPane: ActionPane(
+                    extentRatio: 0.85,
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (BuildContext context) {
+                          _showConfirmZeroDialog(context, _elementsx[index]);
+                        },
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                        label: '0',
+                      ),
+                      SlidableAction(
+                        onPressed: (BuildContext context) {
+                          _addselected("1", _elementsx[index].topicid,
+                              _elementsx[index].topicid);
+                        },
+                        backgroundColor: const Color(0xFFFFAD3B),
+                        foregroundColor: Colors.white,
+                        label: '1',
+                      ),
+                      SlidableAction(
+                        onPressed: (BuildContext context) {
+                          _addselected("2", _elementsx[index].topicid,
+                              _elementsx[index].topicid);
+                        },
+                        backgroundColor: const Color(0xFFF1C40F),
+                        foregroundColor: Colors.white,
+                        label: '2',
+                      ),
+                      SlidableAction(
+                        onPressed: (BuildContext context) {
+                          _addselected("3", _elementsx[index].topicid,
+                              _elementsx[index].topicid);
+                        },
+                        backgroundColor: const Color(0xFF2ECC71),
+                        foregroundColor: Colors.white,
+                        label: '3',
+                      ),
+                      SlidableAction(
+                        onPressed: (BuildContext context) {
+                          _addselected("4", _elementsx[index].topicid,
+                              _elementsx[index].topicid);
+                        },
+                        backgroundColor: const Color(0xFF3498DB),
+                        foregroundColor: Colors.white,
+                        label: '4',
+                      )
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        // Optional interactive guide trigger
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 38,
+                              width: 38,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isScored ? Colors.white : Colors.grey.shade50,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  isScored
+                                      ? Icons.check_circle_rounded
+                                      : Icons.radio_button_unchecked_rounded,
+                                  color: isScored ? const Color(0xFF0F9B73) : Colors.grey.shade400,
+                                  size: 22,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Text(
+                                _elementsx[index].topicname,
+                                style: const TextStyle(
+                                  fontFamily: 'Prompt',
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            if (isScored)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0F9B73).withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  "คะแนน: $has_line_score",
+                                  style: const TextStyle(
+                                    fontFamily: 'Prompt',
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF0F9B73),
+                                    fontSize: 12,
                                   ),
-                                  Spacer(),
-                                  Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.grey[400],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(false);
-                                      },
-                                      child: Text(
-                                        'ไม่ใช่',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               )
-                            ],
-                          ),
+                            else
+                              Text(
+                                "สไลด์เพื่อประเมิน",
+                                style: TextStyle(
+                                  fontFamily: 'Prompt',
+                                  fontSize: 11,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.swipe_left_rounded,
+                              color: Colors.grey,
+                              size: 16,
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  // icon: Icons.delete,
-                  label: '0',
-                ),
-                SlidableAction(
-                  onPressed: (BuildContext context) {
-                    _addselected("1", _elementsx[index].topicid,
-                        _elementsx[index].topicid);
-                  },
-                  backgroundColor: Color.fromARGB(255, 204, 146, 39),
-                  foregroundColor: Colors.black,
-                  //icon: Icons.one_k,
-                  label: '1',
-                ),
-                SlidableAction(
-                  onPressed: (BuildContext context) {
-                    _addselected("2", _elementsx[index].topicid,
-                        _elementsx[index].topicid);
-                  },
-                  backgroundColor: Color.fromARGB(255, 213, 216, 24),
-                  foregroundColor: Colors.black,
-                  //  icon: Icons.share,
-                  label: '2',
-                ),
-                SlidableAction(
-                  onPressed: (BuildContext context) {
-                    _addselected("3", _elementsx[index].topicid,
-                        _elementsx[index].topicid);
-                  },
-                  backgroundColor: Color.fromARGB(255, 134, 218, 24),
-                  foregroundColor: Colors.black,
-                  //  icon: Icons.share,
-                  label: '3',
-                ),
-                SlidableAction(
-                  onPressed: (BuildContext context) {
-                    _addselected("4", _elementsx[index].topicid,
-                        _elementsx[index].topicid);
-                  },
-                  backgroundColor: Color.fromARGB(255, 135, 161, 218),
-                  foregroundColor: Colors.black,
-                  //  icon: Icons.share,
-                  label: '4',
-                )
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: GestureDetector(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  color: int.parse(has_line_score) > -1
-                      ? Colors.green.shade400
-                      : Colors.white,
-                  elevation: 2.0,
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 10.0, vertical: 6.0),
-                  child: SizedBox(
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 10.0),
-                      leading: int.parse(has_line_score) > -1
-                          ? const Icon(
-                              Icons.check_circle,
-                              color: Colors.white,
-                            )
-                          : const Icon(
-                              Icons.close,
-                              color: Colors.red,
-                            ),
-                      title: Text('${_elementsx[index].topicname}'),
-                      trailing:
-                          Text(has_line_score == "-1" ? "" : has_line_score),
                     ),
                   ),
                 ),
-                onTap: () {},
               ),
             ),
           );
@@ -338,16 +202,123 @@ class _BigCleanCheckDetailPageState extends State<BigCleanCheckDetailPage> {
 
       return carditem;
     } else {
-      return Center(
-        child: Text('No Data'),
+      return const Center(
+        child: Text(
+          'ไม่พบข้อมูลการตรวจ',
+          style: TextStyle(fontFamily: 'Prompt', color: Colors.grey),
+        ),
       );
     }
   }
 
-  void doNothing(BuildContext context) {}
-  dynamic _addselected(String score, dynamic topic_id, dynamic topic_item_id) {
+  void _showConfirmZeroDialog(BuildContext context, BigCheckDetail item) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.report_problem_rounded,
+                  size: 40,
+                  color: Colors.red.shade600,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'ยืนยันการทำรายการ',
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'ต้องการให้คะแนนเป็น 0 ใช่หรือไม่ ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text(
+                        'ไม่ใช่',
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        _addselected(
+                            "0",
+                            item.topicid,
+                            item.topicid);
+                        if (context.mounted) {
+                          Navigator.of(context).pop(false);
+                        }
+                      },
+                      child: const Text(
+                        'ใช่',
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _addselected(String score, dynamic topic_id, dynamic topic_item_id) {
     if (score != '') {
-      print("selected scored is ${topic_item_id}");
       InspectionTrans _inspec = InspectionTrans(
         area_group_id: '0',
         emp_id: '0',
@@ -364,63 +335,100 @@ class _BigCleanCheckDetailPageState extends State<BigCleanCheckDetailPage> {
         trans_date: DateTime.now().toIso8601String(),
       );
 
-      // print("data to add inspect is ${_inspec}");
       Provider.of<PlanData>(context, listen: false)
           .addBigInspectionTrans(_inspec);
-
-      //Navigator.of(context).pop();
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 9, 111, 206),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text('หัวข้อการตรวจ'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
-        // actions: [
-        //   IconButton(
-        //       onPressed: () => Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => CreateCar(
-        //                 plan_area_id: widget.plan_area_id,
-        //                 plan_area_name: widget.plan_area_name,
-        //               ),
-        //             ),
-        //           ),
-        //       icon: Icon(Icons.gps_fixed)),
-        // ],
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'หัวข้อการตรวจ',
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Container(
-          color: Colors.grey.shade100,
+          color: const Color(0xFFF5F7FB),
           child: Column(
             children: [
-              Expanded(
-                flex: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.location_on,
-                          color: Colors.black,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4A5AE7).withOpacity(0.12),
+                          shape: BoxShape.circle,
                         ),
-                        Text(
-                          'พื้นที่ตรวจ ${widget.plan_area_name}',
-                          style: TextStyle(fontSize: 16.0, color: Colors.black),
+                        child: const Icon(
+                          Icons.location_on_rounded,
+                          color: Color(0xFF4A5AE7),
+                          size: 20,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'พื้นที่รับผิดชอบตรวจ',
+                              style: TextStyle(
+                                fontFamily: 'Prompt',
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              widget.plan_area_name,
+                              style: const TextStyle(
+                                fontFamily: 'Prompt',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
               ),
               Expanded(
                 child: Consumer<PlanData>(

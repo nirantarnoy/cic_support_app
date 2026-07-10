@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/carlist.dart';
 import 'package:flutter_cic_support/pages/carcreatezone.dart';
 import 'package:flutter_cic_support/pages/cardetail.dart';
-import 'package:flutter_cic_support/pages/createcar.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -18,9 +17,9 @@ class CarlistPage extends StatefulWidget {
 class _CarlistPageState extends State<CarlistPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
+
   @override
   void initState() {
-    // TODO: implement initState
     EasyLoading.show(status: "โหลดข้อมูล");
     Provider.of<CarData>(context, listen: false).getCarlistByEmpId();
     Provider.of<PlanData>(context, listen: false).fetchNonconformTitle();
@@ -31,156 +30,228 @@ class _CarlistPageState extends State<CarlistPage>
   }
 
   Widget _buildcarlist(List<CarList> listcar, String status) {
-    Widget cards;
     if (listcar.isNotEmpty) {
-      List<CarList> _listcar = [];
+      List<CarList> filteredList = listcar.where((element) => element.status == status).toList();
 
-      listcar.forEach((element) {
-        if (element.status == status) {
-          CarList _item = CarList(
-            id: element.id,
-            area_id: element.area_id,
-            area_name: element.area_name,
-            car_date: element.car_date,
-            car_id: element.car_id,
-            car_no: element.car_no,
-            description: element.description,
-            module_type_id: element.module_type_id,
-            problem_type: element.problem_type,
-            status: element.status,
-            is_new: element.is_new,
-            target_finish_date: element.target_finish_date,
-            responsibility: element.responsibility,
-            car_non_conform: element.car_non_conform,
-          );
-
-          _listcar.add(_item);
-        }
-      });
-
-      if (_listcar.isNotEmpty) {
-        cards = ListView.builder(
-            itemCount: _listcar.length,
+      if (filteredList.isNotEmpty) {
+        return ListView.builder(
+            itemCount: filteredList.length,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            physics: const BouncingScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
-              String status_name = "";
-              // _listcar[index].status == "1" ? "Pending" : "Open";
+              final carItem = filteredList[index];
+              String statusName = "";
+              Color statusColor = Colors.grey;
+              List<Color> gradientColors = [Colors.grey, Colors.grey.shade400];
 
-              if (_listcar[index].status == "1") {
-                status_name = "Pending";
-              } else if (_listcar[index].status == "2") {
-                status_name = "Open";
-              } else if (_listcar[index].status == "3") {
-                status_name = "Closed";
+              if (carItem.status == "1") {
+                statusName = "Pending";
+                statusColor = const Color(0xFFFF9800); // Orange
+                gradientColors = [const Color(0xFFFF9800), const Color(0xFFFFB74D)];
+              } else if (carItem.status == "2") {
+                statusName = "Open";
+                statusColor = const Color(0xFF0F9B73); // Green
+                gradientColors = [const Color(0xFF0F9B73), const Color(0xFF2EC89F)];
+              } else if (carItem.status == "3") {
+                statusName = "Closed";
+                statusColor = const Color(0xFFE53935); // Red
+                gradientColors = [const Color(0xFFE53935), const Color(0xFFEF5350)];
               }
 
-              Color status_color = Colors.black;
-              if (_listcar[index].status == "1") {
-                status_color = Colors.orange;
-              } else if (_listcar[index].status == "2") {
-                status_color = Colors.green;
-              } else if (_listcar[index].status == "3") {
-                status_color = Colors.red;
-              }
-              //    _listcar[index].status == "1" ? Colors.orange : Colors.green;
-
-              return GestureDetector(
-                child: Card(
-                  child: ListTile(
-                    title: Text(
-                        '${_listcar[index].car_no} ${_listcar[index].area_name}'),
-                    subtitle: Text(
-                        '${_listcar[index].description} \n ${_listcar[index].car_date}'),
-                    trailing: Text(
-                      "${status_name}",
-                      style: TextStyle(color: status_color),
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CarDetailPage(
+                                    id: carItem.id,
+                                    car_id: carItem.car_id,
+                                    area_id: carItem.area_id,
+                                    area_name: carItem.area_name,
+                                    car_date: carItem.car_date,
+                                    car_no: carItem.car_no,
+                                    car_description: carItem.description,
+                                    is_new: carItem.is_new,
+                                    target_finish_date: carItem.target_finish_date,
+                                    responsibility: carItem.responsibility,
+                                    car_non_conform: carItem.car_non_conform,
+                                    car_status: carItem.status,
+                                  ))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: gradientColors,
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: statusColor.withOpacity(0.2),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.receipt_long_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${carItem.car_no} - ${carItem.area_name}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    carItem.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today_rounded,
+                                        size: 12,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        carItem.car_date,
+                                        style: TextStyle(
+                                          fontFamily: 'Prompt',
+                                          fontSize: 11,
+                                          color: Colors.grey.shade500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: statusColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                statusName,
+                                style: TextStyle(
+                                  fontFamily: 'Prompt',
+                                  fontWeight: FontWeight.bold,
+                                  color: statusColor,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CarDetailPage(
-                              id: _listcar[index].id,
-                              car_id: _listcar[index].car_id,
-                              area_id: _listcar[index].area_id,
-                              area_name: _listcar[index].area_name,
-                              car_date: _listcar[index].car_date,
-                              car_no: _listcar[index].car_no,
-                              car_description: _listcar[index].description,
-                              is_new: _listcar[index].is_new,
-                              target_finish_date:
-                                  _listcar[index].target_finish_date,
-                              responsibility: _listcar[index].responsibility,
-                              car_non_conform: _listcar[index].car_non_conform,
-                              car_status: _listcar[index].status,
-                            ))),
               );
             });
       } else {
-        cards = Center(
+        return Center(
           child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text(""),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.receipt_long_outlined,
+                  size: 48,
+                  color: Colors.grey,
+                ),
               ),
-              Expanded(
-                flex: 3,
-                child: Column(children: [
-                  Icon(
-                    Icons.block,
-                    size: 50,
-                    color: Color.fromARGB(255, 45, 172, 123),
-                  ),
-                  Center(
-                      child: Text(
-                    'ไม่พบรายการ',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                    ),
-                  )),
-                ]),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(""),
+              const SizedBox(height: 16),
+              const Text(
+                'ไม่พบรายการในหมวดนี้',
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
               ),
             ],
           ),
         );
       }
-
-      return cards;
     } else {
       return Center(
         child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: Text(""),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.block_flipped,
+                size: 48,
+                color: Colors.grey,
+              ),
             ),
-            Expanded(
-              flex: 3,
-              child: Column(children: [
-                Icon(
-                  Icons.block,
-                  size: 50,
-                  color: Color.fromARGB(255, 45, 172, 123),
-                ),
-                Center(
-                    child: Text(
-                  'ไม่พบรายการตรวจ',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey,
-                  ),
-                )),
-              ]),
-            ),
-            Expanded(
-              flex: 2,
-              child: Text(""),
+            const SizedBox(height: 16),
+            const Text(
+              'ไม่พบรายการตรวจใบ CAR',
+              style: TextStyle(
+                fontFamily: 'Prompt',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
             ),
           ],
         ),
@@ -191,24 +262,62 @@ class _CarlistPageState extends State<CarlistPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text("รายการใบ CAR"),
-        backgroundColor: Color.fromARGB(153, 161, 12, 24),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "รายการใบ CAR",
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CarcreateZone())),
-              icon: Icon(Icons.new_label_outlined))
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CarcreateZone()),
+            ),
+            icon: const Icon(
+              Icons.post_add_rounded,
+              color: Colors.black87,
+              size: 26,
+            ),
+          )
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: <Widget>[
+          indicatorColor: const Color(0xFF0F9B73),
+          indicatorWeight: 3,
+          labelColor: Colors.black87,
+          unselectedLabelColor: Colors.black38,
+          labelStyle: const TextStyle(
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
+          ),
+          tabs: const <Widget>[
             Tab(
-              // icon: Icon(Icons.list_outlined),
               text: "รอดำเนินการ",
             ),
             Tab(
-              //icon: Icon(Icons.calendar_month),
               text: "คงค้าง",
             ),
             Tab(
@@ -217,30 +326,22 @@ class _CarlistPageState extends State<CarlistPage>
           ],
         ),
       ),
-      body: Container(
-        child: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            Container(
-              child: Consumer<CarData>(
-                builder: ((context, value, _) =>
-                    _buildcarlist(value.listcaritem, "1")),
-              ),
-            ),
-            Container(
-              child: Consumer<CarData>(
-                builder: ((context, value, _) =>
-                    _buildcarlist(value.listcaritem, "2")),
-              ),
-            ),
-            Container(
-              child: Consumer<CarData>(
-                builder: ((context, value, _) =>
-                    _buildcarlist(value.listcaritem, "3")),
-              ),
-            ),
-          ],
-        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          Consumer<CarData>(
+            builder: ((context, value, _) =>
+                _buildcarlist(value.listcaritem, "1")),
+          ),
+          Consumer<CarData>(
+            builder: ((context, value, _) =>
+                _buildcarlist(value.listcaritem, "2")),
+          ),
+          Consumer<CarData>(
+            builder: ((context, value, _) =>
+                _buildcarlist(value.listcaritem, "3")),
+          ),
+        ],
       ),
     );
   }

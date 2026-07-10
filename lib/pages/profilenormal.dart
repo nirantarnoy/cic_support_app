@@ -18,6 +18,7 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
+import 'package:flutter_cic_support/pages/production_dashboard.dart';
 import 'package:flutter_cic_support/pages/securitycheckarea.dart';
 import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/shirtorderinform.dart';
@@ -326,23 +327,22 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
 
   Widget _buildEmployeeInfoItem({
     required IconData icon,
-    required Color color,
+    required List<Color> gradientColors,
     required String title,
   }) {
     return Container(
-      width: 100,
+      width: 95,
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100),
       ),
       child: Material(
         color: Colors.transparent,
@@ -352,17 +352,21 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
             EasyLoading.showInfo('ระบบกำลังพัฒนา\nจะเปิดให้ใช้งานเร็วๆ นี้');
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    gradient: LinearGradient(
+                      colors: gradientColors,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, color: color, size: 24),
+                  child: Icon(icon, color: Colors.white, size: 20),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -372,6 +376,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.black87,
+                    fontFamily: 'Prompt',
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -386,74 +391,82 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
 
   Widget _buildMenuCard({
     required IconData icon,
-    required Color iconColor,
+    required List<Color> gradientColors,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
   }) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-            child: Row(
-              children: [
-                Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: iconColor, size: 24),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.black87,
-                        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              child: Row(
+                children: [
+                  Container(
+                    height: 44,
+                    width: 44,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: gradientColors,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 22),
                   ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.grey[400],
-                  size: 16,
-                ),
-              ],
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'Prompt',
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontFamily: 'Prompt',
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.grey[400],
+                    size: 14,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -471,24 +484,35 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
     display_section_code = user.getCurrenUserSection();
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: const Color(0xFFF5F7FB),
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF073F2F),
+        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text(
-          'User Profile / ข้อมูลผู้ใช้งาน',
+          'ข้อมูลผู้ใช้งาน / Profile',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black87,
+            fontFamily: 'Prompt',
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(
               Icons.logout_rounded,
-              color: Colors.white,
+              color: Colors.redAccent,
+              size: 22,
             ),
             onPressed: () => _logout(user),
           ),
@@ -497,144 +521,176 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF073F2F), Color(0xFF1E8F68)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF8A2387),
+                          Color(0xFFE94057),
+                          Color(0xFFF27121),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE94057).withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(32),
-                      bottomRight: Radius.circular(32),
-                    ),
-                  ),
-                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 16),
-                  child: Column(
-                    children: [
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 4),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 6),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.white, width: 3),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 44,
+                                    backgroundColor: Colors.white.withOpacity(0.2),
+                                    backgroundImage: image2.isNotEmpty
+                                        ? FileImage(image2[0]) as ImageProvider
+                                        : NetworkImage(display_photo),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _editBottomSheet(context),
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt_rounded,
+                                      color: Color(0xFFE94057),
+                                      size: 16,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                            child: CircleAvatar(
-                              radius: 54,
-                              backgroundColor: Colors.grey.shade200,
-                              backgroundImage: image2.isNotEmpty
-                                  ? FileImage(image2[0]) as ImageProvider
-                                  : NetworkImage(display_photo),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => _editBottomSheet(context),
-                            child: Container(
-                              height: 36,
-                              width: 36,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2DAC7B),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.empfullname.isNotEmpty ? user.empfullname : current_username,
+                                    style: const TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
+                                  const SizedBox(height: 6),
+                                  if (user.emppositionname.isNotEmpty || user.emp_department_name.isNotEmpty)
+                                    Text(
+                                      '${user.emppositionname}${user.emppositionname.isNotEmpty && user.emp_department_name.isNotEmpty ? " • " : ""}${user.emp_department_name}',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 12,
+                                        color: Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                  if (display_section_code.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Section: $display_section_code',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 11,
+                                        color: Colors.white.withOpacity(0.75),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
-                              child: const Icon(
-                                Icons.camera_alt_rounded,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        user.empfullname,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      if (user.emppositionname.isNotEmpty || user.emp_department_name.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Text(
-                          '${user.emppositionname}${user.emppositionname.isNotEmpty && user.emp_department_name.isNotEmpty ? " • " : ""}${user.emp_department_name}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white.withOpacity(0.85),
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                      if (image2.isNotEmpty) ...[
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF1565C0),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              ),
-                              onPressed: () => _updatephotofrofil(context),
-                              icon: const Icon(Icons.check_circle_outline, size: 16),
-                              label: const Text('Update Photo'),
-                            ),
-                            const SizedBox(width: 12),
-                            OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                side: const BorderSide(color: Colors.white70),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  image2.clear();
-                                  base64ImageList.clear();
-                                });
-                              },
-                              icon: const Icon(Icons.cancel_outlined, size: 16),
-                              label: const Text('Cancel'),
                             ),
                           ],
                         ),
+                        if (image2.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFFE94057),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  elevation: 0,
+                                ),
+                                onPressed: () => _updatephotofrofil(context),
+                                icon: const Icon(Icons.check_circle_outline, size: 16),
+                                label: const Text('บันทึกรูปภาพ', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold, fontSize: 12)),
+                              ),
+                              const SizedBox(width: 12),
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  side: const BorderSide(color: Colors.white70),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    image2.clear();
+                                    base64ImageList.clear();
+                                  });
+                                },
+                                icon: const Icon(Icons.cancel_outlined, size: 16),
+                                label: const Text('ยกเลิก', style: TextStyle(fontFamily: 'Prompt', fontSize: 12)),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 24, bottom: 12),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 8),
                   child: Row(
                     children: [
                       const Text(
                         'ข้อมูลพนักงาน',
                         style: TextStyle(
                           color: Colors.black87,
+                          fontFamily: 'Prompt',
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -651,6 +707,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           'ยังไม่เปิดใช้งาน',
                           style: TextStyle(
                             color: Colors.amber.shade800,
+                            fontFamily: 'Prompt',
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -660,7 +717,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 105,
+                  height: 110,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -668,27 +725,27 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                     children: [
                       _buildEmployeeInfoItem(
                         icon: Icons.local_hospital_rounded,
-                        color: Colors.red.shade400,
+                        gradientColors: [const Color(0xFFFF5252), const Color(0xFFFF1744)],
                         title: 'สถานพยาบาล',
                       ),
                       _buildEmployeeInfoItem(
                         icon: Icons.school_rounded,
-                        color: Colors.blue.shade400,
+                        gradientColors: [const Color(0xFF40C4FF), const Color(0xFF00B0FF)],
                         title: 'อบรม',
                       ),
                       _buildEmployeeInfoItem(
                         icon: Icons.date_range_rounded,
-                        color: Colors.purple.shade400,
+                        gradientColors: [const Color(0xFFE040FB), const Color(0xFFD500F9)],
                         title: 'เช็ควันลา',
                       ),
                       _buildEmployeeInfoItem(
                         icon: Icons.health_and_safety_rounded,
-                        color: Colors.green.shade400,
+                        gradientColors: [const Color(0xFF69F0AE), const Color(0xFF00E676)],
                         title: 'ตรวจสุขภาพ',
                       ),
                       _buildEmployeeInfoItem(
                         icon: Icons.account_balance_wallet_rounded,
-                        color: Colors.orange.shade400,
+                        gradientColors: [const Color(0xFFFFAB40), const Color(0xFFFF9100)],
                         title: 'เงินกู้สวัสดิการ',
                       ),
                     ],
@@ -704,7 +761,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           children: [
                             _buildMenuCard(
                               icon: Icons.approval_rounded,
-                              iconColor: Colors.green,
+                              gradientColors: [const Color(0xFF0F9B73), const Color(0xFF2EC89F)],
                               title: 'อนุมัติใบเบิก',
                               subtitle: 'ตรวจสอบและอนุมัติใบเบิกวัสดุอุปกรณ์',
                               onTap: () => Navigator.of(context).push(
@@ -715,10 +772,9 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
                             _buildMenuCard(
                               icon: Icons.fire_extinguisher_rounded,
-                              iconColor: Colors.red,
+                              gradientColors: [const Color(0xFFFF5252), const Color(0xFFFF1744)],
                               title: 'ตรวจถังดับเพลิง',
                               subtitle: 'บันทึกการตรวจสอบความปลอดภัยของถังดับเพลิง',
                               onTap: () => Navigator.of(context).push(
@@ -727,12 +783,22 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
                           ],
                         ),
                       _buildMenuCard(
+                        icon: Icons.show_chart_rounded,
+                        gradientColors: [const Color(0xFF1565C0), const Color(0xFF42A5F5)],
+                        title: 'Production Dashboard',
+                        subtitle: 'ยอดผลิตประจำวัน/สัปดาห์ เทียบเป้าหมายรายแผนก',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ProductionDashboardPage(),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
                         icon: Icons.accessibility_new_rounded,
-                        iconColor: Colors.blue,
+                        gradientColors: [const Color(0xFF4A5AE7), const Color(0xFF6B8DF8)],
                         title: 'ระบุเบอร์เสื้อ',
                         subtitle: 'บันทึกข้อมูลและเลือกขนาดเสื้อเครื่องแบบพนักงาน',
                         onTap: () async {
@@ -749,10 +815,11 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 12),
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 12),
                   child: Text(
                     'กิจกรรม/ข่าวสาร',
                     style: TextStyle(
+                      fontFamily: 'Prompt',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -768,6 +835,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
             ),
           ),
           DraggableFAB(
+            initialAlignment: Alignment.centerRight,
             onTap: () {
               Navigator.push(
                 context,

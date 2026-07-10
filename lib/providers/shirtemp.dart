@@ -8,6 +8,7 @@ import 'package:flutter_cic_support/providers/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ShirtempData extends ChangeNotifier {
   final String url_to_get_shirt_list =
@@ -94,10 +95,6 @@ class ShirtempData extends ChangeNotifier {
     final String user_id = prefs.getString("emp_key").toString();
     final String token = prefs.getString("token").toString();
 
-    final Map<String, dynamic> filterData = {
-      'user_id': int.parse(user_id),
-    };
-
     notifyListeners();
     if (listshirt.length == 0) {
       try {
@@ -107,19 +104,23 @@ class ShirtempData extends ChangeNotifier {
 
         if (response.statusCode == 200) {
           List<Shirtdata> data = [];
-          List<dynamic> res = json.decode(response.body);
-
-          if (res == null) {
+          final decoded = json.decode(response.body);
+          if (decoded == null) {
             print("no data");
             return false;
           }
-          print("shirt data is ${res}");
+          List<dynamic> resList = [];
+          if (decoded is List) {
+            resList = decoded;
+          } else if (decoded is Map && decoded['data'] is List) {
+            resList = decoded['data'];
+          }
 
-          for (var i = 0; i <= res.length - 1; i++) {
+          for (var i = 0; i <= resList.length - 1; i++) {
             final Shirtdata _item = Shirtdata(
-              id: res[i]["id"].toString(),
-              name: res[i]["name"].toString(),
-              shirt_type_id: res[i]["shirt_type_id"].toString(),
+              id: resList[i]["id"].toString(),
+              name: resList[i]["name"].toString(),
+              shirt_type_id: resList[i]["shirt_type_id"].toString(),
             );
 
             data.add(_item);
@@ -128,10 +129,12 @@ class ShirtempData extends ChangeNotifier {
           notifyListeners();
           return listshirt;
         } else {
-          print("No Data");
+          print("No Data fetchShirt: ${response.statusCode} - ${response.body}");
+          Fluttertoast.showToast(msg: "ดึงแบบเสื้อล้มเหลว: รหัส ${response.statusCode}");
         }
       } catch (err) {
         print("error na ja is ${err}");
+        Fluttertoast.showToast(msg: "ดึงแบบเสื้อล้มเหลว: ${err.toString()}");
       }
     }
   }
@@ -140,10 +143,6 @@ class ShirtempData extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("emp_key").toString();
     final String token = prefs.getString("token").toString();
-
-    final Map<String, dynamic> filterData = {
-      'user_id': int.parse(user_id),
-    };
 
     notifyListeners();
     if (listshirtsize.length == 0) {
@@ -154,18 +153,22 @@ class ShirtempData extends ChangeNotifier {
 
         if (response.statusCode == 200) {
           List<ShirtSizedata> data = [];
-          List<dynamic> res = json.decode(response.body);
-
-          if (res == null) {
+          final decoded = json.decode(response.body);
+          if (decoded == null) {
             print("no data");
             return false;
           }
-          print("shirt data is ${res}");
+          List<dynamic> resList = [];
+          if (decoded is List) {
+            resList = decoded;
+          } else if (decoded is Map && decoded['data'] is List) {
+            resList = decoded['data'];
+          }
 
-          for (var i = 0; i <= res.length - 1; i++) {
+          for (var i = 0; i <= resList.length - 1; i++) {
             final ShirtSizedata _item = ShirtSizedata(
-              id: res[i]["id"].toString(),
-              name: res[i]["name"].toString(),
+              id: resList[i]["id"].toString(),
+              name: resList[i]["name"].toString(),
             );
 
             data.add(_item);
@@ -174,10 +177,12 @@ class ShirtempData extends ChangeNotifier {
           notifyListeners();
           return listshirtsize;
         } else {
-          print("No Data");
+          print("No Data fetchShirtSize: ${response.statusCode} - ${response.body}");
+          Fluttertoast.showToast(msg: "ดึงไซส์เสื้อล้มเหลว: รหัส ${response.statusCode}");
         }
       } catch (err) {
         print("error na ja is ${err}");
+        Fluttertoast.showToast(msg: "ดึงไซส์เสื้อล้มเหลว: ${err.toString()}");
       }
     }
   }
@@ -186,10 +191,6 @@ class ShirtempData extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String user_id = prefs.getString("emp_key").toString();
     final String token = prefs.getString("token").toString();
-
-    final Map<String, dynamic> filterData = {
-      'user_id': int.parse(user_id),
-    };
 
     notifyListeners();
     if (listshirtpocket.length == 0) {
@@ -200,18 +201,22 @@ class ShirtempData extends ChangeNotifier {
 
         if (response.statusCode == 200) {
           List<ShirtPocketdata> data = [];
-          List<dynamic> res = json.decode(response.body);
-
-          if (res == null) {
+          final decoded = json.decode(response.body);
+          if (decoded == null) {
             print("no data");
             return false;
           }
-          print("shirt data is ${res}");
+          List<dynamic> resList = [];
+          if (decoded is List) {
+            resList = decoded;
+          } else if (decoded is Map && decoded['data'] is List) {
+            resList = decoded['data'];
+          }
 
-          for (var i = 0; i <= res.length - 1; i++) {
+          for (var i = 0; i <= resList.length - 1; i++) {
             final ShirtPocketdata _item = ShirtPocketdata(
-              id: res[i]["id"].toString(),
-              name: res[i]["name"].toString(),
+              id: resList[i]["id"].toString(),
+              name: resList[i]["name"].toString(),
             );
 
             data.add(_item);
@@ -220,10 +225,12 @@ class ShirtempData extends ChangeNotifier {
           notifyListeners();
           return listshirtpocket;
         } else {
-          print("No Data");
+          print("No Data fetchShirtPocket: ${response.statusCode} - ${response.body}");
+          Fluttertoast.showToast(msg: "ดึงลักษณะเสื้อล้มเหลว: รหัส ${response.statusCode}");
         }
       } catch (err) {
         print("error na ja is ${err}");
+        Fluttertoast.showToast(msg: "ดึงลักษณะเสื้อล้มเหลว: ${err.toString()}");
       }
     }
   }
@@ -314,11 +321,13 @@ class ShirtempData extends ChangeNotifier {
         return shirtselected;
       } else {
         shirtselected = 0;
-        print("No Data");
+        print("No Data fetchEmpuniform: ${response.statusCode} - ${response.body}");
+        Fluttertoast.showToast(msg: "ตรวจสอบประวัติเครื่องแบบล้มเหลว: รหัส ${response.statusCode}");
       }
     } catch (err) {
       shirtselected = 0;
       print("error na ja is ${err}");
+      Fluttertoast.showToast(msg: "ตรวจสอบประวัติเครื่องแบบล้มเหลว: ${err.toString()}");
     }
   }
 
@@ -338,37 +347,45 @@ class ShirtempData extends ChangeNotifier {
           headers: {"Authorization": token});
 
       if (response.statusCode == 200) {
-        List<dynamic> res = json.decode(response.body);
+        final decoded = json.decode(response.body);
         List<ShirtOrder> data = [];
-        if (res == null) {
+        if (decoded == null) {
           print("no data");
           return 0;
         }
+        List<dynamic> resList = [];
+        if (decoded is List) {
+          resList = decoded;
+        } else if (decoded is Map && decoded['data'] is List) {
+          resList = decoded['data'];
+        }
 
-        for (var i = 0; i <= res.length - 1; i++) {
+        for (var i = 0; i <= resList.length - 1; i++) {
           ShirtOrder _data = ShirtOrder(
-            order_id: res[i]['id'].toString(),
-            shirt_type: res[i]['shirt_id'].toString(),
-            shirt_size: res[i]['shirt_size_id'].toString(),
-            shirt_pocket: res[i]['shirt_pocket_id'].toString(),
-            shirt_qty: res[i]['qty'].toString(),
-            shirt_remark: res[i]['remark'].toString(),
-            shirt_type_name: res[i]['shirt_name'].toString(),
-            shirt_size_name: res[i]['shirt_size_name'].toString(),
-            shirt_pocket_name: res[i]['shirt_pocket_name'].toString(),
+            order_id: resList[i]['id'].toString(),
+            shirt_type: resList[i]['shirt_id'].toString(),
+            shirt_size: resList[i]['shirt_size_id'].toString(),
+            shirt_pocket: resList[i]['shirt_pocket_id'].toString(),
+            shirt_qty: resList[i]['qty'].toString(),
+            shirt_remark: resList[i]['remark'].toString(),
+            shirt_type_name: resList[i]['shirt_name'].toString(),
+            shirt_size_name: resList[i]['shirt_size_name'].toString(),
+            shirt_pocket_name: resList[i]['shirt_pocket_name'].toString(),
           );
           data.add(_data);
-          print("shirt order data is ${res}");
+          print("shirt order data is ${decoded}");
         }
         listshirtorder = data;
 
         notifyListeners();
         return listshirtorder;
       } else {
-        print("No Data");
+        print("No Data fetchEmpShirtOrder: ${response.statusCode} - ${response.body}");
+        Fluttertoast.showToast(msg: "ดึงรายการสั่งจองล้มเหลว: รหัส ${response.statusCode}");
       }
     } catch (err) {
       print("error na ja is ${err}");
+      Fluttertoast.showToast(msg: "ดึงรายการสั่งจองล้มเหลว: ${err.toString()}");
     }
   }
 
@@ -495,10 +512,6 @@ class ShirtempData extends ChangeNotifier {
     final String user_id = prefs.getString("emp_key").toString();
     final String token = prefs.getString("token").toString();
 
-    final Map<String, dynamic> filterData = {
-      'user_id': int.parse(user_id),
-    };
-
     notifyListeners();
     if (shirtassignstdlist.length == 0) {
       try {
@@ -508,23 +521,27 @@ class ShirtempData extends ChangeNotifier {
 
         if (response.statusCode == 200) {
           List<ShirtAssignStd> data = [];
-          List<dynamic> res = json.decode(response.body);
-
-          if (res == null) {
+          final decoded = json.decode(response.body);
+          if (decoded == null) {
             print("no data");
             return false;
           }
-          print("shirt assign data is ${res}");
+          List<dynamic> resList = [];
+          if (decoded is List) {
+            resList = decoded;
+          } else if (decoded is Map && decoded['data'] is List) {
+            resList = decoded['data'];
+          }
 
-          for (var i = 0; i <= res.length - 1; i++) {
+          for (var i = 0; i <= resList.length - 1; i++) {
             final ShirtAssignStd _item = ShirtAssignStd(
-              id: res[i]["id"].toString(),
-              shirt_id: res[i]["shirt_id"].toString(),
-              emp_level_id: res[i]["emp_level_id"].toString(),
-              emp_dept_id: res[i]["emp_dept_id"].toString(),
-              emp_dept_name: res[i]["emp_dept_name"].toString(),
-              emp_position_id: res[i]["emp_position_id"].toString(),
-              emp_position_name: res[i]["emp_position_name"].toString(),
+              id: resList[i]["id"].toString(),
+              shirt_id: resList[i]["shirt_id"].toString(),
+              emp_level_id: resList[i]["emp_level_id"].toString(),
+              emp_dept_id: resList[i]["emp_dept_id"].toString(),
+              emp_dept_name: resList[i]["emp_dept_name"].toString(),
+              emp_position_id: resList[i]["emp_position_id"].toString(),
+              emp_position_name: resList[i]["emp_position_name"].toString(),
             );
 
             data.add(_item);
@@ -534,10 +551,12 @@ class ShirtempData extends ChangeNotifier {
           notifyListeners();
           return shirtassignstdlist;
         } else {
-          print("No Data");
+          print("No Data fetchShirtEmpAssingStd: ${response.statusCode} - ${response.body}");
+          Fluttertoast.showToast(msg: "ดึงสิทธิ์เครื่องแบบล้มเหลว: รหัส ${response.statusCode}");
         }
       } catch (err) {
         print("error na ja is ${err}");
+        Fluttertoast.showToast(msg: "ดึงสิทธิ์เครื่องแบบล้มเหลว: ${err.toString()}");
       }
     }
   }

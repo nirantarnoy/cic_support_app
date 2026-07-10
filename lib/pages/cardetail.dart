@@ -516,14 +516,11 @@ class _CarDetailPageState extends State<CarDetailPage> {
   }
 
   Widget _buildcarphoto(List<CarPhotoList> _carphoto) {
-    Widget _items;
-    if (!_carphoto.isEmpty) {
-      _items = ListView.separated(
+    if (_carphoto.isNotEmpty) {
+      return ListView.separated(
         itemCount: _carphoto.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
-          // print(
-          //     'car image list is http://img.cicsupport.net/upload/${_carphoto[index].image}');
           String image_url =
               'http://img.cicsupport.net/upload/${_carphoto[index].image}';
           return GestureDetector(
@@ -532,38 +529,51 @@ class _CarDetailPageState extends State<CarDetailPage> {
                 MaterialPageRoute(
                     builder: (context) =>
                         CarphotoCloseviewPage(carphoto_url: image_url))),
-            child: SizedBox(
-              height: 100,
-              width: 100,
-              child: Image.network(
-                "http://img.cicsupport.net/upload/${_carphoto[index].image}",
-                fit: BoxFit.fill,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  image_url,
+                  fit: BoxFit.cover,
+                  width: 90,
+                  height: 90,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 90,
+                    height: 90,
+                    color: Colors.grey.shade100,
+                    child: const Icon(Icons.broken_image_rounded, color: Colors.grey),
+                  ),
+                ),
               ),
             ),
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return SizedBox(
-            width: 5.0,
-          );
+          return const SizedBox(width: 8.0);
         },
       );
     } else {
-      _items = Text('No Data');
+      return const Center(child: Text('No Data', style: TextStyle(fontFamily: 'Prompt')));
     }
-
-    return _items;
   }
 
   Widget _buildcarclosephoto(List<CarClosePhotoList> _carphoto) {
-    Widget _items;
-    if (!_carphoto.isEmpty) {
-      _items = ListView.separated(
+    if (_carphoto.isNotEmpty) {
+      return ListView.separated(
         itemCount: _carphoto.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
-          // print(
-          //     'car image list is http://img.cicsupport.net/upload/${_carphoto[index].image}');
           String image_url =
               'http://img.cicsupport.net/upload/${_carphoto[index].image}';
           return GestureDetector(
@@ -572,27 +582,43 @@ class _CarDetailPageState extends State<CarDetailPage> {
                 MaterialPageRoute(
                     builder: (context) =>
                         CarphotoCloseviewPage(carphoto_url: image_url))),
-            child: SizedBox(
-              height: 100,
-              width: 100,
-              child: Image.network(
-                "http://img.cicsupport.net/upload/${_carphoto[index].image}",
-                fit: BoxFit.fill,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  image_url,
+                  fit: BoxFit.cover,
+                  width: 90,
+                  height: 90,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 90,
+                    height: 90,
+                    color: Colors.grey.shade100,
+                    child: const Icon(Icons.broken_image_rounded, color: Colors.grey),
+                  ),
+                ),
               ),
             ),
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return SizedBox(
-            width: 5.0,
-          );
+          return const SizedBox(width: 8.0);
         },
       );
     } else {
-      _items = Text('No Data');
+      return const Center(child: Text('No Data', style: TextStyle(fontFamily: 'Prompt')));
     }
-
-    return _items;
   }
 
   Future _closecar() async {
@@ -673,409 +699,412 @@ class _CarDetailPageState extends State<CarDetailPage> {
     }
   }
 
+  Widget _buildDetailRow(String label, dynamic value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Prompt',
+              fontSize: 12,
+              color: Colors.grey.shade500,
+            ),
+          ),
+          const SizedBox(height: 6),
+          value is Widget
+              ? value
+              : Text(
+                  value.toString(),
+                  style: const TextStyle(
+                    fontFamily: 'Prompt',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+          const SizedBox(height: 12),
+          Divider(color: Colors.grey.shade100, height: 1),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     print("is open is ${is_load_open}");
     final DateFormat dateFormatter = DateFormat('dd-MM-yyyy');
     String aStr = widget.car_non_conform.replaceAll(new RegExp(r'[^0-9]'), '');
-    // print("string replace is ${aStr}");
-    // print("string replace lenght is ${aStr.length}");
-    // for (var i = 0; i <= aStr.length; i++) {
-    //   String x = aStr.substring(1, i);
-    //   print("split string is ${x}");
-    // }
 
     bool isWeb = GetPlatform.isWeb;
-    // if (isWeb) {
-    //   //print("this is web");
-    // } else {
-    //   //print("not web");
-    // }
     List<String> xx = aStr.split("");
-    // print("sr is ${xx}");
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text("รายละเอียดใบ CAR"),
-        backgroundColor: Color.fromARGB(153, 161, 12, 24),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "รายละเอียดใบ CAR",
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
         actions: <Widget>[
           widget.car_status != "2"
-              ? Text("")
+              ? const SizedBox.shrink()
               : IconButton(
                   onPressed: () => chooseImage(),
-                  icon: Icon(Icons.add_a_photo_outlined))
+                  icon: const Icon(Icons.add_a_photo_outlined, color: Colors.black87),
+                ),
         ],
       ),
-      body: Column(children: [
-        Expanded(
-          flex: 6,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "เลขที่",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '${widget.car_no}',
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("วันที่",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${dateFormatter.format(DateTime.parse(widget.car_date))}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("แผนก/พื้นที่",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${widget.area_name}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("พบปัญหาและข้อบกพร่องดังนี้",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: _getIsnew(),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("รายละเอียด",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${widget.car_description}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("ไม่สอดคล้องตามมาตรฐานในหัวข้อ",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: _getNoncomformName(xx),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("ผู้รับผิดชอบ",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${widget.responsibility}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text("กำหนดเสร็จ",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${widget.target_finish_date}",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(2.0),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('รูปภาพ',
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.015),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDetailRow("เลขที่ใบ CAR / CAR No.", widget.car_no),
+                            _buildDetailRow(
+                              "วันที่ตรวจพบ / Date Detected",
+                              dateFormatter.format(DateTime.parse(widget.car_date)),
+                            ),
+                            _buildDetailRow("แผนก/พื้นที่ / Department & Area", widget.area_name),
+                            _buildDetailRow("ประเภทปัญหา / Issue Status", _getIsnew()),
+                            _buildDetailRow("รายละเอียดปัญหา / Description", widget.car_description),
+                            _buildDetailRow("มาตรฐานหัวข้อที่ไม่สอดคล้อง / Nonconformity Section", _getNoncomformName(xx)),
+                            _buildDetailRow("ผู้รับผิดชอบแก้ไข / Person in Charge", widget.responsibility),
+                            _buildDetailRow("กำหนดส่งงานแก้ไข / Target Finish Date", widget.target_finish_date),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8.0, bottom: 12.0),
+                        child: Text(
+                          'รูปภาพแนบขณะตรวจพบ / Detection Photos',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Consumer<CarData>(
-                        builder: ((context, _car, child) =>
-                            _car.listcarphoto.length > 0
-                                ? Consumer<CarData>(
-                                    builder: ((context, _car, child) =>
-                                        _car.listcarphoto.length > 0
-                                            ? Container(
-                                                padding: EdgeInsets.all(4),
-                                                width: double.infinity,
-                                                height: 100,
-                                                child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: _buildcarphoto(
-                                                        _car.listcarphoto)))
-                                            : Center(
-                                                child: Text(''),
-                                              )),
-                                  )
-                                : Center(
-                                    child: Text('No Photo'),
-                                  )),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text('รูปภาพปิด CAR',
-                          style: TextStyle(
+                            fontFamily: 'Prompt',
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          )),
-                      Consumer<CarData>(
-                        builder: ((context, _car, child) =>
-                            _car.listcarclosephoto.length > 0
-                                ? Consumer<CarData>(
-                                    builder: ((context, _car, child) => _car
-                                                .listcarphoto.length >
-                                            0
-                                        ? Container(
-                                            padding: EdgeInsets.all(4),
-                                            width: double.infinity,
-                                            height: 100,
-                                            child: Align(
-                                                alignment: Alignment.center,
-                                                child: _buildcarclosephoto(
-                                                    _car.listcarclosephoto)))
-                                        : Center(
-                                            child: Text(''),
-                                          )),
-                                  )
-                                : Center(
-                                    child: Text('No Photo'),
-                                  )),
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
                       ),
-                      image2.length == 0
-                          ? imageweb2.length > 0
+                      Consumer<CarData>(
+                        builder: ((context, _car, child) => _car.listcarphoto.isNotEmpty
+                            ? SizedBox(
+                                height: 100,
+                                width: double.infinity,
+                                child: _buildcarphoto(_car.listcarphoto),
+                              )
+                            : Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 24),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.grey.shade100),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.photo_outlined, color: Colors.grey.shade300, size: 32),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'ไม่มีรูปภาพแนบ / No Photos',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 12,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                      ),
+                      const SizedBox(height: 24),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8.0, bottom: 12.0),
+                        child: Text(
+                          'รูปภาพหลังดำเนินการแก้ไข / Resolution Photos',
+                          style: TextStyle(
+                            fontFamily: 'Prompt',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Consumer<CarData>(
+                        builder: ((context, _car, child) => _car.listcarclosephoto.isNotEmpty
+                            ? SizedBox(
+                                height: 100,
+                                width: double.infinity,
+                                child: _buildcarclosephoto(_car.listcarclosephoto),
+                              )
+                            : Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 24),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.grey.shade100),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.check_circle_outline_rounded, color: Colors.grey.shade300, size: 32),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'ยังไม่มีรูปภาพปิดงาน / No Resolution Photos',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 12,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                      ),
+                      const SizedBox(height: 16),
+                      image2.isEmpty
+                          ? imageweb2.isNotEmpty
                               ? GestureDetector(
-                                  onTap: () => this.imageweb2.length > 0
-                                      ? _editBottomSheetWeb(
-                                          context, imageweb2, isWeb)
+                                  onTap: () => imageweb2.isNotEmpty
+                                      ? _editBottomSheetWeb(context, imageweb2, isWeb)
                                       : null,
                                   child: Container(
                                     width: double.infinity,
-                                    margin: EdgeInsets.only(top: 5),
+                                    margin: const EdgeInsets.only(top: 8),
                                     height: 50,
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: this.imageweb2.length > 0
-                                            ? Colors.green
-                                            : Colors.white),
-                                    child: Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "จำนวนรูป ${this.imageweb2.length}",
-                                          style: TextStyle(
-                                            color: this.imageweb2.length > 0
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                        )),
-                                  ),
-                                )
-                              : Center(
-                                  child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(''),
-                                ))
-                          : GestureDetector(
-                              onTap: () => this.image2.length > 0
-                                  ? _editBottomSheet(context, image2)
-                                  : null,
-                              child: Container(
-                                width: double.infinity,
-                                margin: EdgeInsets.only(top: 5),
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: this.image2.length > 0
-                                        ? Colors.green
-                                        : Colors.white),
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "จำนวนรูป ${this.image2.length}",
-                                      style: TextStyle(
-                                        color: this.image2.length > 0
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    )),
-                              ),
-                            ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        widget.car_status == "2"
-            ? Expanded(
-                flex: 1,
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.center,
-                  color: Color.fromARGB(255, 45, 172, 123),
-                  child: GestureDetector(
-                    onTap: () => showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => Dialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Icon(
-                                Icons.mood_outlined,
-                                size: 32,
-                                color: Colors.green,
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'ยืนยันการทำรายการ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'ต้องการทำการปิดใบ CAR นี้ใช่หรือไม่ ?',
-                                style: TextStyle(fontWeight: FontWeight.normal),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.green.shade300,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
-                                      // onPressed: () async {
-                                      //   Navigator.of(context)
-                                      //       .popUntil((route) => route.isFirst);
-                                      // },
-                                      onPressed: () => _closecar(),
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: const Color(0xFF0F9B73),
+                                    ),
+                                    child: Center(
                                       child: Text(
-                                        'ใช่',
-                                        style: TextStyle(
+                                        "จำนวนรูปที่เลือก: ${imageweb2.length} รูป (แตะเพื่อจัดการ)",
+                                        style: const TextStyle(
+                                          fontFamily: 'Prompt',
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Spacer(),
-                                  Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.grey[400],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(false);
-                                      },
-                                      child: Text(
-                                        'ไม่ใช่',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                )
+                              : const SizedBox.shrink()
+                          : GestureDetector(
+                              onTap: () => image2.isNotEmpty
+                                  ? _editBottomSheet(context, image2)
+                                  : null,
+                              child: Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(top: 8),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: const Color(0xFF0F9B73),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "จำนวนรูปที่เลือก: ${image2.length} รูป (แตะเพื่อจัดการ)",
+                                    style: const TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                ],
-                              )
-                            ],
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            widget.car_status == "2"
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      height: 52,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFE53935), Color(0xFFEF5350)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFE53935).withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green.shade50,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.check_circle_outline_rounded,
+                                        size: 40,
+                                        color: Color(0xFF0F9B73),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const Text(
+                                      'ยืนยันการทำรายการ',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    const Text(
+                                      'ต้องการทำการปิดใบ CAR นี้ใช่หรือไม่?',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        color: Colors.black54,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFF0F9B73),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(12)),
+                                              padding: const EdgeInsets.symmetric(vertical: 12),
+                                              elevation: 0,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              _closecar();
+                                            },
+                                            child: const Text(
+                                              'ใช่',
+                                              style: TextStyle(
+                                                fontFamily: 'Prompt',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: OutlinedButton(
+                                            style: OutlinedButton.styleFrom(
+                                              foregroundColor: Colors.black54,
+                                              side: BorderSide(color: Colors.grey.shade300),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(12)),
+                                              padding: const EdgeInsets.symmetric(vertical: 12),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            },
+                                            child: const Text(
+                                              'ไม่ใช่',
+                                              style: TextStyle(
+                                                fontFamily: 'Prompt',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "ปิดใบ CAR",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Prompt',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    child: Text(
-                      'ปิดใบ CAR',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ))
-            : Text(""),
-      ]),
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
+      ),
     );
   }
 }

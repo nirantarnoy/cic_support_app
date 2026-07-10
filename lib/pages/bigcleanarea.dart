@@ -1,17 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/bigplanarea.dart';
-import 'package:flutter_cic_support/models/jobplanarea.dart';
 import 'package:flutter_cic_support/pages/bigcleancheckdetail.dart';
-import 'package:flutter_cic_support/pages/carhistory.dart';
-import 'package:flutter_cic_support/pages/carlistpage.dart';
-import 'package:flutter_cic_support/pages/history.dart';
-import 'package:flutter_cic_support/pages/jobcheck.dart';
-import 'package:flutter_cic_support/pages/jobchecknew.dart';
 import 'package:flutter_cic_support/pages/plancheckcomplete.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
-import 'package:flutter_cic_support/services/local_auth.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -25,209 +17,445 @@ class BigcleanAreaPage extends StatefulWidget {
 
 class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
   String current_section_code = '';
-  Future _obtainPlanArea() async {
-    return await Provider.of<PlanData>(context, listen: false)
-        .fetchBigcleanplan();
-  }
 
-  // List<JobplanArea> _checklist = [
-  //   JobplanArea(
-  //       plan_id: "1",
-  //       plan_date: "",
-  //       plan_area_id: "1",
-  //       plan_area_name: "Drum Test",
-  //       plan_topic_check_qty: "20",
-  //       plan_topic_checked_qty: "0",
-  //       status: "0"),
-  //   JobplanArea(
-  //       plan_id: "1",
-  //       plan_date: "",
-  //       plan_area_id: "1",
-  //       plan_area_name: "คลังสินค้า(ตึก 11)",
-  //       plan_topic_check_qty: "20",
-  //       plan_topic_checked_qty: "0",
-  //       status: "0"),
-  //   JobplanArea(
-  //       plan_id: "1",
-  //       plan_date: "",
-  //       plan_area_id: "1",
-  //       plan_area_name: "ตัดผ้าใบ (ตึก 15)",
-  //       plan_topic_check_qty: "20",
-  //       plan_topic_checked_qty: "0",
-  //       status: "0")
-  // ];
   @override
   void initState() {
-    // TODO: implement initState
-    // Provider.of<PlanData>(context, listen: false).fetchJobplan();
-    //_obtainPlanArea();
     EasyLoading.show(status: "โหลดข้อมูล");
-    //Provider.of<PlanData>(context, listen: false).fetFinishedCheck();
     Provider.of<PlanData>(context, listen: false).fetchBigcleanplan();
     EasyLoading.dismiss();
-
     super.initState();
   }
 
   Widget _buildList(List<BigplanArea> listcheck) {
     Widget cardlist;
-    if (listcheck.length > 0) {
+    if (listcheck.isNotEmpty) {
       cardlist = ListView.builder(
           itemCount: listcheck.length,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          physics: const BouncingScrollPhysics(),
           itemBuilder: (BuildContext contex, int index) {
             int total_topic = 3;
-            // int total_topic = Provider.of<PlanData>(contex, listen: false)
-            //     .countTopicitem(listcheck[index].plan_area_id);
-            int total_topic_counted = Provider.of<PlanData>(contex,
-                    listen: false)
+            int total_topic_counted = Provider.of<PlanData>(contex, listen: false)
                 .countCheckedTopicBigcleanitem(listcheck[index].plan_area_id);
 
-            Color _bgcolor = Colors.green.shade50;
-            Color _line_color = Colors.black;
+            Color _bgcolor = Colors.white;
+            Color _line_color = Colors.black87;
+            Color _status_color = const Color(0xFF4A5AE7); // Default blue
+            String _status_text = 'ยังไม่ได้ตรวจ / Tap to inspect';
 
-            // if (current_section_code == listcheck[index].section_code) {
-            //   _line_color = Colors.red;
-            // }
             if (total_topic_counted <= 0) {
-              _bgcolor = Colors.green.shade50;
+              _bgcolor = Colors.white;
+              _status_color = const Color(0xFF4A5AE7); // Blue
+              _status_text = 'ยังไม่ได้ตรวจ / Tap to inspect';
             } else if (total_topic_counted > 0 &&
                 total_topic_counted < total_topic) {
-              _bgcolor = Color.fromARGB(255, 235, 177, 17);
+              _bgcolor = const Color(0xFFFFF8E1); // Soft yellow
+              _status_color = const Color(0xFFFFAD3B); // Yellow
+              _status_text = 'ตรวจค้างอยู่ / In progress';
+            } else if (total_topic_counted == total_topic) {
+              _bgcolor = const Color(0xFFE8F5E9); // Soft green
+              _status_color = const Color(0xFF0F9B73); // Green
+              _status_text = 'ตรวจเสร็จสิ้น / Completed';
             }
-            if (total_topic_counted == total_topic) {
-              _bgcolor = Colors.green.shade400;
-            }
-            return Slidable(
-              key: const ValueKey(0),
-              startActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                // dismissible: DismissiblePane(onDismissed: () {}),
-                children: [
-                  SlidableAction(
-                    onPressed: doNothing,
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Clear',
-                  ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Delete',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
-                ],
-              ),
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(
-                    // flex: 2,
-                    // onPressed:
-                    //     _removecheckeditem(listcheck[index].plan_area_id),
-                    onPressed: (BuildContext context) {
-                      print("you pressed meeee");
-                      _removecheckeditem(listcheck[index].plan_area_id);
-                    },
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Clear',
-                  ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Delete',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.only(top: 1),
-                      decoration: BoxDecoration(
-                          color: _bgcolor,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: ListTile(
-                        leading: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                              child: Text(
-                            "${(index + 1).toString()}",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _bgcolor,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Slidable(
+                    key: ValueKey(listcheck[index].plan_area_id),
+                    startActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (BuildContext context) {
+                            _removecheckeditem(listcheck[index].plan_area_id);
+                          },
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete_rounded,
+                          label: 'Clear',
+                        ),
+                      ],
+                    ),
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (BuildContext context) {
+                            _removecheckeditem(listcheck[index].plan_area_id);
+                          },
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete_rounded,
+                          label: 'Clear',
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => BigCleanCheckDetailPage(
+                                plan_area_id: listcheck[index].plan_area_id,
+                                plan_id: listcheck[index].plan_id,
+                                plan_num: listcheck[index].plan_id,
+                                plan_area_name: listcheck[index].plan_area_name,
+                              ),
                             ),
-                          )),
-                        ),
-                        title: Text(
-                          '${listcheck[index].plan_area_name}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: _line_color,
-                          ),
-                        ),
-                        trailing: Text(
-                          "${total_topic_counted}/${total_topic}",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: _line_color,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 14.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 38,
+                                width: 38,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "${index + 1}",
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                      fontFamily: 'Prompt',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      listcheck[index].plan_area_name,
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: _line_color,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _status_text,
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 11,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: _status_color.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  "$total_topic_counted/$total_topic",
+                                  style: TextStyle(
+                                    fontFamily: 'Prompt',
+                                    fontWeight: FontWeight.bold,
+                                    color: _status_color,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.grey,
+                                size: 14,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => BigCleanCheckDetailPage(
-                            plan_area_id: listcheck[index].plan_area_id,
-                            plan_id: listcheck[index].plan_id,
-                            // plan_area_name: listcheck[index].plan_area_name,
-                            plan_num: listcheck[index].plan_id,
-                            plan_area_name: listcheck[index].plan_area_name,
-                          ),
-                        ),
-                      );
-                    }),
+                  ),
+                ),
               ),
             );
           });
       return cardlist;
-      //return Text('data');
     } else {
-      return Text('No data');
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.cleaning_services_rounded,
+              size: 64,
+              color: Colors.grey.shade300,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'ไม่พบแผนงาน Big Cleaning',
+              style: TextStyle(
+                fontFamily: 'Prompt',
+                fontSize: 16,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
     }
   }
 
-  void doNothing(BuildContext context) {}
-  dynamic _removecheckeditem(String area_id) {
-    //print("you press me ${area_id}");
+  void _removecheckeditem(String area_id) {
     Provider.of<PlanData>(context, listen: false)
         .removeBigCleaninspectionitem(area_id);
+  }
+
+  void _showWarningDialog(BuildContext context, PlanData plans) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.warning_amber_rounded,
+                  size: 40,
+                  color: Colors.amber,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'แจ้งให้ทราบ',
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'พบข้อมูลการตรวจไม่ครบหัวข้อ ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text(
+                        'ไม่ใช่',
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F9B73),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await _submitInspection(plans);
+                      },
+                      child: const Text(
+                        'ใช่',
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showConfirmDialog(BuildContext context, PlanData plans) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 40,
+                  color: Colors.green.shade600,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'ยืนยันการทำรายการ',
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text(
+                        'ไม่ใช่',
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F9B73),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await _submitInspection(plans);
+                      },
+                      child: const Text(
+                        'ใช่',
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitInspection(PlanData plans) async {
+    await EasyLoading.show(status: "กำลังบันทึกข้อมูล");
+    bool isSave = await plans.submitBigcleanInspection();
+    if (isSave == true) {
+      await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => PlancheckcompletePage()),
+        );
+      }
+    } else {
+      EasyLoading.dismiss();
+    }
   }
 
   @override
@@ -235,71 +463,57 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
     current_section_code =
         Provider.of<UserData>(context, listen: false).getCurrenUserSection();
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 9, 111, 206),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text("แผน Big cleaning"),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () => Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => HistoryPage(),
-        //       ),
-        //     ),
-        //     icon: Icon(Icons.history),
-        //   ),
-        //   IconButton(
-        //     onPressed: () => Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => CarlistPage(),
-        //       ),
-        //     ),
-        //     icon: Icon(Icons.error_outline),
-        //   ),
-        // ],
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "แผน Big Cleaning",
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Container(
-        color: Colors.grey.shade100,
+        color: const Color(0xFFF5F7FB),
         width: double.infinity,
         child: Column(children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Expanded(
-            flex: 5,
             child: Consumer<PlanData>(
               builder: ((context, _plans, _) => _plans.finishedcheck > 0
                   ? Center(
                       child: Column(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Text(""),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline_rounded,
+                            size: 64,
+                            color: Colors.green.shade400,
                           ),
-                          Expanded(
-                            flex: 3,
-                            child: Column(children: [
-                              Icon(
-                                Icons.block,
-                                size: 50,
-                                color: Color.fromARGB(255, 45, 172, 123),
-                              ),
-                              Center(
-                                  child: Text(
-                                'ไม่พบรายการตรวจ',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey,
-                                ),
-                              )),
-                            ]),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(""),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'ไม่พบรายการตรวจ หรือ ตรวจครบแล้ว',
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              fontSize: 15,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
@@ -309,326 +523,57 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
                     )),
             ),
           ),
-          //_plans.checkfinish()
           Consumer<PlanData>(
             builder: ((context, _plans, _) => _plans.hasBigcleanArea() > 0
-                ? Container(
-                    height: 50,
-                    width: double.infinity,
-                    color: Color.fromARGB(255, 9, 111, 206),
-                    child: GestureDetector(
-                      child: Center(
-                        child: Text(
-                          "ยืนยันการตรวจ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      height: 54,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF0F9B73).withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () {
+                            int MustChekAll = _plans.getBigAllMushCheckTopic();
+                            int AllChecked = _plans.getBigAllCheckedTopic();
+                            if (AllChecked < MustChekAll) {
+                              _showWarningDialog(context, _plans);
+                            } else {
+                              _showConfirmDialog(context, _plans);
+                            }
+                          },
+                          child: const Center(
+                            child: Text(
+                              "ยืนยันการตรวจ",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Prompt',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      onTap: () {
-                        // Provider.of<PlanData>(context, listen: false)
-                        //     .submitInspection();
-                        int MustChekAll = _plans.getBigAllMushCheckTopic();
-                        int AllChecked = _plans.getBigAllCheckedTopic();
-                        if (AllChecked < MustChekAll) {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => Dialog(
-                              backgroundColor: Colors.amber,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Icon(
-                                      Icons.error,
-                                      size: 32,
-                                      color: Colors.red,
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Text(
-                                      'แจ้งให้ทราบ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Text(
-                                      'พบข้อมูลการตรวจไม่ครบหัวข้อ ต้องการดำเนินการต่อใช่หรือไม่ ?',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: MaterialButton(
-                                            color: Color.fromARGB(
-                                                255, 45, 172, 123),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(50)),
-                                            onPressed: () async {
-                                              //   final isAvailable =
-                                              //      await LocalAuthApi
-                                              //         .hasBiometrics();
-                                              /* if (isAvailable) {
-                                                final isAuthenticated =
-                                                    await LocalAuthApi
-                                                        .authenticate();
-                                                if (isAuthenticated) {
-                                                  print("success");
-                                                  await EasyLoading.show(
-                                                      status:
-                                                          "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider
-                                                          .of<PlanData>(context,
-                                                              listen: false)
-                                                      .submitBigcleanInspection();
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess(
-                                                        'บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PlancheckcompletePage()));
-                                                  }
-                                                  EasyLoading.dismiss();
-                                                }
-                                              } else {*/
-                                              print("no bio auth");
-                                              await EasyLoading.show(
-                                                  status: "กำลังบันทึกข้อมูล");
-                                              bool isSave = await Provider.of<
-                                                          PlanData>(context,
-                                                      listen: false)
-                                                  .submitBigcleanInspection();
-                                              if (isSave == true) {
-                                                await EasyLoading.showSuccess(
-                                                    'บันทึกรายการเรียบร้อย');
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PlancheckcompletePage()));
-                                              }
-                                              EasyLoading.dismiss();
-                                              //}
-                                              //  _timer?.cancel();
-                                              // await EasyLoading.show(
-                                              //     status: "กำลังบันทึกข้อมูล");
-                                              // bool isSave =
-                                              //     await Provider.of<PlanData>(
-                                              //             context,
-                                              //             listen: false)
-                                              //         .submitInspection();
-                                              // if (isSave == true) {
-                                              //   await EasyLoading.showSuccess(
-                                              //       'บันทึกรายการเรียบร้อย');
-                                              //   // Navigator.popUntil(context, ModalRoute.withName("/profile"));
-                                              //   Navigator.push(
-                                              //       context,
-                                              //       MaterialPageRoute(
-                                              //           builder: (context) =>
-                                              //               PlancheckcompletePage()));
-                                              //   // (route) => false);
-                                              //   // int count = 0;
-                                              //   // Navigator.of(context).popUntil(
-                                              //   //     (_) => count++ >= 2);
-                                              // }
-                                              // EasyLoading.dismiss();
-                                            },
-                                            child: Text(
-                                              'ใช่',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Expanded(
-                                          child: MaterialButton(
-                                            color: Colors.grey[400],
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(50)),
-                                            onPressed: () {
-                                              Navigator.of(context).pop(false);
-                                            },
-                                            child: Text(
-                                              'ไม่ใช่',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => Dialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Icon(
-                                      Icons.privacy_tip_outlined,
-                                      size: 32,
-                                      color: Colors.green.shade400,
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Text(
-                                      'ยืนยันการทำรายการ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Text(
-                                      'ต้องการดำเนินการต่อใช่หรือไม่ ?',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: MaterialButton(
-                                            color: Color.fromARGB(
-                                                255, 45, 172, 123),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(50)),
-                                            onPressed: () async {
-                                              //  final isAvailable =
-                                              //      await LocalAuthApi
-                                              //         .hasBiometrics();
-                                              // if (isAvailable) {
-                                              //  final isAuthenticated =
-                                              //       await LocalAuthApi
-                                              //           .authenticate();
-                                              /*    if (isAuthenticated) {
-                                                  print("success");
-                                                  await EasyLoading.show(
-                                                      status:
-                                                          "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider
-                                                          .of<PlanData>(context,
-                                                              listen: false)
-                                                      .submitBigcleanInspection();
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess(
-                                                        'บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PlancheckcompletePage()));
-                                                  }
-                                                  EasyLoading.dismiss();
-                                                }*/
-                                              //  } else {
-                                              print("no bio auth");
-                                              await EasyLoading.show(
-                                                  status: "กำลังบันทึกข้อมูล");
-                                              bool isSave = await Provider.of<
-                                                          PlanData>(context,
-                                                      listen: false)
-                                                  .submitBigcleanInspection();
-                                              if (isSave == true) {
-                                                await EasyLoading.showSuccess(
-                                                    'บันทึกรายการเรียบร้อย');
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PlancheckcompletePage()));
-                                              }
-                                              EasyLoading.dismiss();
-                                              // }
-                                              // final biometrics =
-                                              //     await LocalAuthApi
-                                              //         .getBiometrics();
-
-                                              //  _timer?.cancel();
-                                            },
-                                            child: Text(
-                                              'ใช่',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Expanded(
-                                          child: MaterialButton(
-                                            color: Colors.grey[400],
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(50)),
-                                            onPressed: () {
-                                              Navigator.of(context).pop(false);
-                                            },
-                                            child: Text(
-                                              'ไม่ใช่',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                      },
                     ),
                   )
-                : Text("")),
+                : const SizedBox()),
           ),
         ]),
       ),

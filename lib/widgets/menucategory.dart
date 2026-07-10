@@ -11,12 +11,84 @@ class MenuCategoryWidget extends StatefulWidget {
 class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
   CarouselController buttonCarouselController = CarouselController();
 
-  List<String> items = ['5ส', 'Satety', 'Audit', 'Kizen'];
+  List<String> items = ['5ส', 'Safety', 'Audit', 'Kizen'];
 
   int _current = 0;
+
+  Gradient _getCategoryGradient(String category) {
+    switch (category) {
+      case '5ส':
+        return const LinearGradient(
+          colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      case 'Safety':
+        return const LinearGradient(
+          colors: [Color(0xFFE94057), Color(0xFFF27121)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      case 'Audit':
+        return const LinearGradient(
+          colors: [Color(0xFF1A2980), Color(0xFF26D0CE)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      case 'Kizen':
+      default:
+        return const LinearGradient(
+          colors: [Color(0xFF8A2387), Color(0xFFE94057)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+    }
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case '5ส':
+        return Icons.auto_awesome_rounded;
+      case 'Safety':
+        return Icons.security_rounded;
+      case 'Audit':
+        return Icons.assignment_turned_in_rounded;
+      case 'Kizen':
+      default:
+        return Icons.lightbulb_rounded;
+    }
+  }
+
+  String _getCategorySubtitle(String category) {
+    switch (category) {
+      case '5ส':
+        return 'กิจกรรมสะสาง สะดวก สะอาด สุขลักษณะ สร้างนิสัย';
+      case 'Safety':
+        return 'กิจกรรมตรวจประเมินความปลอดภัยในพื้นที่ปฏิบัติงาน';
+      case 'Audit':
+        return 'กิจกรรมตรวจสอบคุณภาพมาตรฐานและความเรียบร้อย';
+      case 'Kizen':
+      default:
+        return 'กิจกรรมการปรับปรุงงานอย่างต่อเนื่องและการพัฒนาไอเดีย';
+    }
+  }
+
+  Color _getCategoryTextColor(String category) {
+    switch (category) {
+      case '5ส':
+        return const Color(0xFF0F9B73);
+      case 'Safety':
+        return const Color(0xFFE94057);
+      case 'Audit':
+        return const Color(0xFF1A2980);
+      case 'Kizen':
+      default:
+        return const Color(0xFF8A2387);
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -26,10 +98,12 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
       children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: items.map((image) {
               int index = items.indexOf(image);
+              bool isSelected = _current == index;
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -37,56 +111,61 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
                   });
                 },
                 child: Container(
-                  width: 100.0,
-                  height: 40.0,
+                  width: 90.0,
+                  height: 38.0,
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
-                    // color: _current == index
-                    //     ? Colors.purple
-                    //     : Colors.grey.withOpacity(0.3),
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: _current == index
-                          ? [
-                              Color.fromARGB(255, 45, 172, 123)
-                                  .withOpacity(0.5),
-                              Color.fromARGB(255, 45, 172, 123),
-                            ]
-                          : [
-                              Colors.white,
-                              Colors.white,
+                    border: isSelected
+                        ? null
+                        : Border.all(color: Colors.grey.shade300, width: 1),
+                    gradient: isSelected
+                        ? const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFF0F9B73),
+                              Color(0xFF2EC89F),
                             ],
-                    ),
+                          )
+                        : null,
+                    color: isSelected ? null : Colors.white,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF0F9B73).withOpacity(0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            )
+                          ]
+                        : null,
                   ),
                   child: Text(
-                    '${image}',
+                    image,
                     style: TextStyle(
-                        color:
-                            _current == index ? Colors.white : Colors.black87,
-                        fontWeight: FontWeight.bold),
+                      fontFamily: 'Prompt',
+                      color: isSelected ? Colors.white : Colors.grey[700],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               );
             }).toList(),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         CarouselSlider(
           carouselController: buttonCarouselController,
           options: CarouselOptions(
-              height: 200,
-              // aspectRatio: 20 / 10,
+              height: 180,
               enlargeCenterPage: true,
               enableInfiniteScroll: true,
               autoPlayCurve: Curves.fastOutSlowIn,
-              viewportFraction: 1,
-              // autoPlay: true,
-              // autoPlayInterval: Duration(seconds: 10),
+              viewportFraction: 0.9,
               onPageChanged: (index, reason) {
                 setState(() {
                   _current = index;
@@ -95,86 +174,126 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
           items: items.map((e) {
             return Container(
               width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
               decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(
-                  5,
-                ),
-                gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Color.fromARGB(255, 45, 172, 123).withOpacity(0.5),
-                      Color.fromARGB(255, 45, 172, 123),
-                    ]),
+                borderRadius: BorderRadius.circular(20),
+                gradient: _getCategoryGradient(e),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            '${e}',
-                            style: TextStyle(color: Colors.white, fontSize: 40),
-                          ),
-                          Text(
-                            'กิจกรรม ${e}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -10,
+                    bottom: -20,
+                    child: Icon(
+                      _getCategoryIcon(e),
+                      size: 130,
+                      color: Colors.white.withOpacity(0.12),
                     ),
-                    Expanded(
-                      flex: 0,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(''),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _getCategoryIcon(e),
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              e,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Prompt',
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          _getCategorySubtitle(e),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 12,
+                            fontFamily: 'Prompt',
+                            height: 1.4,
                           ),
-                          Expanded(
-                            flex: 0,
-                            child: GestureDetector(
-                              onTap: () => Navigator.push(
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FiveDetailPage())),
+                                    builder: (context) => FiveDetailPage(),
+                                  ),
+                                );
+                              },
                               child: Container(
                                 alignment: Alignment.center,
-                                width: 100,
-                                height: 30,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(
-                                      20,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
                                     ),
-                                    bottomLeft: Radius.circular(20),
-                                  ),
+                                  ],
                                 ),
-                                child: Text(
-                                  'รายละเอียด',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'รายละเอียด',
+                                      style: TextStyle(
+                                        color: _getCategoryTextColor(e),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Prompt',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 2),
+                                    Icon(
+                                      Icons.chevron_right_rounded,
+                                      color: _getCategoryTextColor(e),
+                                      size: 14,
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
           }).toList(),

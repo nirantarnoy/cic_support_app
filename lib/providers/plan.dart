@@ -22,6 +22,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_cic_support/sqlite/dbprovider.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class PlanData extends ChangeNotifier {
   final String url_to_getplanby_person =
@@ -98,6 +100,22 @@ class PlanData extends ChangeNotifier {
 
   late List<BigplanArea> _bigplan = [];
   List<BigplanArea> get listBigplanArea => _bigplan;
+
+  int _offline5sCount = 0;
+  int _offlineSafetyCount = 0;
+
+  int get offline5sCount => _offline5sCount;
+  int get offlineSafetyCount => _offlineSafetyCount;
+  int get totalOfflineCount => _offline5sCount + _offlineSafetyCount;
+
+  Future<void> loadOfflineCounts() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> offline5s = prefs.getStringList("offline_5s_inspections") ?? [];
+    List<String> offlineSafety = prefs.getStringList("offline_safety_inspections") ?? [];
+    _offline5sCount = offline5s.length;
+    _offlineSafetyCount = offlineSafety.length;
+    notifyListeners();
+  }
 
   set listpersoncurrentplan(List<PersoncurrentPlan> val) {
     _personcurrentplan = val;
@@ -991,6 +1009,9 @@ class PlanData extends ChangeNotifier {
     if (listJobplanArea.isNotEmpty) {
       listJobplanArea.clear();
     }
+    if (_inspectionsafetytrans.isNotEmpty) {
+      _inspectionsafetytrans.clear();
+    }
   }
 
   int countTopicitemRepeat(String area_id) {
@@ -1458,7 +1479,6 @@ class PlanData extends ChangeNotifier {
       final String user_id = prefs.getString("user_id").toString();
       final String team_id = prefs.getString("team_id").toString();
       final String token = prefs.getString("token").toString();
-      // final String plan_num = prefs.getString("plan_num").toString();
 
       var addData = listInspectiontrans
           .map((e) => {
@@ -1479,48 +1499,43 @@ class PlanData extends ChangeNotifier {
                 'action_type_id': int.parse(action_type_id),
               })
           .toList();
-      // var addData = listInspectiontrans
-      //     .map((e) => {
-      //           'module_type_id': e.module_type_id,
-      //           'plan_id': e.plan_num,
-      //           'trans_date': e.trans_date,
-      //           'emp_id': user_id,
-      //           'area_group_id': e.area_group_id,
-      //           'area_id': e.area_id,
-      //           'team_id': team_id,
-      //           'topic_id': e.topic_id,
-      //           'topic_item_id': e.topic_item_id,
-      //           'score': e.score,
-      //           'status': e.status,
-      //           'note': e.note,
-      //           'created_at': '0',
-      //           'created_by': user_id,
-      //         })
-      //     .toList();
-      print('data save is ${json.encode(addData)}');
-      // return false;
+      
+      final String payloadJson = json.encode(addData);
+
+      // Save to offline queue list first
+      List<String> offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];
+      offlineQueue.add(payloadJson);
+      await prefs.setStringList("offline_5s_inspections", offlineQueue);
+      await loadOfflineCounts();
+
       try {
         http.Response response;
         response = await http.post(
           Uri.parse(url_to_add_inspection_trans),
           headers: {"Authorization": token},
-          body: json.encode(addData),
-        );
+          body: payloadJson,
+        ).timeout(const Duration(seconds: 10));
 
         if (response.statusCode == 200) {
-          // List<JobplanArea> data = [];
-          Map<String, dynamic> res = json.decode(response.body);
-          if (res == null) {
-            print("no data");
-            return false;
-          }
+          // If successful, remove it from queue
+          offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];
+          offlineQueue.remove(payloadJson);
+          await prefs.setStringList("offline_5s_inspections", offlineQueue);
+          await loadOfflineCounts();
+
           print("save transaction ok");
           clearInspectionTrans(); // clear list after save finished
+          return true;
+        } else {
+          clearInspectionTrans();
+          EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
+          return true;
         }
-        return true;
       } catch (err) {
         print("has eerror is ${err.toString()}");
-        return false;
+        clearInspectionTrans();
+        EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
+        return true;
       }
     } else {
       print("not save naja");
@@ -1598,7 +1613,6 @@ class PlanData extends ChangeNotifier {
       final String team_safety_id =
           prefs.getString("team_safety_id").toString();
       final String token = prefs.getString("token").toString();
-      // final String plan_num = prefs.getString("plan_num").toString();
 
       var addData = listInspectionSafetytrans
           .map((e) => {
@@ -1617,30 +1631,42 @@ class PlanData extends ChangeNotifier {
               })
           .toList();
 
-      //  print('data save is ${json.encode(addData)}');
-      // return false;
+      final String payloadJson = json.encode(addData);
+
+      // Save to offline queue list first
+      List<String> offlineQueue = prefs.getStringList("offline_safety_inspections") ?? [];
+      offlineQueue.add(payloadJson);
+      await prefs.setStringList("offline_safety_inspections", offlineQueue);
+      await loadOfflineCounts();
+
       try {
         http.Response response;
         response = await http.post(
           Uri.parse(url_to_add_safety_inspection_trans),
           headers: {"Authorization": token},
-          body: json.encode(addData),
-        );
+          body: payloadJson,
+        ).timeout(const Duration(seconds: 10));
 
         if (response.statusCode == 200) {
-          // List<JobplanArea> data = [];
-          Map<String, dynamic> res = json.decode(response.body);
-          if (res == null) {
-            print("no data");
-            return false;
-          }
+          // If successful, remove it from queue
+          offlineQueue = prefs.getStringList("offline_safety_inspections") ?? [];
+          offlineQueue.remove(payloadJson);
+          await prefs.setStringList("offline_safety_inspections", offlineQueue);
+          await loadOfflineCounts();
+
           print("save transaction ok");
           clearInspectionTrans(); // clear list after save finished
+          return true;
+        } else {
+          clearInspectionTrans();
+          EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
+          return true;
         }
-        return true;
       } catch (err) {
         print("has eerror is ${err.toString()}");
-        return false;
+        clearInspectionTrans();
+        EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
+        return true;
       }
     } else {
       print("not save naja");
@@ -1890,5 +1916,84 @@ class PlanData extends ChangeNotifier {
     }
 
     return false;
+  }
+
+  Future<void> syncOfflineData() async {
+    try {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        print("ยังไม่มีสัญญาณอินเทอร์เน็ตในการซิงค์ข้อมูล");
+        return;
+      }
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString("token").toString();
+
+      // 1. Sync 5S Inspections
+      List<String> offline5s = prefs.getStringList("offline_5s_inspections") ?? [];
+      List<String> remaining5s = List.from(offline5s);
+      bool is5sSuccess = true;
+
+      for (String itemJson in offline5s) {
+        try {
+          http.Response response = await http.post(
+            Uri.parse(url_to_add_inspection_trans),
+            headers: {"Authorization": token},
+            body: itemJson,
+          ).timeout(const Duration(seconds: 15));
+
+          if (response.statusCode == 200) {
+            remaining5s.remove(itemJson);
+          } else {
+            is5sSuccess = false;
+            break; // Stop syncing if server error to retry later
+          }
+        } catch (e) {
+          is5sSuccess = false;
+          print("Error syncing 5s inspection item: $e");
+          break; // Network dropped or timeout
+        }
+      }
+      await prefs.setStringList("offline_5s_inspections", remaining5s);
+
+      // 2. Sync Safety Inspections
+      List<String> offlineSafety = prefs.getStringList("offline_safety_inspections") ?? [];
+      List<String> remainingSafety = List.from(offlineSafety);
+      bool isSafetySuccess = true;
+
+      for (String itemJson in offlineSafety) {
+        try {
+          http.Response response = await http.post(
+            Uri.parse(url_to_add_safety_inspection_trans),
+            headers: {"Authorization": token},
+            body: itemJson,
+          ).timeout(const Duration(seconds: 15));
+
+          if (response.statusCode == 200) {
+            remainingSafety.remove(itemJson);
+          } else {
+            isSafetySuccess = false;
+            break;
+          }
+        } catch (e) {
+          isSafetySuccess = false;
+          print("Error syncing safety inspection item: $e");
+          break;
+        }
+      }
+      await prefs.setStringList("offline_safety_inspections", remainingSafety);
+
+      await loadOfflineCounts();
+
+      if (offline5s.isNotEmpty || offlineSafety.isNotEmpty) {
+        if (remaining5s.isEmpty && remainingSafety.isEmpty) {
+          EasyLoading.showSuccess('ซิงค์ข้อมูลออฟไลน์เรียบร้อยแล้ว');
+        } else if (!is5sSuccess || !isSafetySuccess) {
+          print("ซิงค์ข้อมูลบางส่วนค้างอยู่");
+        }
+      }
+    } catch (e) {
+      print("Error in syncOfflineData: $e");
+    }
   }
 }

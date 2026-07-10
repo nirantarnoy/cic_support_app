@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/inspectionsafetytrans.dart';
@@ -27,6 +29,9 @@ class SafetyplanAreaPage extends StatefulWidget {
 
 class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
   String current_section_code = '';
+  bool _isOffline = false;
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
   Future _obtainPlanArea() async {
     return await Provider.of<PlanData>(context, listen: false)
         .fetchSafetyJobplan();
@@ -34,21 +39,37 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    // Provider.of<PlanData>(context, listen: false).fetchJobplan();
-    // _obtainPlanArea();
-
-    //EasyLoading.show(status: "โหลดข้อมูล");
-    //Provider.of<PlanData>(context, listen: false).fetFinishedCheck();
-    // Provider.of<PlanData>(context, listen: false).fetchJobplan();
-    //EasyLoading.dismiss();
-
     EasyLoading.show(status: "โหลดข้อมูล");
     Provider.of<PlanData>(context, listen: false).fetSafetyFinishedCheck();
     Provider.of<PlanData>(context, listen: false).fetchSafetyJobplan();
+    Provider.of<PlanData>(context, listen: false).loadOfflineCounts();
     EasyLoading.dismiss();
 
+    Connectivity().checkConnectivity().then((result) {
+      setState(() {
+        _isOffline = result == ConnectivityResult.none;
+      });
+      if (!_isOffline) {
+        Provider.of<PlanData>(context, listen: false).syncOfflineData();
+      }
+    });
+
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _isOffline = result == ConnectivityResult.none;
+      });
+      if (!_isOffline) {
+        Provider.of<PlanData>(context, listen: false).syncOfflineData();
+      }
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Widget _buildList(List<JobSafetyplanArea> listcheck) {
@@ -248,6 +269,80 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
         color: Colors.grey.shade100,
         width: double.infinity,
         child: Column(children: <Widget>[
+          if (_isOffline)
+            Container(
+              width: double.infinity,
+              color: Colors.red.shade50,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.wifi_off_rounded, color: Colors.red.shade700, size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    "ขณะนี้คุณกำลังทำงานในโหมดออฟไลน์ (Offline Mode)",
+                    style: TextStyle(
+                      fontFamily: 'Prompt',
+                      color: Colors.red.shade700,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          Consumer<PlanData>(
+            builder: (context, planData, _) {
+              if (planData.totalOfflineCount > 0) {
+                return Container(
+                  width: double.infinity,
+                  color: Colors.amber.shade50,
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.cloud_upload_outlined, color: Colors.amber.shade800, size: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        "มีรายการตรวจค้างส่งออฟไลน์: ${planData.totalOfflineCount} รายการ",
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          color: Colors.amber.shade800,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (!_isOffline)
+                        GestureDetector(
+                          onTap: () {
+                            EasyLoading.show(status: "กำลังส่งข้อมูล...");
+                            planData.syncOfflineData();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.shade800,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              "กดซิงค์",
+                              style: TextStyle(
+                                fontFamily: 'Prompt',
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           SizedBox(
             height: 10,
           ),

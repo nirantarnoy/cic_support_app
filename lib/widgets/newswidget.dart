@@ -17,7 +17,6 @@ class _newswidgetState extends State<newswidget> {
   int _current = 0;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -28,10 +27,11 @@ class _newswidgetState extends State<newswidget> {
         CarouselSlider(
           carouselController: buttonCarouselController,
           options: CarouselOptions(
-              height: 200,
+              height: 180,
               autoPlay: true,
               autoPlayInterval: const Duration(seconds: 10),
-              viewportFraction: 1,
+              viewportFraction: 0.9,
+              enlargeCenterPage: true,
               onPageChanged: (index, reason) {
                 setState(() {
                   _current = index;
@@ -41,20 +41,22 @@ class _newswidgetState extends State<newswidget> {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
-                  height: 200,
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 2.0),
                   decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(
-                      5,
-                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
                       e,
                       fit: BoxFit.cover,
+                      width: double.infinity,
                     ),
                   ),
                 );
@@ -62,18 +64,21 @@ class _newswidgetState extends State<newswidget> {
             );
           }).toList(),
         ),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: items.map((image) {
             int index = items.indexOf(image);
-            return Container(
-              width: 8.0,
+            bool isSelected = _current == index;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: isSelected ? 16.0 : 8.0,
               height: 8.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 3.0),
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _current == index
-                    ? Color.fromARGB(255, 45, 172, 123)
+                borderRadius: BorderRadius.circular(4),
+                color: isSelected
+                    ? const Color(0xFF0F9B73)
                     : Colors.grey.withOpacity(0.3),
               ),
             );

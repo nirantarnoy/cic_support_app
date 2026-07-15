@@ -70,33 +70,44 @@ class _CreateCarState extends State<CreateCar> {
 
   Widget _buildDatepicker() {
     return TextFormField(
-      cursorColor: Colors.green,
+      cursorColor: const Color(0xFF0F9B73),
       textAlign: TextAlign.left,
       controller: _cardateText,
       readOnly: true,
       onTap: () {
         _selectDate(context);
       },
+      style: const TextStyle(fontFamily: 'Prompt', fontSize: 14),
       decoration: InputDecoration(
-        labelText: 'วันที่',
-        contentPadding: EdgeInsets.only(
-          top: 20,
-        ),
+        labelText: 'วันที่ตรวจพบ',
+        labelStyle: TextStyle(fontFamily: 'Prompt', color: Colors.grey.shade600),
+        hintStyle: TextStyle(fontFamily: 'Prompt', color: Colors.grey.shade400),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         isDense: true,
         hintText: 'เลือกวันที่',
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          borderSide: const BorderSide(color: Colors.grey),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Colors.grey.shade200),
         ),
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(top: 5),
-          child: Icon(Icons.calendar_today_sharp),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Color(0xFF0F9B73), width: 1.5),
         ),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Colors.red, width: 1),
+        ),
+        focusedErrorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
+        ),
+        prefixIcon: Icon(Icons.calendar_today_rounded, color: Colors.grey.shade400, size: 20),
       ),
       validator: (String? value) {
         if (value!.isEmpty || value.length < 1) {
           return 'กรุณาเลือกวันที่';
         }
+        return null;
       },
       onSaved: (String? value) {
         _formData['car_date'] = value;
@@ -125,21 +136,23 @@ class _CreateCarState extends State<CreateCar> {
       textAlign: TextAlign.left,
       controller: _cardepartmentText,
       readOnly: true,
+      style: const TextStyle(fontFamily: 'Prompt', fontSize: 14, color: Colors.black87),
       decoration: InputDecoration(
-        labelText: 'พื้นที่',
-        contentPadding: EdgeInsets.only(
-          top: 20,
-        ),
-        isDense: false,
+        labelText: 'แผนก/พื้นที่',
+        labelStyle: TextStyle(fontFamily: 'Prompt', color: Colors.grey.shade600),
+        hintStyle: TextStyle(fontFamily: 'Prompt', color: Colors.grey.shade400),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        isDense: true,
         hintText: 'พื้นที่ตรวจ',
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          borderSide: const BorderSide(color: Colors.grey),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Colors.grey.shade200),
         ),
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(top: 5),
-          child: Icon(Icons.location_on),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Color(0xFF0F9B73), width: 1.5),
         ),
+        prefixIcon: Icon(Icons.location_on_rounded, color: Colors.grey.shade400, size: 20),
       ),
     );
   }
@@ -148,103 +161,143 @@ class _CreateCarState extends State<CreateCar> {
     return TextFormField(
       textAlign: TextAlign.left,
       controller: _cardescriptionText,
-      maxLines: 5,
+      maxLines: 4,
+      style: const TextStyle(fontFamily: 'Prompt', fontSize: 14),
       decoration: InputDecoration(
-        // labelText: 'รายละเอียด',
-        contentPadding: EdgeInsets.only(
-          top: 20,
+        hintText: 'ระบุรายละเอียดปัญหาและข้อบกพร่อง...',
+        hintStyle: TextStyle(fontFamily: 'Prompt', color: Colors.grey.shade400),
+        contentPadding: const EdgeInsets.all(16),
+        isDense: true,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Colors.grey.shade200),
         ),
-        isDense: false,
-        //hintText: 'รายละเอียด',
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          borderSide: const BorderSide(color: Colors.grey),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          borderSide: BorderSide(color: Color(0xFF0F9B73), width: 1.5),
         ),
       ),
     );
   }
 
   Widget _buildNonconformlist(List<NonConformTitle> _listcheck) {
-    Widget cards;
-    if (_listcheck.length > 0) {
-      cards = ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          //    scrollDirection: Axis.vertical,
-          itemCount: _listcheck.length,
-          itemBuilder: (BuildContext context, int index) {
-            //  return Text('${_listcheck[index].name}');
-            return GestureDetector(
-              child: CheckboxListTile(
-                value: _isNonconformChecked[index],
-                selected: _isNonconformChecked[index],
-                title: Text('${_listcheck[index].name}'),
-                onChanged: (bool? value) {
-                  setState(() {
-                    _isNonconformChecked[index] = value!;
-                    if (value == true) {
-                      NonconformSelected item = NonconformSelected(
-                          id: _listcheck[index].id,
-                          name: _listcheck[index].name);
-                      nonconformSelected.add(item);
-                    } else {
-                      nonconformSelected.forEach((element) {
-                        if (element.id == _listcheck[index].id) {
-                          nonconformSelected.removeWhere(
-                              (items) => items.id == _listcheck[index].id);
-                        }
-                      });
-                    }
-
-                    print('nonconformselecred is ${nonconformSelected}');
-                  });
-                },
+    if (_listcheck.isNotEmpty) {
+      return ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: _listcheck.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 8),
+        itemBuilder: (BuildContext context, int index) {
+          final isChecked = _isNonconformChecked[index];
+          return Container(
+            decoration: BoxDecoration(
+              color: isChecked ? const Color(0xFF0F9B73).withOpacity(0.04) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isChecked ? const Color(0xFF0F9B73) : Colors.grey.shade200,
+                width: isChecked ? 1.5 : 1,
               ),
-            );
-          });
-      return cards;
+            ),
+            child: CheckboxListTile(
+              value: isChecked,
+              selected: isChecked,
+              activeColor: const Color(0xFF0F9B73),
+              checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+              title: Text(
+                _listcheck[index].name,
+                style: const TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+              onChanged: (bool? value) {
+                setState(() {
+                  _isNonconformChecked[index] = value!;
+                  if (value == true) {
+                    NonconformSelected item = NonconformSelected(
+                        id: _listcheck[index].id,
+                        name: _listcheck[index].name);
+                    nonconformSelected.add(item);
+                  } else {
+                    nonconformSelected.removeWhere(
+                        (items) => items.id == _listcheck[index].id);
+                  }
+                  print('nonconformselected is ${nonconformSelected}');
+                });
+              },
+            ),
+          );
+        },
+      );
     } else {
-      return Center(
-        child: Text('No Data'),
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('No Data', style: TextStyle(fontFamily: 'Prompt')),
+        ),
       );
     }
   }
 
   Widget _buildProblemTypelist(List<ProblemType> _listproblemtype) {
-    Widget cards;
-    if (_listproblemtype.length > 0) {
-      cards = ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          //    scrollDirection: Axis.vertical,
-          itemCount: _listproblemtype.length,
-          itemBuilder: (BuildContext context, int index) {
-            //  return Text('${_listcheck[index].name}');
-            return GestureDetector(
-              child: CheckboxListTile(
-                value: _isProblemtypeChecked[index],
-                selected: _isProblemtypeChecked[index],
-                title: Text('${_listproblemtype[index].name}'),
-                onChanged: (bool? value) {
-                  setState(() {
-                    problemtypeSelected = _listproblemtype[index].id.toString();
-                    _isProblemtypeChecked[index] = value!;
-                    var i = 0;
-                    _isProblemtypeChecked.forEach((element) {
-                      if (i != index) {
-                        _isProblemtypeChecked[i] = false;
-                      }
-                      i += 1;
-                    });
-                  });
-                },
+    if (_listproblemtype.isNotEmpty) {
+      return ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: _listproblemtype.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 8),
+        itemBuilder: (BuildContext context, int index) {
+          final isChecked = _isProblemtypeChecked[index];
+          return Container(
+            decoration: BoxDecoration(
+              color: isChecked ? const Color(0xFF0F9B73).withOpacity(0.04) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isChecked ? const Color(0xFF0F9B73) : Colors.grey.shade200,
+                width: isChecked ? 1.5 : 1,
               ),
-            );
-          });
-      return cards;
+            ),
+            child: CheckboxListTile(
+              value: isChecked,
+              selected: isChecked,
+              activeColor: const Color(0xFF0F9B73),
+              checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+              title: Text(
+                _listproblemtype[index].name,
+                style: const TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+              onChanged: (bool? value) {
+                setState(() {
+                  problemtypeSelected = _listproblemtype[index].id.toString();
+                  _isProblemtypeChecked[index] = value!;
+                  var i = 0;
+                  _isProblemtypeChecked.forEach((element) {
+                    if (i != index) {
+                      _isProblemtypeChecked[i] = false;
+                    }
+                    i += 1;
+                  });
+                });
+              },
+            ),
+          );
+        },
+      );
     } else {
-      return Center(
-        child: Text('No Data'),
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('No Data', style: TextStyle(fontFamily: 'Prompt')),
+        ),
       );
     }
   }
@@ -515,215 +568,272 @@ class _CreateCarState extends State<CreateCar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text('ออกใบ CAR'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'ออกใบ CAR',
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
         actions: <Widget>[
           image2.length > 3
-              ? Text("")
+              ? const SizedBox.shrink()
               : IconButton(
                   onPressed: () => chooseImage(),
-                  icon: Icon(Icons.add_a_photo_outlined))
+                  icon: const Icon(Icons.add_a_photo_outlined, color: Colors.black87),
+                ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: Form(
-                key: _formKey,
-                child: Column(children: [
-                  Expanded(
-                    flex: 4,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(
-                                children: [
-                                  _buildDatepicker(),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  _buildareaText(),
-                                ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.015),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              _buildDatepicker(),
+                              const SizedBox(height: 16),
+                              _buildareaText(),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0, bottom: 12.0),
+                          child: Text(
+                            "ไม่สอดคล้องตามมาตรฐานในหัวข้อ / Nonconformity Section",
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.015),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          Card(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      "ไม่สอดคล้องตามมาตรฐานในหัวข้อ",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ))
-                                  ],
+                          child: Consumer<PlanData>(
+                            builder: (context, _nonconform, _) =>
+                                _buildNonconformlist(_nonconform.listofnonconform_5s()),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0, bottom: 12.0),
+                          child: Text(
+                            "พบว่าเป็นปัญหา / Issue Category",
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.015),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: _buildProblemTypelist(_listproblemtype),
+                        ),
+                        const SizedBox(height: 24),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0, bottom: 12.0),
+                          child: Text(
+                            "รูปภาพแนบ / Photos",
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        image2.isEmpty
+                            ? Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 24),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.grey.shade100),
                                 ),
-                                Row(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Expanded(
-                                      child: Consumer<PlanData>(
-                                          builder: (context, _nonconform, _) =>
-                                              _buildNonconformlist(_nonconform
-                                                  .listofnonconform_5s())),
+                                    Icon(Icons.photo_outlined, color: Colors.grey.shade300, size: 32),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'ยังไม่ได้เลือกรูปภาพ / No Photos Selected',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Card(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Column(children: <Widget>[
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      "พบว่าเป็นปัญหา",
-                                      style: TextStyle(
-                                        fontSize: 16,
+                              )
+                            : GestureDetector(
+                                onTap: () => image2.isNotEmpty
+                                    ? _editBottomSheet(context, image2)
+                                    : null,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: const Color(0xFF0F9B73),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "จำนวนรูปภาพที่เลือก: ${image2.length} รูป (แตะเพื่อจัดการ)",
+                                      style: const TextStyle(
+                                        fontFamily: 'Prompt',
                                         fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
-                                    ))
-                                  ],
+                                    ),
+                                  ),
                                 ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: _buildProblemTypelist(
-                                            _listproblemtype)),
-                                  ],
-                                ),
-                              ]),
+                              ),
+                        const SizedBox(height: 24),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0, bottom: 12.0),
+                          child: Text(
+                            "พบปัญหาและข้อบกพร่องดังนี้ / Description",
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.015),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          Card(
-                            child: Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Column(children: <Widget>[
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      "รูปภาพ",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ))
-                                  ],
-                                ),
-                                image2.length == 0
-                                    ? Center(child: Text('No Photo'))
-                                    : GestureDetector(
-                                        onTap: () => this.image2.length > 0
-                                            ? _editBottomSheet(context, image2)
-                                            : null,
-                                        child: Container(
-                                          width: double.infinity,
-                                          margin: EdgeInsets.only(top: 5),
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: this.image2.length > 0
-                                                  ? Colors.green
-                                                  : Colors.white),
-                                          child: Align(
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                "จำนวนรูป ${this.image2.length}",
-                                                style: TextStyle(
-                                                  color: this.image2.length > 0
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              )),
-                                        ),
-                                      ),
-                              ]),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Card(
-                            child: Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Column(children: <Widget>[
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      "พบปัญหาและข้อบกพร่องดังนี้",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                _builddescriptionText()
-                              ]),
-                            ),
-                          ),
-                        ],
-                      ),
+                          child: _builddescriptionText(),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
-                  // Expanded(
-                  //   child: Consumer<PlanData>(
-                  //       builder: (context, _nonconform, _) =>
-                  //           _buildNonconformlist(_nonconform.listnonconform)),
-                  // ),
-                ]),
-              ),
-            ),
-          ),
-          Container(
-            height: 60,
-            alignment: Alignment.center,
-            color: Color.fromARGB(255, 45, 172, 123),
-            child: GestureDetector(
-              onTap: () => submitform(),
-              child: Text(
-                'บันทึกข้อมูล',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                height: 52,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0F9B73).withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => submitform(),
+                    child: const Center(
+                      child: Text(
+                        'บันทึกข้อมูล',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -18,102 +18,95 @@ class TeamnotifyData extends ChangeNotifier {
     _teamnotify = val;
   }
 
+  /// Safely extract a [List<dynamic>] from a decoded JSON body
+  /// that may be either a plain array or a wrapped object {"data": [...]}.
+  List<dynamic>? _safeList(dynamic decoded) {
+    if (decoded is List) return decoded;
+    if (decoded is Map && decoded['data'] is List) {
+      return decoded['data'] as List<dynamic>;
+    }
+    return null;
+  }
+
+  List<Teamnotify> _mapItems(List<dynamic> res) {
+    return res.map((item) {
+      return Teamnotify(
+        id: item['id'].toString(),
+        trans_ref_id: item['trans_ref_id'].toString(),
+        module_type_id: item['module_type_id'].toString(),
+        emp_id: item['emp_id'].toString(),
+        title: item['title'].toString(),
+        detail: item['detail'].toString(),
+        read_status: item['read_status'].toString(),
+        notify_date: item['notify_date'].toString(),
+      );
+    }).toList();
+  }
+
   Future<dynamic> teamnotifyFetch() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String user_id = prefs.getString("user_id").toString();
+    final String userId = prefs.getString("user_id").toString();
     final String token = prefs.getString("token").toString();
 
     try {
-      http.Response response;
-      response = await http.get(Uri.parse(url_to_get_notify + "/" + user_id),
-          headers: {"Authorization": token});
+      final response = await http.get(
+        Uri.parse("$url_to_get_notify/$userId"),
+        headers: {"Authorization": token},
+      );
 
       if (response.statusCode == 200) {
         print("has data notify");
-        List<dynamic> res = json.decode(response.body);
-        List<Teamnotify> data = [];
-
-        if (res == null) {
+        final res = _safeList(json.decode(response.body));
+        if (res == null || res.isEmpty) {
+          print("notify: empty or unrecognised format");
+          listteamnotify = [];
           notifyListeners();
-          listteamnotify = data;
-          print("data is null");
           return false;
         }
-
-        print("noti is ${res[0]["id"]}");
-
-        for (var i = 0; i <= res.length - 1; i++) {
-          Teamnotify item = Teamnotify(
-            id: res[i]['id'].toString(),
-            trans_ref_id: res[i]['trans_ref_id'].toString(),
-            module_type_id: res[i]['module_type_id'].toString(),
-            emp_id: res[i]['emp_id'].toString(),
-            title: res[i]['title'].toString(),
-            detail: res[i]['detail'].toString(),
-            read_status: res[i]['read_status'].toString(),
-            notify_date: res[i]['notify_date'].toString(),
-          );
-          data.add(item);
-        }
-        listteamnotify = data;
+        print("notify id[0]: ${res[0]["id"]}");
+        listteamnotify = _mapItems(res);
         notifyListeners();
         return listteamnotify;
       } else {
-        print("no dta");
+        print("notify: HTTP ${response.statusCode}");
         return false;
       }
     } catch (err) {
-      print(err);
+      print("teamnotifyFetch error: $err");
       return false;
     }
   }
 
   Future<dynamic> teamnotifyAllFetch() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String team_id = prefs.getString("team_id").toString();
+    final String teamId = prefs.getString("team_id").toString();
     final String token = prefs.getString("token").toString();
 
     try {
-      http.Response response;
-      response = await http.get(
-          Uri.parse(url_to_get_team_notify + "/" + team_id),
-          headers: {"Authorization": token});
+      final response = await http.get(
+        Uri.parse("$url_to_get_team_notify/$teamId"),
+        headers: {"Authorization": token},
+      );
 
       if (response.statusCode == 200) {
-        print("has data");
-        List<dynamic> res = json.decode(response.body);
-        List<Teamnotify> data = [];
-
-        if (res == null) {
+        print("has data (team notify)");
+        final res = _safeList(json.decode(response.body));
+        if (res == null || res.isEmpty) {
+          print("team notify: empty or unrecognised format");
+          listteamnotify = [];
           notifyListeners();
-          print("data is null");
           return false;
         }
-
-        print("noti is ${res[0]["id"]}");
-
-        for (var i = 0; i <= res.length - 1; i++) {
-          Teamnotify item = Teamnotify(
-            id: res[i]['id'].toString(),
-            trans_ref_id: res[i]['trans_ref_id'].toString(),
-            module_type_id: res[i]['module_type_id'].toString(),
-            emp_id: res[i]['emp_id'].toString(),
-            title: res[i]['title'].toString(),
-            detail: res[i]['detail'].toString(),
-            read_status: res[i]['read_status'].toString(),
-            notify_date: res[i]['notify_date'].toString(),
-          );
-          data.add(item);
-        }
-        listteamnotify = data;
+        print("team notify id[0]: ${res[0]["id"]}");
+        listteamnotify = _mapItems(res);
         notifyListeners();
         return listteamnotify;
       } else {
-        print("no dta");
+        print("team notify: HTTP ${response.statusCode}");
         return false;
       }
     } catch (err) {
-      print(err);
+      print("teamnotifyAllFetch error: $err");
       return false;
     }
   }

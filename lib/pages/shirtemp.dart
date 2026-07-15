@@ -235,17 +235,17 @@ class _ShirtempPageState extends State<ShirtempPage> {
 
     if (shirts != null) {
       if (shirts.length > 0) {
-        shirtCards = new GridView.builder(
+        shirtCards = GridView.builder(
             itemCount: shirts.length,
-            shrinkWrap: false,
-            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 2,
-              crossAxisSpacing: 2,
-              childAspectRatio: 4.0,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 3.2,
             ),
             itemBuilder: (BuildContext context, int index) {
-              //  print("ccccc shirt type is ${shirts[index].shirt_type_id}");
               int _is_enabled =
                   Provider.of<ShirtempData>(context, listen: false)
                       .checkShirtPermission(
@@ -257,85 +257,96 @@ class _ShirtempPageState extends State<ShirtempPage> {
                           _emp_salary_type.toString(),
                           _emp_gender.toString());
 
-              //print("menu enable is ${_is_enabled.toString()}");
-
-              Color _shirt_type_active_color =
-                  Color.fromARGB(255, 242, 246, 242);
-              Color _shirt_not_allow_border_color = Colors.green.shade400;
-              Color _shirt_not_allow_font_color = Colors.black;
+              Color _shirt_type_active_color = Colors.white;
+              Color _shirt_not_allow_border_color = Colors.grey.shade300;
+              Color _shirt_not_allow_font_color = Colors.black87;
+              Gradient? _gradient;
+              BoxShadow? _shadow;
 
               if (_shirt_type != -1) {
                 if (int.parse(shirts[index].id) == _shirt_type) {
-                  _shirt_type_active_color = Colors.green.shade400;
+                  _gradient = const LinearGradient(
+                    colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                  );
+                  _shirt_not_allow_font_color = Colors.white;
+                  _shadow = BoxShadow(
+                    color: const Color(0xFF0F9B73).withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  );
                 }
               }
 
               if (_is_enabled == 0) {
-                Color _shirt_type_active_color =
-                    Color.fromARGB(255, 242, 246, 242);
-                _shirt_not_allow_font_color =
-                    Color.fromARGB(255, 169, 171, 169);
+                _shirt_type_active_color = Colors.grey.shade100;
+                _shirt_not_allow_border_color = Colors.grey.shade100;
+                _shirt_not_allow_font_color = Colors.grey.shade400;
               }
 
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (_is_enabled != 0) {
-                        _shirt_type = int.parse(shirts[index].id);
-                        _shirt_type_name = shirts[index].name;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (_is_enabled != 0) {
+                      _shirt_type = int.parse(shirts[index].id);
+                      _shirt_type_name = shirts[index].name;
 
-                        _shirt_size = -1;
-                        _shirt_pocket = -1;
-                        _quantity = 1;
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 15,
-                    decoration: BoxDecoration(
-                      color: _shirt_type_active_color,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      border: Border.all(
-                        color: _shirt_not_allow_border_color,
-                        width: 0.5,
+                      _shirt_size = -1;
+                      _shirt_pocket = -1;
+                      _quantity = 1;
+                    }
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _gradient == null ? _shirt_type_active_color : null,
+                    gradient: _gradient,
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    border: _gradient == null
+                        ? Border.all(
+                            color: _shirt_not_allow_border_color,
+                            width: 1,
+                          )
+                        : null,
+                    boxShadow: _shadow != null ? [_shadow] : null,
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        shirts[index].name,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _shirt_not_allow_font_color,
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                    child: Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: Text(
-                        "${shirts[index].name}",
-                        style: TextStyle(color: _shirt_not_allow_font_color),
-                      ),
-                    )),
                   ),
                 ),
               );
             });
       } else {
-        return Container(
-          child: Center(
-            child: Text(
-              'ไม่พบข้อมูล',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
+        return const Center(
+          child: Text(
+            'ไม่พบข้อมูล',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+              fontFamily: 'Prompt',
             ),
           ),
         );
       }
     } else {
-      return Container(
-        child: Center(
-          child: Text(
-            'ไม่พบข้อมูล2',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
+      return const Center(
+        child: Text(
+          'ไม่พบข้อมูล',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey,
+            fontFamily: 'Prompt',
           ),
         ),
       );
@@ -349,75 +360,95 @@ class _ShirtempPageState extends State<ShirtempPage> {
 
     if (shirts != null) {
       if (shirts.length > 0) {
-        shirtCards = new GridView.builder(
+        shirtCards = GridView.builder(
             itemCount: shirts.length,
             shrinkWrap: true,
-            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisSpacing: 2,
-              crossAxisSpacing: 2,
-              childAspectRatio: 2.5,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 2.0,
             ),
             itemBuilder: (BuildContext context, int index) {
-              Color _shirt_type_active_color =
-                  Color.fromARGB(255, 242, 246, 242);
+              Color _shirt_type_active_color = Colors.white;
+              Color _shirt_not_allow_font_color = Colors.black87;
+              Gradient? _gradient;
+              BoxShadow? _shadow;
+
               if (_shirt_size != -1 && _shirt_type != -1) {
                 if (int.parse(shirts[index].id) == _shirt_size) {
-                  _shirt_type_active_color = Colors.green;
+                  _gradient = const LinearGradient(
+                    colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                  );
+                  _shirt_not_allow_font_color = Colors.white;
+                  _shadow = BoxShadow(
+                    color: const Color(0xFF0F9B73).withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  );
                 }
               }
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (_shirt_type != -1) {
-                        _shirt_size = int.parse(shirts[index].id);
-                        _shirt_size_name = shirts[index].name;
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 15,
-                    decoration: BoxDecoration(
-                      color: _shirt_type_active_color,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      border: Border.all(
-                        color: Colors.green.shade400,
-                        width: 0.5,
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (_shirt_type != -1) {
+                      _shirt_size = int.parse(shirts[index].id);
+                      _shirt_size_name = shirts[index].name;
+                    }
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _gradient == null ? _shirt_type_active_color : null,
+                    gradient: _gradient,
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    border: _gradient == null
+                        ? Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          )
+                        : null,
+                    boxShadow: _shadow != null ? [_shadow] : null,
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        shirts[index].name,
+                        style: TextStyle(
+                          color: _shirt_not_allow_font_color,
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                    child: Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: Text("${shirts[index].name}"),
-                    )),
                   ),
                 ),
               );
             });
       } else {
-        return Container(
-          child: Center(
-            child: Text(
-              'ไม่พบข้อมูล',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
+        return const Center(
+          child: Text(
+            'ไม่พบข้อมูล',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+              fontFamily: 'Prompt',
             ),
           ),
         );
       }
     } else {
-      return Container(
-        child: Center(
-          child: Text(
-            'ไม่พบข้อมูล2',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
+      return const Center(
+        child: Text(
+          'ไม่พบข้อมูล',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey,
+            fontFamily: 'Prompt',
           ),
         ),
       );
@@ -431,122 +462,140 @@ class _ShirtempPageState extends State<ShirtempPage> {
 
     if (shirts != null) {
       if (shirts.length > 0) {
-        shirtCards = new GridView.builder(
+        shirtCards = GridView.builder(
             itemCount: shirts.length,
-            shrinkWrap: false,
-            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              mainAxisSpacing: 2,
-              crossAxisSpacing: 2,
-              childAspectRatio: 2.5,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 2.2,
             ),
             itemBuilder: (BuildContext context, int index) {
-              Color _shirt_type_active_color =
-                  Color.fromARGB(255, 242, 246, 242);
-              Color _shirt_not_allow_border_color = Colors.green.shade400;
-              Color _shirt_not_allow_font_color = Colors.black;
+              Color _shirt_type_active_color = Colors.white;
+              Color _shirt_not_allow_border_color = Colors.grey.shade300;
+              Color _shirt_not_allow_font_color = Colors.black87;
+              Gradient? _gradient;
+              BoxShadow? _shadow;
 
               if (_shirt_pocket != -1 && _shirt_type != -1) {
                 if (_shirt_type == 1 && int.parse(shirts[index].id) != 1) {
                   if (int.parse(shirts[index].id) == _shirt_pocket) {
-                    _shirt_type_active_color = Colors.green;
+                    _gradient = const LinearGradient(
+                      colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                    );
+                    _shirt_not_allow_font_color = Colors.white;
+                    _shadow = BoxShadow(
+                      color: const Color(0xFF0F9B73).withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    );
                   }
                 } else {
                   if (int.parse(shirts[index].id) == _shirt_pocket) {
-                    _shirt_type_active_color = Colors.green;
+                    _gradient = const LinearGradient(
+                      colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                    );
+                    _shirt_not_allow_font_color = Colors.white;
+                    _shadow = BoxShadow(
+                      color: const Color(0xFF0F9B73).withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    );
                   }
                 }
               }
 
               if (_shirt_type == 1 && int.parse(shirts[index].id) == 1) {
-                _shirt_not_allow_border_color =
-                    Color.fromARGB(255, 242, 246, 242);
-                _shirt_not_allow_font_color =
-                    Color.fromARGB(255, 169, 171, 169);
+                _shirt_type_active_color = Colors.grey.shade100;
+                _shirt_not_allow_border_color = Colors.grey.shade100;
+                _shirt_not_allow_font_color = Colors.grey.shade400;
               }
 
               if (_emp_salary_type == 3 && int.parse(shirts[index].id) == 2) {
-                _shirt_not_allow_border_color =
-                    Color.fromARGB(255, 242, 246, 242);
-                _shirt_not_allow_font_color =
-                    Color.fromARGB(255, 169, 171, 169);
+                _shirt_type_active_color = Colors.grey.shade100;
+                _shirt_not_allow_border_color = Colors.grey.shade100;
+                _shirt_not_allow_font_color = Colors.grey.shade400;
               }
 
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (_shirt_type != -1 && _shirt_size != -1) {
-                        //  has selected shirt type
-                        if (_shirt_type != 1 &&
-                            int.parse(shirts[index].id) == 1) {
-                          _shirt_pocket = int.parse(shirts[index].id);
-                          _shirt_pocket_name = shirts[index].name;
-                        } else {
-                          _shirt_pocket = int.parse(shirts[index].id);
-                          _shirt_pocket_name = shirts[index].name;
-                        }
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (_shirt_type != -1 && _shirt_size != -1) {
+                      if (_shirt_type != 1 &&
+                          int.parse(shirts[index].id) == 1) {
+                        _shirt_pocket = int.parse(shirts[index].id);
+                        _shirt_pocket_name = shirts[index].name;
+                      } else {
+                        _shirt_pocket = int.parse(shirts[index].id);
+                        _shirt_pocket_name = shirts[index].name;
                       }
-                      if (_shirt_type == 1 &&
-                          int.parse(shirts[index].id) == 1 &&
-                          _emp_salary_type == 3) {
-                        _shirt_pocket = -1;
-                        _shirt_pocket_name = '';
-                      }
-                      if (_emp_salary_type == 3 &&
-                          int.parse(shirts[index].id) == 2) {
-                        _shirt_pocket = -1;
-                        _shirt_pocket_name = '';
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 15,
-                    decoration: BoxDecoration(
-                      color: _shirt_type_active_color,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      border: Border.all(
-                        color: _shirt_not_allow_border_color,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(3.0),
+                    }
+                    if (_shirt_type == 1 &&
+                        int.parse(shirts[index].id) == 1 &&
+                        _emp_salary_type == 3) {
+                      _shirt_pocket = -1;
+                      _shirt_pocket_name = '';
+                    }
+                    if (_emp_salary_type == 3 &&
+                        int.parse(shirts[index].id) == 2) {
+                      _shirt_pocket = -1;
+                      _shirt_pocket_name = '';
+                    }
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _gradient == null ? _shirt_type_active_color : null,
+                    gradient: _gradient,
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    border: _gradient == null
+                        ? Border.all(
+                            color: _shirt_not_allow_border_color,
+                            width: 1,
+                          )
+                        : null,
+                    boxShadow: _shadow != null ? [_shadow] : null,
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
                       child: Text(
-                        "${shirts[index].name}",
+                        shirts[index].name,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _shirt_not_allow_font_color,
+                          fontFamily: 'Prompt',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
                         ),
                       ),
-                    )),
+                    ),
                   ),
                 ),
               );
             });
       } else {
-        return Container(
-          child: Center(
-            child: Text(
-              'ไม่พบข้อมูล',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
+        return const Center(
+          child: Text(
+            'ไม่พบข้อมูล',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+              fontFamily: 'Prompt',
             ),
           ),
         );
       }
     } else {
-      return Container(
-        child: Center(
-          child: Text(
-            'ไม่พบข้อมูล2',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
+      return const Center(
+        child: Text(
+          'ไม่พบข้อมูล',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey,
+            fontFamily: 'Prompt',
           ),
         ),
       );
@@ -555,20 +604,7 @@ class _ShirtempPageState extends State<ShirtempPage> {
     return shirtCards;
   }
 
-  Widget _buildTextRemark() {
-    return TextField(
-      controller: _textEditingController,
-      maxLines: 5,
-      decoration: InputDecoration(
-          border: InputBorder.none,
-          filled: true,
-          fillColor: Colors.grey[100],
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 8,
-          )),
-    );
-  }
+
 
   _showPopupSize(BuildContext context) {
     showDialog(
@@ -602,16 +638,29 @@ class _ShirtempPageState extends State<ShirtempPage> {
     _cart_count = _fetch_orderlist.length;
     _cart = _fetch_orderlist;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("เลือกรายการ"),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black87, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "รายละเอียดการจองเสื้อ",
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
         actions: [
           _cart_count == 0
               ? Container()
               : IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent, size: 24),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -620,51 +669,54 @@ class _ShirtempPageState extends State<ShirtempPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(20.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              SizedBox(
-                                height: 12,
-                              ),
+                              const SizedBox(height: 12),
                               Icon(
                                 Icons.remove_circle,
-                                size: 32,
+                                size: 56,
                                 color: Colors.red.shade400,
                               ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'ยืนยันการทำรายการ',
+                              const SizedBox(height: 16),
+                              const Text(
+                                'ยืนยันล้างตะกร้า',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  fontFamily: 'Prompt',
+                                ),
                               ),
-                              SizedBox(
-                                height: 12,
+                              const SizedBox(height: 12),
+                              const Text(
+                                'คุณต้องการลบรายการเสื้อทั้งหมดในตะกร้าใช่หรือไม่?',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontFamily: 'Prompt',
+                                  color: Colors.black54,
+                                ),
                               ),
-                              Text(
-                                'ต้องการดำเนินการต่อใช่หรือไม่ ?',
-                                style: TextStyle(fontWeight: FontWeight.normal),
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
+                              const SizedBox(height: 24),
                               Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: MaterialButton(
-                                      color: Color.fromARGB(255, 45, 172, 123),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF0F9B73),
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                      ),
                                       onPressed: () async {
                                         await EasyLoading.show(
                                             status: "กำลังดำเนินการ");
                                         setState(() {
-                                          // _cart.clear();
-                                          // _cart_count = 0;
                                           Provider.of<ShirtempData>(context,
                                                   listen: false)
                                               .emptyCart();
@@ -672,29 +724,36 @@ class _ShirtempPageState extends State<ShirtempPage> {
                                         EasyLoading.dismiss();
                                         Navigator.of(context).pop(true);
                                       },
-                                      child: Text(
+                                      child: const Text(
                                         'ใช่',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          fontFamily: 'Prompt',
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Spacer(),
+                                  const SizedBox(width: 12),
                                   Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.grey[400],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.grey[700],
+                                        side: BorderSide(color: Colors.grey.shade300),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                      ),
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
                                       },
-                                      child: Text(
+                                      child: const Text(
                                         'ไม่ใช่',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
+                                          fontFamily: 'Prompt',
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
@@ -711,7 +770,7 @@ class _ShirtempPageState extends State<ShirtempPage> {
           _cart_count == 0
               ? Container()
               : Padding(
-                  padding: EdgeInsets.only(right: 10),
+                  padding: const EdgeInsets.only(right: 12),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.of(context)
@@ -722,26 +781,27 @@ class _ShirtempPageState extends State<ShirtempPage> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Icon(
-                          Icons.shopping_cart,
-                          size: 30,
+                        const Icon(
+                          Icons.shopping_cart_outlined,
+                          color: Color(0xFF0F9B73),
+                          size: 26,
                         ),
                         if (_cart_count > 0)
                           Positioned(
-                            top: 5,
+                            top: 8,
                             right: 0,
                             child: Container(
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
                                   shape: BoxShape.circle, color: Colors.red),
-                              constraints: BoxConstraints(
+                              constraints: const BoxConstraints(
                                 minWidth: 16,
                                 minHeight: 16,
                               ),
                               child: Text(
                                 '${_cart_count}',
-                                style: TextStyle(
-                                    fontSize: 10, color: Colors.white),
+                                style: const TextStyle(
+                                    fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -750,297 +810,355 @@ class _ShirtempPageState extends State<ShirtempPage> {
                     ),
                   ),
                 )
-          //GestureDetector(
-          //     onTap: () {
-          //       Navigator.of(context)
-          //           .pushNamed(ShirtorderPage.routeName, arguments: {
-          //         'shirtorder': _cart,
-          //       });
-          //     },
-          //     child: CircleAvatar(
-          //       backgroundColor: Colors.orange,
-          //       child: Center(
-          //           child: Text(
-          //         "${_cart_count.toString()}",
-          //         style: TextStyle(
-          //           fontWeight: FontWeight.bold,
-          //           color: Colors.black,
-          //         ),
-          //       )),
-          //     ),
-          //   ),
         ],
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(children: [
-          Padding(
-            padding: EdgeInsets.all(3.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'แบบเสื้อ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Consumer<ShirtempData>(
-              builder: (context, value, _) => _buildshirtlist(value.listshirt),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(3.0),
-            child: Row(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'ขนาดเสื้อ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () => _showPopupSize(context),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      color: Color.fromARGB(255, 35, 36, 35),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        'กดดูตารางรายละเอียด Size ตรงนี้',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Section 1: Shirt Type
+                    _buildSectionHeader('แบบเสื้อ'),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Consumer<ShirtempData>(
+                        builder: (context, value, _) => _buildshirtlist(value.listshirt),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Consumer<ShirtempData>(
-              builder: (context, value, _) =>
-                  _buildshirtsizelist(value.listshirtsize),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: EdgeInsets.all(3.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'ลักษณะพิเศษ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Consumer<ShirtempData>(
-              builder: (context, value, _) =>
-                  _buildshirtpocketlist(value.listshirtpocket),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: EdgeInsets.all(3.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'หมายเหตุ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 5,
-                right: 5,
-              ),
-              child: _buildTextRemark(),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(3.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'จำนวน',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 221, 218, 218),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                      onPressed: () {
-                        decreateqty();
-                      },
-                      icon: Icon(Icons.remove)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 15,
-                  ),
-                  child: Container(
-                    child: Text(
-                      "${_quantity.toString()}",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 24),
+
+                    // Section 2: Shirt Size
+                    Row(
+                      children: [
+                        _buildSectionHeader('ขนาดเสื้อ'),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => _showPopupSize(context),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F9B73).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.info_outline_rounded, color: Color(0xFF0F9B73), size: 14),
+                                SizedBox(width: 4),
+                                Text(
+                                  'ตารางไซส์เสื้อ',
+                                  style: TextStyle(
+                                    color: Color(0xFF0F9B73),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Prompt',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Consumer<ShirtempData>(
+                        builder: (context, value, _) =>
+                            _buildshirtsizelist(value.listshirtsize),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+
+                    // Section 3: Special Character (Pocket)
+                    _buildSectionHeader('ลักษณะพิเศษ'),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Consumer<ShirtempData>(
+                        builder: (context, value, _) =>
+                            _buildshirtpocketlist(value.listshirtpocket),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Section 4: Remark
+                    _buildSectionHeader('หมายเหตุ'),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _textEditingController,
+                        maxLines: 3,
+                        style: const TextStyle(fontFamily: 'Prompt', fontSize: 13),
+                        decoration: InputDecoration(
+                          hintText: 'ระบุรายละเอียดเพิ่มเติม (ถ้ามี)...',
+                          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13, fontFamily: 'Prompt'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey.shade200),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey.shade200),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Color(0xFF0F9B73), width: 1.5),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey.shade50,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Section 5: Quantity
+                    _buildSectionHeader('จำนวน'),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                                onPressed: () {
+                                  decreateqty();
+                                },
+                                icon: const Icon(Icons.remove, color: Colors.black87)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                            child: Text(
+                              "${_quantity.toString()}",
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Prompt',
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                increateqty();
+                              },
+                              icon: const Icon(Icons.add, color: Colors.black87),
+                              splashColor: Colors.green,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 221, 218, 218),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      //print("button clicked");
-                      increateqty();
-                    },
-                    icon: Icon(Icons.add),
-                    splashColor: Colors.green,
-                  ),
-                )
-              ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(1.0),
-            child: GestureDetector(
-              onTap: () {
-                if (_shirt_type == -1) {
-                  Fluttertoast.showToast(
-                    msg: "กรุณาเลือกแบบเสื้อ",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                } else if (_shirt_size == -1) {
-                  Fluttertoast.showToast(
-                    msg: "กรุณาเลือกขนาดเสื้อ",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                } else if (_shirt_pocket == -1) {
-                  Fluttertoast.showToast(
-                    msg: "กรุณาเลือกลักษณะพิเศษ",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                } else {
-                  _remark = _textEditingController.text;
-                  if (checkOverQty() == 0) {
-                    ShirtOrder _item = ShirtOrder(
-                        order_id: "0",
-                        shirt_type: _shirt_type.toString(),
-                        shirt_type_name: _shirt_type_name,
-                        shirt_size: _shirt_size.toString(),
-                        shirt_size_name: _shirt_size_name,
-                        shirt_pocket: _shirt_pocket.toString(),
-                        shirt_pocket_name: _shirt_pocket_name,
-                        shirt_qty: _quantity.toString(),
-                        shirt_remark: _remark);
-
-                    // _cart.add(_item);
-                    Provider.of<ShirtempData>(context, listen: false)
-                        .addCart(_item);
-                    setState(() {
-                      // _cart_count = _cart.length;
-                      _cart_count =
-                          Provider.of<ShirtempData>(context, listen: false)
-                              .listshirtorder
-                              .length;
-                    });
-
-                    clearInput();
-
-                    Fluttertoast.showToast(
-                      msg: "เพิ่มรายการเสื้อเรียบร้อยแล้ว",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.green,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                  }
-                }
-              },
+            
+            // Bottom Action: Add to Cart
+            Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Container(
-                color: Colors.green,
-                height: 50,
-                child: Center(
-                  child: Text(
-                    "หยิบใส่ตะกร้า",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                width: double.infinity,
+                height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0F9B73).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      if (_shirt_type == -1) {
+                        Fluttertoast.showToast(
+                          msg: "กรุณาเลือกแบบเสื้อ",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      } else if (_shirt_size == -1) {
+                        Fluttertoast.showToast(
+                          msg: "กรุณาเลือกขนาดเสื้อ",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      } else if (_shirt_pocket == -1) {
+                        Fluttertoast.showToast(
+                          msg: "กรุณาเลือกลักษณะพิเศษ",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      } else {
+                        _remark = _textEditingController.text;
+                        if (checkOverQty() == 0) {
+                          ShirtOrder _item = ShirtOrder(
+                              order_id: "0",
+                              shirt_type: _shirt_type.toString(),
+                              shirt_type_name: _shirt_type_name,
+                              shirt_size: _shirt_size.toString(),
+                              shirt_size_name: _shirt_size_name,
+                              shirt_pocket: _shirt_pocket.toString(),
+                              shirt_pocket_name: _shirt_pocket_name,
+                              shirt_qty: _quantity.toString(),
+                              shirt_remark: _remark);
+
+                          Provider.of<ShirtempData>(context, listen: false)
+                              .addCart(_item);
+                          setState(() {
+                            _cart_count =
+                                Provider.of<ShirtempData>(context, listen: false)
+                                    .listshirtorder
+                                    .length;
+                          });
+
+                          clearInput();
+                          _textEditingController.clear();
+
+                          Fluttertoast.showToast(
+                            msg: "เพิ่มรายการเสื้อเรียบร้อยแล้ว",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                        }
+                      }
+                    },
+                    child: const Center(
+                      child: Text(
+                        "หยิบใส่ตะกร้า",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: 'Prompt',
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 16,
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F9B73),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+            fontSize: 16,
+            fontFamily: 'Prompt',
+          ),
+        ),
+      ],
     );
   }
 }

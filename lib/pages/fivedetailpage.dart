@@ -79,20 +79,20 @@ class _FiveDetailPageState extends State<FiveDetailPage>
 
   @override
   void initState() {
-    // TODO: implement initState
-    EasyLoading.show(status: "กำลังโหลดข้อมูล");
-    Provider.of<PlanData>(context, listen: false).fetchFiveRank("2023", "01");
-    EasyLoading.dismiss();
     _tabController = TabController(initialIndex: 0, length: 4, vsync: this);
     super.initState();
 
-    setState(() {
-      //countryList = countryFromJson(jsonStr);
-      year_list.add(now.year.toString());
-      year_list.add((now.year - 1).toString());
-      dropdownyearvalue = year_list.first;
-      dropdownvalue = month_list.first;
-    });
+    final String currentYear = now.year.toString();
+    final String currentMonth = now.month.toString().padLeft(2, '0');
+
+    year_list.add(now.year.toString());
+    year_list.add((now.year - 1).toString());
+    dropdownyearvalue = currentYear;
+    dropdownvalue = month_list[now.month - 1];
+
+    EasyLoading.show(status: "กำลังโหลดข้อมูล");
+    Provider.of<PlanData>(context, listen: false).fetchFiveRank(currentYear, currentMonth);
+    EasyLoading.dismiss();
   }
 
   Widget _buildlist(List<FiveRankData> data, int score_rank) {

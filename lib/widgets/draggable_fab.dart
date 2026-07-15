@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class DraggableFAB extends StatefulWidget {
   final VoidCallback onTap;
+  final Alignment? initialAlignment;
 
-  const DraggableFAB({Key? key, required this.onTap}) : super(key: key);
+  const DraggableFAB({
+    Key? key,
+    required this.onTap,
+    this.initialAlignment,
+  }) : super(key: key);
 
   @override
   State<DraggableFAB> createState() => _DraggableFABState();
@@ -24,9 +29,15 @@ class _DraggableFABState extends State<DraggableFAB> {
       final screenWidth = mediaQuery.size.width;
       final screenHeight = mediaQuery.size.height;
 
-      // Default position: Bottom right
-      xPosition = screenWidth - buttonSize - 16.0;
-      yPosition = screenHeight - buttonSize - 100.0;
+      if (widget.initialAlignment == Alignment.centerRight) {
+        // Initial position: Middle right
+        xPosition = screenWidth - buttonSize - 16.0;
+        yPosition = (screenHeight - buttonSize) / 2;
+      } else {
+        // Default position: Bottom right
+        xPosition = screenWidth - buttonSize - 16.0;
+        yPosition = screenHeight - buttonSize - 100.0;
+      }
       isInitialized = true;
     }
   }

@@ -70,170 +70,216 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
   }
 
   Widget _buildList(List<JobplanAreaRepeat> listcheck) {
-    Widget cardlist;
-    if (listcheck.length > 0) {
-      cardlist = ListView.builder(
-          itemCount: listcheck.length,
-          itemBuilder: (BuildContext contex, int index) {
-            int total_topic = Provider.of<PlanData>(contex, listen: false)
-                .countTopicitemRepeat(listcheck[index].plan_area_id);
-            int total_topic_counted =
-                Provider.of<PlanData>(contex, listen: false)
-                    .countCheckedTopicitemRepeat(listcheck[index].plan_area_id);
+    if (listcheck.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assignment_turned_in_outlined,
+                size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            const Text("ไม่พบรายการตรวจ",
+                style: TextStyle(
+                    fontFamily: 'Prompt', fontSize: 18, color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: listcheck.length,
+      itemBuilder: (BuildContext context, int index) {
+        int total_topic = Provider.of<PlanData>(context, listen: false)
+            .countTopicitemRepeat(listcheck[index].plan_area_id);
+        int total_topic_counted = Provider.of<PlanData>(context, listen: false)
+            .countCheckedTopicitemRepeat(listcheck[index].plan_area_id);
 
-            Color _bgcolor = Colors.green.shade50;
-            Color _line_color = Colors.black;
+        Color _bgcolor = Colors.white;
+        Color _line_color = Colors.black87;
+        Color _status_color = const Color(0xFF4A5AE7); // Default blue
+        String _status_text = 'แตะเพื่อเริ่มตรวจ / Tap to inspect';
 
-            if (current_section_code == listcheck[index].section_code) {
-              _line_color = Colors.red;
-            }
-            if (total_topic_counted <= 0) {
-              _bgcolor = Colors.green.shade50;
-            } else if (total_topic_counted > 0 &&
-                total_topic_counted < total_topic) {
-              _bgcolor = Color.fromARGB(255, 235, 177, 17);
-            }
-            if (total_topic_counted == total_topic) {
-              _bgcolor = Colors.green.shade400;
-            }
-            return Slidable(
-              key: const ValueKey(0),
-              enabled: current_section_code == listcheck[index].section_code
-                  ? false
-                  : true,
+        final bool isOwnSection =
+            current_section_code == listcheck[index].section_code;
+
+        if (isOwnSection) {
+          _line_color = Colors.red.shade400;
+          _status_color = Colors.grey;
+          _status_text = 'พื้นที่ของแผนกคุณ (ตรวจไม่ได้) / Your Section';
+          _bgcolor = const Color(0xFFF5F5F5); // Soft grey
+        } else {
+          if (total_topic_counted <= 0) {
+            _bgcolor = Colors.white;
+            _status_color = const Color(0xFF4A5AE7); // Blue
+            _status_text = 'ยังไม่ได้ตรวจ / Tap to inspect';
+          } else if (total_topic_counted > 0 &&
+              total_topic_counted < total_topic) {
+            _bgcolor = const Color(0xFFFFF8E1); // Soft yellow
+            _status_color = const Color(0xFFFFAD3B); // Yellow
+            _status_text = 'ตรวจค้างอยู่ / In progress';
+          } else if (total_topic_counted == total_topic) {
+            _bgcolor = const Color(0xFFE8F5E9); // Soft green
+            _status_color = const Color(0xFF0F9B73); // Green
+            _status_text = 'ตรวจเสร็จสิ้น / Completed';
+          }
+        }
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: _bgcolor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Slidable(
+              key: ValueKey(listcheck[index].plan_area_id),
+              enabled: !isOwnSection,
               startActionPane: ActionPane(
                 motion: const ScrollMotion(),
-                // dismissible: DismissiblePane(onDismissed: () {}),
                 children: [
                   SlidableAction(
-                    onPressed: doNothing,
-                    backgroundColor: Colors.red,
+                    onPressed: (BuildContext context) {
+                      _removecheckeditem(listcheck[index].plan_area_id);
+                    },
+                    backgroundColor: Colors.redAccent,
                     foregroundColor: Colors.white,
-                    icon: Icons.delete,
+                    icon: Icons.delete_rounded,
                     label: 'Clear',
                   ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Delete',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
                 ],
               ),
               endActionPane: ActionPane(
                 motion: const ScrollMotion(),
                 children: [
                   SlidableAction(
-                    // flex: 2,
-                    // onPressed:
-                    //     _removecheckeditem(listcheck[index].plan_area_id),
                     onPressed: (BuildContext context) {
-                      print("you pressed meeee");
                       _removecheckeditem(listcheck[index].plan_area_id);
                     },
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.redAccent,
                     foregroundColor: Colors.white,
-                    icon: Icons.delete,
+                    icon: Icons.delete_rounded,
                     label: 'Clear',
                   ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Delete',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.only(top: 1),
-                      decoration: BoxDecoration(
-                          color: current_section_code ==
-                                  listcheck[index].section_code
-                              ? Colors.grey.shade300
-                              : _bgcolor,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: ListTile(
-                        leading: Container(
-                          height: 30,
-                          width: 30,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: isOwnSection
+                      ? null
+                      : () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => JobCheckNewRepeatPage(
+                                plan_area_id: listcheck[index].plan_area_id,
+                                plan_id: listcheck[index].plan_id,
+                                plan_area_name: listcheck[index].plan_area_name,
+                                plan_num: listcheck[index].plan_num,
+                              ),
+                            ),
+                          );
+                        },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 12.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
+                            shape: BoxShape.circle,
                             color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: Center(
-                              child: current_section_code ==
-                                      listcheck[index].section_code
-                                  ? Icon(
-                                      Icons.home,
-                                      color: Colors.red,
-                                    )
-                                  : Text(
-                                      "${(index + 1).toString()}",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
-                        ),
-                        title: Text(
-                          '${listcheck[index].plan_area_name}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: _line_color,
+                            child: isOwnSection
+                                ? Icon(
+                                    Icons.home_rounded,
+                                    color: Colors.red.shade400,
+                                    size: 20,
+                                  )
+                                : Text(
+                                    "${index + 1}",
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                      fontFamily: 'Prompt',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                           ),
                         ),
-                        trailing: Text(
-                          "${total_topic_counted}/${total_topic}",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: _line_color,
-                          ),
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      current_section_code == listcheck[index].section_code
-                          ? null
-                          : Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => JobCheckNewRepeatPage(
-                                  plan_area_id: listcheck[index].plan_area_id,
-                                  plan_id: listcheck[index].plan_id,
-                                  plan_area_name:
-                                      listcheck[index].plan_area_name,
-                                  plan_num: listcheck[index].plan_num,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                listcheck[index].plan_area_name,
+                                style: TextStyle(
+                                  fontFamily: 'Prompt',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: _line_color,
                                 ),
                               ),
-                            );
-                    }),
+                              const SizedBox(height: 4),
+                              Text(
+                                _status_text,
+                                style: TextStyle(
+                                  fontFamily: 'Prompt',
+                                  fontSize: 11,
+                                  color: isOwnSection
+                                      ? Colors.grey
+                                      : Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _status_color.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "$total_topic_counted/$total_topic",
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              fontWeight: FontWeight.bold,
+                              color: _status_color,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            );
-          });
-      return cardlist;
-      //return Text('data');
-    } else {
-      return Text('No data');
-    }
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void doNothing(BuildContext context) {}
@@ -248,11 +294,18 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
     current_section_code =
         Provider.of<UserData>(context, listen: false).getCurrenUserSection();
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text("แผนพื้นที่ตรวจ 5ส. (ซ้ำ)"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: const Text(
+          "แผนพื้นที่ตรวจ 5ส. (ซ้ำ)",
+          style: TextStyle(
+              fontFamily: 'Prompt',
+              fontWeight: FontWeight.bold,
+              color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
           IconButton(
             onPressed: () => Navigator.push(
@@ -261,7 +314,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                 builder: (context) => HistoryPage(),
               ),
             ),
-            icon: Icon(Icons.history),
+            icon: const Icon(Icons.history_rounded),
           ),
           IconButton(
             onPressed: () => Navigator.push(
@@ -270,78 +323,57 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                 builder: (context) => CarlistPage(),
               ),
             ),
-            icon: Icon(Icons.error_outline),
+            icon: const Icon(Icons.error_outline_rounded),
           ),
         ],
       ),
-      body: Container(
-        color: Colors.grey.shade100,
-        width: double.infinity,
+      body: SafeArea(
         child: Column(children: <Widget>[
-          SizedBox(
-            height: 10,
-          ),
           Expanded(
-            flex: 5,
             child: Consumer<PlanData>(
-              //  builder: ((context, _plans, _) => _plans.finishedcheck > 0
               builder: ((context, _plans, _) => 0 > 0
                   ? Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Text(""),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Column(children: [
-                              Icon(
-                                Icons.block,
-                                size: 50,
-                                color: Color.fromARGB(255, 45, 172, 123),
-                              ),
-                              Center(
-                                  child: Text(
-                                'ไม่พบรายการตรวจ',
-                                style: TextStyle(
+                          Icon(Icons.assignment_turned_in_outlined,
+                              size: 64, color: Colors.grey.shade400),
+                          const SizedBox(height: 16),
+                          const Text("ไม่มีแผนการตรวจค้าง",
+                              style: TextStyle(
+                                  fontFamily: 'Prompt',
                                   fontSize: 18,
-                                  color: Colors.grey,
-                                ),
-                              )),
-                            ]),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(""),
-                          ),
+                                  color: Colors.grey)),
                         ],
                       ),
                     )
-                  : _buildList(
-                      _plans.getAreaRepeatTitle(),
-                    )),
+                  : _buildList(_plans.getAreaRepeatTitle())),
             ),
           ),
-          //_plans.checkfinish()
           Consumer<PlanData>(
-            // builder: ((context, _plans, _) => _plans.finishedcheck <= 0
             builder: ((context, _plans, _) => 0 <= 0
                 ? Container(
-                    height: 50,
+                    margin: const EdgeInsets.all(16),
                     width: double.infinity,
-                    color: Color.fromARGB(255, 45, 172, 123),
-                    child: GestureDetector(
-                      child: Center(
-                        child: Text(
-                          "ยืนยันการตรวจ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F9B73),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        "ยืนยันการตรวจ",
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onTap: () {
+                      onPressed: () {
                         // Provider.of<PlanData>(context, listen: false)
                         //     .submitInspection();
                         int MustChekAll = _plans.getAllMushCheckTopic();
@@ -646,7 +678,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                       },
                     ),
                   )
-                : Text("")),
+                : const SizedBox.shrink()),
           ),
         ]),
       ),

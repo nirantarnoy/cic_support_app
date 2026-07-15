@@ -13,6 +13,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_cic_support/pages/it_support_dashboard.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = 'mainpage';
@@ -62,6 +63,7 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
       body: Stack(
         children: [
           NestedScrollView(
@@ -71,7 +73,8 @@ class _MainPageState extends State<MainPage>
               pinned: false,
               floating: true,
               forceElevated: innerBoxIsScrolled,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.white,
+              elevation: 0,
               leading: IconButton(
                 onPressed: () => Navigator.push(
                     context,
@@ -86,33 +89,21 @@ class _MainPageState extends State<MainPage>
               title: RichText(
                   text: const TextSpan(children: [
                 TextSpan(
-                  text: "CIC",
+                  text: "CIC ",
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.black87,
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.grey,
-                        blurRadius: 8.0,
-                      ),
-                    ],
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'Prompt',
                   ),
                 ),
                 TextSpan(
                   text: "SUPPORT",
                   style: TextStyle(
-                    color: Color.fromARGB(255, 45, 172, 123),
+                    color: Color(0xFF0F9B73),
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.grey,
-                        blurRadius: 8.0,
-                      ),
-                    ],
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'Prompt',
                   ),
                 ),
               ])),
@@ -120,7 +111,7 @@ class _MainPageState extends State<MainPage>
                 IconButton(
                   icon: const Icon(
                     Icons.notifications_outlined,
-                    color: Color.fromARGB(255, 45, 172, 123),
+                    color: Color(0xFF0F9B73),
                   ),
                   onPressed: () => Navigator.push(
                       context,
@@ -128,13 +119,6 @@ class _MainPageState extends State<MainPage>
                         builder: (context) => NotificationPage(),
                       )),
                 ),
-                // IconButton(
-                //   icon: Icon(
-                //     Icons.logout_outlined,
-                //     color: Colors.purple,
-                //   ),
-                //   onPressed: () {},
-                // ),
               ],
             ),
           ];
@@ -239,19 +223,120 @@ class _MainPageState extends State<MainPage>
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'กิจกรรม/ข่าวสาร',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54),
+                // IT Support Standalone Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ITSupportDashboardPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF0072FF).withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.computer_rounded,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'IT Support',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Prompt',
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'ระบบแจ้งซ่อมและสนับสนุนด้านไอที',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 12,
+                                    fontFamily: 'Prompt',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: Color(0xFF0072FF),
+                              size: 14,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        width: 4,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0F9B73),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'กิจกรรม/ข่าวสาร',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          fontFamily: 'Prompt',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 10,

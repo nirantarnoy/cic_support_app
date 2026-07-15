@@ -39,97 +39,194 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
   }
 
   Widget _buildlist(List<Storeissue> _listcheck) {
-    DateFormat dateformatter = DateFormat('dd-MM-yyyy hh:ss');
-    // print("list len is ${_listcheck.length}");
-    Widget cards;
+    DateFormat dateformatter = DateFormat('dd-MM-yyyy HH:mm');
     if (_listcheck.isNotEmpty) {
-      cards = RefreshIndicator(
+      return RefreshIndicator(
         onRefresh: _getNewdata,
-        child: new ListView.builder(
-            itemCount: _listcheck.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: GestureDetector(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => StoreissuedetailPage(
-                                issue_id: _listcheck[index].id,
-                                team_id: widget.team_id,
-                              ))),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.error_outlined,
-                      color: Color.fromARGB(255, 241, 84, 5),
-                    ),
-                    title: Text('${_listcheck[index].journal_no}'),
-                    subtitle: Column(
-                      children: [
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '${_listcheck[index].emp_full_name}',
-                              style: TextStyle(color: Colors.green),
-                            )),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '${dateformatter.format(DateTime.parse(_listcheck[index].trans_date))}',
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: Text(""),
+        color: const Color(0xFF0F9B73),
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: _listcheck.length,
+          itemBuilder: (BuildContext context, int index) {
+            final item = _listcheck[index];
+            return GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StoreissuedetailPage(
+                    issue_id: item.id,
+                    team_id: widget.team_id,
                   ),
                 ),
-              );
-            }),
+              ),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0F9B73).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.inventory_rounded,
+                          color: Color(0xFF0F9B73),
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  item.journal_no,
+                                  style: const TextStyle(
+                                    fontFamily: 'Prompt',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF7E36)
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Text(
+                                    'รออนุมัติ',
+                                    style: TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFFF7E36),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              item.emp_full_name,
+                              style: const TextStyle(
+                                fontFamily: 'Prompt',
+                                fontSize: 13,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.access_time_rounded,
+                                    size: 12, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Text(
+                                  dateformatter
+                                      .format(DateTime.parse(item.trans_date)),
+                                  style: const TextStyle(
+                                    fontFamily: 'Prompt',
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       );
-
-      return cards;
     } else {
-      return Center(child: Text("ไม่พบรายการ"));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.inventory_2_outlined,
+                  size: 48, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "ไม่พบรายการรออนุมัติ",
+              style: TextStyle(
+                fontFamily: 'Prompt',
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.white,
-            onPressed: () {
-              widget.team_id == ""
-                  ? Navigator.of(context).pushNamedAndRemoveUntil(
-                      "profilenormal", (Route<dynamic> route) => false)
-                  : Navigator.of(context).pushNamed("profile");
-            }),
-        title: Consumer<UserData>(
-          builder: (context, _user, _) => Text(
-            "อนุมัติใบเบิกสโตร์",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.black87, size: 20),
+          onPressed: () {
+            widget.team_id == ""
+                ? Navigator.of(context).pushNamedAndRemoveUntil(
+                    "profilenormal", (Route<dynamic> route) => false)
+                : Navigator.of(context).pushNamed("profile");
+          },
+        ),
+        title: const Text(
+          "อนุมัติใบเบิกสโตร์",
+          style: TextStyle(
+            fontFamily: 'Prompt',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 45, 172, 123),
+        centerTitle: true,
       ),
-      body: Container(
-        child: Column(children: <Widget>[
-          SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: Consumer<StoreissueData>(
-              builder: ((context, memberteam, child) =>
-                  _buildlist(memberteam.listIssue)),
-            ),
-          ),
-        ]),
+      body: Consumer<StoreissueData>(
+        builder: ((context, storeData, child) =>
+            _buildlist(storeData.listIssue)),
       ),
     );
   }

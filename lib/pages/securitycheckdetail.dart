@@ -67,183 +67,138 @@ class _SecuritycheckDetailPageState extends State<SecuritycheckDetailPage> {
   }
 
   Widget _buildList(List<SecuritycheckDetail> listcheck) {
-    Widget cardlist;
-    if (listcheck.length > 0) {
-      cardlist = ListView.builder(
-          itemCount: listcheck.length,
-          itemBuilder: (BuildContext contex, int index) {
-            // int total_topic_counted =
-            //     getAreacheckCount(listcheck[index].plan_area_id);
-            String _ischecked_line =
-                Provider.of<SecurityplanData>(context, listen: false)
-                    .checkhaschecklist(
-                        widget.id, listcheck[index].id, index.toString());
+    if (listcheck.isNotEmpty) {
+      return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        itemCount: listcheck.length,
+        itemBuilder: (BuildContext context, int index) {
+          String _ischecked_line =
+              Provider.of<SecurityplanData>(context, listen: false)
+                  .checkhaschecklist(
+                      widget.id, listcheck[index].id, index.toString());
 
-            Color _bgcolor = Colors.grey.shade300;
-            Color _line_color = Colors.black;
-            Icon _showIcon = Icon(Icons.question_mark_outlined);
+          Color _iconColor = Colors.grey;
+          Color _iconBgColor = Colors.grey.shade100;
+          IconData _iconData = Icons.help_outline_rounded;
+          String _statusText = "ยังไม่ได้ตรวจ";
 
-            if (_ischecked_line != "") {
-              // print("check has count data is ${_ischecked_line}");
-              _bgcolor = Colors.green.shade50;
-              if (_ischecked_line == "1") {
-                _showIcon = Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.green,
-                );
-              } else {
-                _showIcon = Icon(
-                  Icons.error_outline_outlined,
-                  color: Colors.red,
-                );
-              }
+          if (_ischecked_line != "") {
+            if (_ischecked_line == "1") {
+              _iconColor = const Color(0xFF0F9B73);
+              _iconBgColor = const Color(0xFF0F9B73).withOpacity(0.1);
+              _iconData = Icons.check_circle_rounded;
+              _statusText = "ปกติ";
+            } else {
+              _iconColor = const Color(0xFFE53935);
+              _iconBgColor = const Color(0xFFE53935).withOpacity(0.1);
+              _iconData = Icons.cancel_rounded;
+              _statusText = "ผิดปกติ";
             }
+          }
 
-            return Slidable(
-              key: const ValueKey(0),
-              enabled: true,
-              // startActionPane: ActionPane(
-              //   motion: const ScrollMotion(),
-              //   // dismissible: DismissiblePane(onDismissed: () {}),
-              //   children: [
-              //     // SlidableAction(
-              //     //   onPressed: doNothing,
-              //     //   backgroundColor: Colors.green,
-              //     //   foregroundColor: Colors.white,
-              //     //   icon: Icons.check_circle,
-              //     //   label: 'Yes',
-              //     // ),
-              //     // SlidableAction(
-              //     //   onPressed: doNothing,
-              //     //   backgroundColor: Colors.red,
-              //     //   foregroundColor: Colors.white,
-              //     //   icon: Icons.error,
-              //     //   label: 'No',
-              //     // ),
-              //     // SlidableAction(
-              //     //   onPressed: doNothing,
-              //     //   backgroundColor: Colors.green,
-              //     //   foregroundColor: Colors.white,
-              //     //   icon: Icons.share,
-              //     //   label: 'Share',
-              //     // )
-              //   ],
-              // ),
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(
-                    key: const ValueKey(1),
-                    onPressed: (BuildContext context) {
-                      _addtolist(listcheck[index].id, "1", index.toString());
-                    },
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    icon: Icons.check_circle,
-                    label: 'Yes',
+          return Slidable(
+            key: ValueKey(listcheck[index].id),
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (BuildContext context) async {
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    _addtolist(listcheck[index].id, "1", index.toString());
+                  },
+                  backgroundColor: const Color(0xFF0F9B73),
+                  foregroundColor: Colors.white,
+                  icon: Icons.check_circle_outline_rounded,
+                  label: 'ปกติ',
+                ),
+                SlidableAction(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
                   ),
-                  SlidableAction(
-                    key: const ValueKey(2),
-                    onPressed: (BuildContext context) {
-                      _addtolist(listcheck[index].id, "0", index.toString());
-                    },
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    icon: Icons.error,
-                    label: 'No',
+                  onPressed: (BuildContext context) async {
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    _addtolist(listcheck[index].id, "0", index.toString());
+                  },
+                  backgroundColor: const Color(0xFFE53935),
+                  foregroundColor: Colors.white,
+                  icon: Icons.highlight_off_rounded,
+                  label: 'ผิดปกติ',
+                ),
+              ],
+            ),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  // SlidableAction(
-                  //   // flex: 2,
-                  //   // onPressed:
-                  //   //     _removecheckeditem(listcheck[index].plan_area_id),
-                  //   onPressed: (BuildContext context) {
-                  //     print("you pressed meeee");
-                  //     //  _removecheckeditem(listcheck[index].id);
-                  //   },
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Clear',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Delete',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.only(top: 1),
-                    decoration: BoxDecoration(
-                        color: _bgcolor,
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: ListTile(
-                      leading: Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.white,
-                        ),
-                        child: Center(
-                            child: Text(
-                          "${(index + 1).toString()}",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )),
+              child: ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                leading: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: _iconBgColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "${index + 1}",
+                      style: TextStyle(
+                        fontFamily: 'Prompt',
+                        color: _iconColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                      title: Text(
-                        '${listcheck[index].name}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _line_color,
-                        ),
-                      ),
-                      trailing: _showIcon,
-                      // subtitle: Text(
-                      //     '${listcheck[index].section_name} : ${listcheck[index].location_name}'),
-                      // trailing: Text(
-                      //   "${total_topic_counted}/${total_topic}",
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.bold,
-                      //     color: _line_color,
-                      //   ),
-                      // ),
                     ),
                   ),
-                  // onTap: () {
-                  //   Navigator.of(context).push(
-                  //     MaterialPageRoute(
-                  //       builder: (context) => SecuritycheckDetailPage(
-                  //         id: listcheck[index].id,
-                  //         code: listcheck[index].code,
-                  //       ),
-                  //     ),
-                  //   );
-                  // }
+                ),
+                title: Text(
+                  '${listcheck[index].name}',
+                  style: const TextStyle(
+                    fontFamily: 'Prompt',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colors.black87,
+                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _statusText,
+                      style: TextStyle(
+                        fontFamily: 'Prompt',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: _iconColor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(_iconData, color: _iconColor, size: 24),
+                  ],
                 ),
               ),
-            );
-          });
-      return cardlist;
-      //return Text('data');
+            ),
+          );
+        },
+      );
     } else {
-      return Text('No data');
+      return const Center(
+        child: Text(
+          'ไม่พบข้อมูลการตรวจ',
+          style: TextStyle(fontFamily: 'Prompt', color: Colors.grey),
+        ),
+      );
     }
   }
 
@@ -432,110 +387,172 @@ class _SecuritycheckDetailPageState extends State<SecuritycheckDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('${widget.code}'),
-        actions: [
-          IconButton(
-              onPressed: () => chooseImage(), icon: Icon(Icons.camera_front)),
-        ],
-      ),
-      body: Column(children: [
-        Expanded(flex: 4, child: _buildList(check_list)),
-        Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(children: <Widget>[
-                      Row(
-                        children: [
-                          Expanded(
-                              child: Text(
-                            "รูปภาพ",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ))
-                        ],
-                      ),
-                      image2.length == 0
-                          ? Center(child: Text('No Photo'))
-                          : GestureDetector(
-                              onTap: () => this.image2.length > 0
-                                  ? _editBottomSheet(context, image2)
-                                  : null,
-                              child: Container(
-                                width: double.infinity,
-                                margin: EdgeInsets.only(top: 5),
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: this.image2.length > 0
-                                        ? Colors.green
-                                        : Colors.white),
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "จำนวนรูป ${this.image2.length}",
-                                      style: TextStyle(
-                                        color: this.image2.length > 0
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    )),
-                              ),
-                            ),
-                    ]),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
-            )),
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: EdgeInsets.all(3),
-            child: TextField(
-              controller: _remarkController,
-              maxLines: 3,
-              decoration: InputDecoration(
-                  hintText: 'คำอธิบายเพิ่มเติม',
-                  labelText: 'คำอธิบายเพิ่มเติม'),
-              onSubmitted: (value) {
-                setState(() {
-                  _remarkController.text = value;
-                });
-              },
-            ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.black87, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          widget.code,
+          style: const TextStyle(
+            fontFamily: 'Prompt',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: GestureDetector(
-            onTap: () => _submitform(),
-            child: Container(
-                height: 20,
-                width: double.infinity,
-                color: Colors.green,
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'บันทึกรายการ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ))),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () => chooseImage(),
+            icon: const Icon(Icons.camera_alt_rounded, color: Colors.black87),
           ),
-        )
-      ]),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 5,
+            child: _buildList(check_list),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                )
+              ],
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "รูปภาพประกอบ",
+                              style: TextStyle(
+                                fontFamily: 'Prompt',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            if (image2.isNotEmpty)
+                              GestureDetector(
+                                onTap: () => _editBottomSheet(context, image2),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0F9B73)
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    "${image2.length} รูป",
+                                    style: const TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF0F9B73),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              GestureDetector(
+                                onTap: () => chooseImage(),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.add_a_photo_rounded,
+                                        size: 16, color: Colors.blue),
+                                    const SizedBox(width: 4),
+                                    const Text(
+                                      "เพิ่มรูปภาพ",
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _remarkController,
+                          maxLines: 2,
+                          style: const TextStyle(
+                              fontFamily: 'Prompt', fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'เพิ่มคำอธิบาย (ถ้ามี)...',
+                            hintStyle: const TextStyle(
+                                fontFamily: 'Prompt', color: Colors.grey),
+                            filled: true,
+                            fillColor: const Color(0xFFF5F7FB),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onSubmitted: (value) {
+                            setState(() {
+                              _remarkController.text = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0F9B73),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () => _submitform(),
+                            child: const Text(
+                              'บันทึกรายการตรวจ',
+                              style: TextStyle(
+                                fontFamily: 'Prompt',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

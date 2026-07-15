@@ -40,19 +40,26 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
   }
 
   Widget _buildlist(List<ShirtOrder> orders) {
-    Widget itemcards;
     if (orders.isNotEmpty) {
-      if (orders.length > 0) {
-        itemcards = new ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, int index) {
-              return Dismissible(
+      return ListView.builder(
+          itemCount: orders.length,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemBuilder: (context, int index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              child: Dismissible(
                 key: ValueKey(orders[index]),
                 background: Container(
-                  color: Colors.red,
-                  child: Icon(
-                    Icons.delete,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
                     color: Colors.white,
+                    size: 28,
                   ),
                 ),
                 direction: DismissDirection.endToStart,
@@ -60,17 +67,31 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
                   return showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                              title: Text("ยืนยันการลบข้อมูล"),
-                              content: Text("คุณต้องการลบข้อมูลใช่หรือไม่"),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              title: const Text(
+                                "ยืนยันการลบข้อมูล",
+                                style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold),
+                              ),
+                              content: const Text(
+                                "คุณต้องการลบรายการเสื้อนี้จากตะกร้าใช่หรือไม่",
+                                style: TextStyle(fontFamily: 'Prompt'),
+                              ),
                               actions: [
                                 TextButton(
-                                  child: Text("ยกเลิก"),
+                                  child: const Text("ยกเลิก", style: TextStyle(color: Colors.grey, fontFamily: 'Prompt')),
                                   onPressed: () {
                                     Navigator.of(ctx).pop(false);
                                   },
                                 ),
                                 TextButton(
-                                  child: Text("ยืนยัน"),
+                                  child: const Text(
+                                    "ยืนยัน",
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Prompt',
+                                    ),
+                                  ),
                                   onPressed: () {
                                     Navigator.of(ctx).pop(true);
                                   },
@@ -79,25 +100,11 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
                 },
                 onDismissed: (direction) {
                   setState(() {
-                    // orders.forEach((element) {
-                    //   if (element.shirt_type == orders[index].shirt_type) {
-                    //     orders.removeWhere((item) =>
-                    //         item.shirt_type == orders[index].shirt_type);
-                    //     print("remove item ${orders[index].shirt_type}");
-
-                    //     // Provider.of<ShirtempData>(context, listen: false)
-                    //     //     .removeCart(orders[index].shirt_type);
-                    //   }
-                    // });
                     Provider.of<ShirtempData>(context, listen: false)
                         .removeCart(index);
-                    // orders.removeAt(index);
                   });
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  //   content: Text("ลบข้อมูลสําเร็จ"),
-                  // ));
                   Fluttertoast.showToast(
-                      msg: "ลบข้อมูลสําเร็จ",
+                      msg: "ลบข้อมูลสำเร็จ",
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.CENTER,
                       timeInSecForIosWeb: 1,
@@ -105,60 +112,128 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                 },
-                child: ListTile(
-                  title: Text(
-                      '${orders[index].shirt_type_name} ${orders[index].shirt_size_name}'),
-                  subtitle: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text('${orders[index].shirt_pocket_name}'),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: orders[index].shirt_remark != ''
-                                ? Text(
-                                    '*** ${orders[index].shirt_remark}',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.red,
-                                    ),
-                                  )
-                                : Text(''),
-                          ),
-                        ],
-                      ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      )
                     ],
                   ),
-                  trailing: Text('${orders[index].shirt_qty}'),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0F9B73).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.checkroom_rounded,
+                        color: Color(0xFF0F9B73),
+                      ),
+                    ),
+                    title: Text(
+                      '${orders[index].shirt_type_name} - ${orders[index].shirt_size_name}',
+                      style: const TextStyle(
+                        fontFamily: 'Prompt',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            orders[index].shirt_pocket_name,
+                            style: TextStyle(
+                              fontFamily: 'Prompt',
+                              color: Colors.grey.shade600,
+                              fontSize: 12,
+                            ),
+                          ),
+                          if (orders[index].shirt_remark != '')
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                '* ${orders[index].shirt_remark}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.redAccent,
+                                  fontFamily: 'Prompt',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0F9B73).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'x${orders[index].shirt_qty}',
+                        style: const TextStyle(
+                          color: Color(0xFF0F9B73),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          fontFamily: 'Prompt',
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              );
-            });
-      } else {
-        return Center(
-          child: Text("ไม่พบข้อมูล"),
-        );
-      }
+              ),
+            );
+          });
     } else {
-      return Center(
-        child: Text("ไม่พบข้อมูล"),
+      return const Center(
+        child: Text(
+          "ไม่พบข้อมูลในตะกร้า",
+          style: TextStyle(fontFamily: 'Prompt', color: Colors.grey, fontSize: 16),
+        ),
       );
     }
-
-    return itemcards;
   }
 
   Widget _buildRemark() {
-    return Text(
-        "กรณีต้องการเปลี่ยนข้อมูลเสื้อโปรดดำเนินการก่อนวันที่ 30 มิถุนายน 2568",
-        style: TextStyle(
-            fontWeight: FontWeight.normal, fontSize: 11, color: Colors.red));
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.redAccent.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.redAccent.withOpacity(0.15)),
+      ),
+      child: Row(
+        children: const [
+          Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 18),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              "กรณีต้องการเปลี่ยนข้อมูลเสื้อโปรดดำเนินการก่อนวันที่ 31 กรกฎาคม 2569",
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 11,
+                color: Colors.redAccent,
+                fontFamily: 'Prompt',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _submitform(BuildContext context, List<ShirtOrder> _orderlist) {
@@ -166,102 +241,59 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: 12,
+              const SizedBox(height: 12),
+              const Icon(
+                Icons.check_circle_outline_rounded,
+                size: 56,
+                color: Color(0xFF0F9B73),
               ),
-              Icon(
-                Icons.privacy_tip_outlined,
-                size: 32,
-                color: Colors.green.shade400,
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'ยืนยันการทำรายการ',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  fontFamily: 'Prompt',
+                ),
               ),
-              SizedBox(
-                height: 12,
+              const SizedBox(height: 12),
+              const Text(
+                'ต้องการบันทึกข้อมูลการจองเสื้อใช่หรือไม่ ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Prompt',
+                  color: Colors.black54,
+                ),
               ),
-              Text(
-                'ต้องการดำเนินการต่อใช่หรือไม่ ?',
-                style: TextStyle(fontWeight: FontWeight.normal),
-              ),
-              SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 24),
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: MaterialButton(
-                      color: Color.fromARGB(255, 45, 172, 123),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50)),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F9B73),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
                       onPressed: () async {
-                        // final isAvailable =
-                        //     await LocalAuthApi
-                        //         .hasBiometrics();
-                        // if (isAvailable) {
-                        //   final isAuthenticated =
-                        //       await LocalAuthApi
-                        //           .authenticate();
-                        //   if (isAuthenticated) {
-                        //     print("success");
-                        //     await EasyLoading.show(
-                        //         status:
-                        //             "กำลังบันทึกข้อมูล");
-                        //     bool isSave = await Provider
-                        //             .of<PlanData>(context,
-                        //                 listen: false)
-                        //         .submitInspection("1");
-                        //     if (isSave == true) {
-                        //       await EasyLoading.showSuccess(
-                        //           'บันทึกรายการเรียบร้อย');
-                        //       Navigator.push(
-                        //           context,
-                        //           MaterialPageRoute(
-                        //               builder: (context) =>
-                        //                   PlancheckcompletePage()));
-                        //     }
-                        //     EasyLoading.dismiss();
-                        //   }
-                        // } else {
-                        //   print("no bio auth");
-                        //   await EasyLoading.show(
-                        //       status:
-                        //           "กำลังบันทึกข้อมูล");
-                        //   bool isSave =
-                        //       await Provider.of<PlanData>(
-                        //               context,
-                        //               listen: false)
-                        //           .submitInspection("1");
-                        //   if (isSave == true) {
-                        //     await EasyLoading.showSuccess(
-                        //         'บันทึกรายการเรียบร้อย');
-                        //     Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (context) =>
-                        //                 PlancheckcompletePage()));
-                        //   }
-                        //   EasyLoading.dismiss();
-                        // }
-
                         await EasyLoading.show(status: "กำลังบันทึกข้อมูล");
                         bool isSave = await Provider.of<ShirtempData>(context,
                                 listen: false)
                             .submitshirt(_orderlist);
                         if (isSave == true) {
-                          await EasyLoading.showSuccess(
-                              'บันทึกรายการเรียบร้อย');
+                          await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
                           if (userlogin_type == 1) {
                             Navigator.push(
                                 context,
@@ -276,35 +308,37 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
                           }
                         }
                         EasyLoading.dismiss();
-
-                        // final biometrics =
-                        //     await LocalAuthApi
-                        //         .getBiometrics();
-
-                        //  _timer?.cancel();
                       },
-                      child: Text(
+                      child: const Text(
                         'ใช่',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          fontFamily: 'Prompt',
+                          fontSize: 16,
                         ),
                       ),
                     ),
                   ),
-                  Spacer(),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: MaterialButton(
-                      color: Colors.grey[400],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50)),
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.grey[700],
+                        side: BorderSide(color: Colors.grey.shade300),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
-                      child: Text(
+                      child: const Text(
                         'ไม่ใช่',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'Prompt',
+                          fontSize: 16,
                         ),
                       ),
                     ),
@@ -324,10 +358,12 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
       total_qty += int.parse(element.shirt_qty);
     });
     return Text(
-      '${total_qty.toString()}',
-      style: TextStyle(
+      '${total_qty.toString()} ตัว',
+      style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
+        color: Color(0xFF0F9B73),
+        fontFamily: 'Prompt',
       ),
     );
   }
@@ -336,87 +372,124 @@ class _ShirtorderPageState extends State<ShirtorderPage> {
   Widget build(BuildContext context) {
     final _shirt_order = ModalRoute.of(context)?.settings.arguments as Map;
     List<ShirtOrder> order_items = _shirt_order['shirtorder'];
-    // order_items.forEach((el) {
-    //   total_qty = (total_qty + int.parse(el.shirt_qty));
-    // });
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text("รายละเอียดการเลือก"),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black87, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "สรุปรายการเลือก",
+          style: TextStyle(
+            color: Colors.black87,
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(children: [
-          // Expanded(
-          //   flex: 5,
-          //   child: order_items.isNotEmpty
-          //       ? _buildlist(order_items)
-          //       : Center(
-          //           child: Text("ไม่พบข้อมูล"),
-          //         ),
-          // ),
-          Expanded(
-            flex: 5,
-            child: Consumer<ShirtempData>(
-              builder: (context, topicitems, _) =>
-                  _buildlist(topicitems.listshirtorder),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Consumer<ShirtempData>(
+                builder: (context, topicitems, _) =>
+                    _buildlist(topicitems.listshirtorder),
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(2.0),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'จำนวนรวม',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
-                  ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
                 ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Consumer<ShirtempData>(
-                    builder: (context, value, child) =>
-                        _buildTotal(value.listshirtorder),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(2.0),
-            child: _buildRemark(),
-          ),
-          order_items.isNotEmpty
-              ? Expanded(
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: () {
-                      _submitform(context, order_items);
-                    },
-                    child: Container(
-                      height: 18,
-                      color: Colors.green,
-                      child: Center(
-                          child: Text(
-                        "ยืนยันส่งข้อมูล",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, -4),
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'จำนวนรวมทั้งสิ้น',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontFamily: 'Prompt',
+                          ),
                         ),
-                      )),
+                        const Spacer(),
+                        Consumer<ShirtempData>(
+                          builder: (context, value, child) =>
+                              _buildTotal(value.listshirtorder),
+                        ),
+                      ],
                     ),
-                  ))
-              : Text(''),
-        ]),
+                  ),
+                  _buildRemark(),
+                  const SizedBox(height: 8),
+                  if (order_items.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Container(
+                        width: double.infinity,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF0F9B73).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              _submitform(context, order_items);
+                            },
+                            child: const Center(
+                              child: Text(
+                                "ยืนยันส่งข้อมูล",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Prompt',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

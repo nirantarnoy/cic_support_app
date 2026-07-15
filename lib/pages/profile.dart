@@ -17,6 +17,7 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
+import 'package:flutter_cic_support/pages/production_dashboard.dart';
 import 'package:flutter_cic_support/pages/securitycheckarea.dart';
 import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
@@ -293,8 +294,6 @@ class _ProfilePageState extends State<ProfilePage> {
           Provider.of<UserData>(context, listen: false).fetchProfile();
           image2.clear();
         });
-        // Navigator.of(context).pop();
-        //Navigator.popAndPushNamed(context, '/profile');
       } else {
         print("nooooooooooooooooo");
         image2.clear();
@@ -302,955 +301,577 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Widget _buildEmployeeInfoItem({
+    required IconData icon,
+    required List<Color> gradientColors,
+    required String title,
+  }) {
+    return Container(
+      width: 95,
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            EasyLoading.showInfo('ระบบกำลังพัฒนา\nจะเปิดให้ใช้งานเร็วๆ นี้');
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: gradientColors,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontFamily: 'Prompt',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuCard({
+    required IconData icon,
+    required List<Color> gradientColors,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              child: Row(
+                children: [
+                  Container(
+                    height: 44,
+                    width: 44,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: gradientColors,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 22),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'Prompt',
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontFamily: 'Prompt',
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.grey[400],
+                    size: 14,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   appBar: AppBar(title: Text("hlllo")),
-    // );
-    final textScale = MediaQuery.of(context).textScaleFactor;
-    display_photo =
-        Provider.of<UserData>(context, listen: false).getCurrenUserPhoto();
+    final user = Provider.of<UserData>(context);
+    display_photo = user.getCurrenUserPhoto();
     display_photo = display_url + display_photo;
 
-    //print('photo profile is ${display_photo}');
-
-    display_section_code =
-        Provider.of<UserData>(context, listen: false).getCurrenUserSection();
-    // print("image is ${display_photo}");
+    display_section_code = user.getCurrenUserSection();
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: const Color(0xFFF5F7FB),
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+            size: 20,
+          ),
+          onPressed: () => Navigator.pushNamed(context, "mainpage"),
+        ),
         title: const Text(
-          'User Profile',
+          'ข้อมูลผู้ใช้งาน / Profile',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black87,
+            fontFamily: 'Prompt',
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.pushNamed(context, "mainpage"),
-        ),
+        centerTitle: true,
         actions: [
-          Consumer<UserData>(
-            builder: (context, _users, _) => IconButton(
-                icon: const Icon(
-                  Icons.settings_outlined,
-                  color: Colors.white,
-                ),
-                onPressed: () => _logout(_users)),
-          ),
-          Consumer<UserData>(
-            builder: (context, _users, _) => IconButton(
-                icon: const Icon(
-                  Icons.logout_rounded,
-                  color: Colors.white,
-                ),
-                onPressed: () => _logout(_users)),
+          IconButton(
+            icon: const Icon(
+              Icons.logout_rounded,
+              color: Colors.redAccent,
+              size: 22,
+            ),
+            onPressed: () => _logout(user),
           ),
         ],
       ),
       body: Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.centerLeft,
-        children: <Widget>[
-          //Initialize the chart widget
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            //  height: 60,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.only(
-                // topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
+        children: [
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: Text(''),
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF8A2387),
+                          Color(0xFFE94057),
+                          Color(0xFFF27121),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      Expanded(
-                        child: image2.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () => _updatephotofrofil(context),
-                                  child: Container(
-                                    width: 150,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromARGB(255, 13, 103, 238),
-                                    ),
-                                    child: Text(
-                                      'Update Photo',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12 * textScale,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE94057).withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.white, width: 3),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                                    ),
+                                    ],
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 44,
+                                    backgroundColor: Colors.white.withOpacity(0.2),
+                                    backgroundImage: image2.isNotEmpty
+                                        ? FileImage(image2[0]) as ImageProvider
+                                        : NetworkImage(display_photo),
                                   ),
                                 ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
+                                GestureDetector(
                                   onTap: () => _editBottomSheet(context),
                                   child: Container(
-                                    width: 150,
                                     height: 30,
-                                    alignment: Alignment.center,
+                                    width: 30,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromARGB(255, 45, 172, 123),
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
-                                    child: Text(
-                                      'เปลี่ยนรูป',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12 * textScale,
-                                      ),
+                                    child: const Icon(
+                                      Icons.camera_alt_rounded,
+                                      color: Color(0xFFE94057),
+                                      size: 16,
                                     ),
                                   ),
                                 ),
-                              ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: image2.isNotEmpty
-                              ? GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      this.image2.clear();
-                                      this.base64ImageList.clear();
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 150,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color.fromARGB(255, 224, 63, 14),
-                                    ),
-                                    child: Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
+                              ],
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.empfullname.isNotEmpty ? user.empfullname : current_username,
+                                    style: const TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                )
-                              : Text(''),
+                                  const SizedBox(height: 6),
+                                  if (user.emppositionname.isNotEmpty || user.emp_department_name.isNotEmpty)
+                                    Text(
+                                      '${user.emppositionname}${user.emppositionname.isNotEmpty && user.emp_department_name.isNotEmpty ? " • " : ""}${user.emp_department_name}',
+                                      style: TextStyle(
+                                        fontFamily: 'Prompt',
+                                        fontSize: 12,
+                                        color: Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'ทีมตรวจ: ${user.team_display}${display_section_code.isNotEmpty ? " • Section: $display_section_code" : ""}',
+                                    style: TextStyle(
+                                      fontFamily: 'Prompt',
+                                      fontSize: 11,
+                                      color: Colors.white.withOpacity(0.75),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (image2.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFFE94057),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  elevation: 0,
+                                ),
+                                onPressed: () => _updatephotofrofil(context),
+                                icon: const Icon(Icons.check_circle_outline, size: 16),
+                                label: const Text('บันทึกรูปภาพ', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold, fontSize: 12)),
+                              ),
+                              const SizedBox(width: 12),
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  side: const BorderSide(color: Colors.white70),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    image2.clear();
+                                    base64ImageList.clear();
+                                  });
+                                },
+                                icon: const Icon(Icons.cancel_outlined, size: 16),
+                                label: const Text('ยกเลิก', style: TextStyle(fontFamily: 'Prompt', fontSize: 12)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 8),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'ข้อมูลพนักงาน',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontFamily: 'Prompt',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.amber.shade200),
+                        ),
+                        child: Text(
+                          'ยังไม่เปิดใช้งาน',
+                          style: TextStyle(
+                            color: Colors.amber.shade800,
+                            fontFamily: 'Prompt',
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Row(
-                        children: [
-                          Text(
-                            'ข้อมูลพนักงาน',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          Text(
-                            ' (ยังไม่เปิดใช้งาน)',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 9,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(children: [
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(Icons.local_hospital_outlined,
-                                    color: Colors.red, size: 30),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'สถานพยาบาล',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(
-                                  Icons.school_outlined,
-                                  color: Colors.blue,
-                                  size: 30,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'อบรม',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(Icons.data_exploration,
-                                    color: Color.fromARGB(205, 76, 66, 221),
-                                    size: 30),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'เช็ควันลา',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(
-                                  Icons.health_and_safety_outlined,
-                                  color: Colors.green,
-                                  size: 30,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'ตรวจสุขภาพ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Icon(
-                                    Icons.account_balance_wallet_outlined,
-                                    color: Color.fromARGB(235, 224, 142, 43),
-                                    size: 30),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Center(
-                                child: Text(
-                                  'เงินกู้สวัสดิการ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ]),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Text('ข้อมูลกิจกรรม',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
-                          ))),
-                ),
-                // Expanded(
-                //   flex: 1,
-                //   child: Row(children: <Widget>[
-                //     Expanded(
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: Container(
-                //           height: 50,
-                //           child: Column(
-                //             children: [
-                //               Center(child: Text('5s.')),
-                //               Center(
-                //                 child: Text(
-                //                   '10',
-                //                   style: TextStyle(
-                //                     fontSize: 10,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 ),
-                //               )
-                //             ],
-                //           ),
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: Container(
-                //           height: 50,
-                //           child: Column(
-                //             children: [
-                //               Center(child: Text('Safety')),
-                //               Center(
-                //                 child: Text(
-                //                   '10',
-                //                   style: TextStyle(
-                //                     fontSize: 10,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 ),
-                //               )
-                //             ],
-                //           ),
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: Container(
-                //           height: 50,
-                //           child: Column(
-                //             children: [
-                //               Center(child: Text('Kaizen')),
-                //               Center(
-                //                 child: Text(
-                //                   '5',
-                //                   style: TextStyle(
-                //                     fontSize: 10,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 ),
-                //               )
-                //             ],
-                //           ),
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ]),
-                // ),
-                Expanded(
-                  flex: 5,
-                  child: SingleChildScrollView(
-                    child: Column(children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.calendar_month,
-                                  color: Colors.lightBlue,
-                                )),
-                              ),
-                              title: Text(
-                                'แผนและตารางตรวจ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          //  onTap: () {}
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PlanPage())),
-                        ),
+                  height: 110,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _buildEmployeeInfoItem(
+                        icon: Icons.local_hospital_rounded,
+                        gradientColors: [const Color(0xFFFF5252), const Color(0xFFFF1744)],
+                        title: 'สถานพยาบาล',
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.check_box_outlined,
-                                  color: Colors.amber,
-                                )),
-                              ),
-                              title: Text(
-                                'ตรวจกิจกรรม 5ส.',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => JobplanAreaPage())),
-                        ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.school_rounded,
+                        gradientColors: [const Color(0xFF40C4FF), const Color(0xFF00B0FF)],
+                        title: 'อบรม',
                       ),
-                      Consumer<UserData>(
-                          builder: (context, _userx, _) =>
-                              _userx.team_safety_display != null
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GestureDetector(
-                                        child: Container(
-                                          width: double.infinity,
-                                          padding: EdgeInsets.all(2),
-                                          height: 80,
-                                          alignment: Alignment.centerLeft,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Colors.white,
-                                          ),
-                                          child: ListTile(
-                                            leading: Container(
-                                              height: 50,
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                color: Colors.grey.shade200,
-                                              ),
-                                              child: Center(
-                                                  child: Icon(
-                                                Icons.safety_check,
-                                                color: Colors.green,
-                                              )),
-                                            ),
-                                            title: Text(
-                                              'ตรวจ Safety',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            trailing: Icon(
-                                              Icons.keyboard_arrow_right,
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () => Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SafetyplanAreaPage())),
-                                        // onTap: () => Navigator.of(context).push(
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) => SafetyCheckPage())),
-                                      ),
-                                    )
-                                  : Text('')),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.cancel,
-                                  color: Colors.red,
-                                )),
-                              ),
-                              title: Text(
-                                'จัดการใบ CAR',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => CarlistPage())),
-                        ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.date_range_rounded,
+                        gradientColors: [const Color(0xFFE040FB), const Color(0xFFD500F9)],
+                        title: 'เช็ควันลา',
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.checklist_rounded,
-                                  color: Colors.lightGreen,
-                                )),
-                              ),
-                              title: Text(
-                                'ตรวจ Big Cleaning',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => BigcleanAreaPage())),
-                        ),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.health_and_safety_rounded,
+                        gradientColors: [const Color(0xFF69F0AE), const Color(0xFF00E676)],
+                        title: 'ตรวจสุขภาพ',
                       ),
-                      Consumer<UserData>(
-                        builder: (context, _userx, _) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(2),
-                              height: 80,
-                              alignment: Alignment.centerLeft,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                              ),
-                              child: ListTile(
-                                leading: Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.grey.shade200,
-                                  ),
-                                  child: Center(
-                                      child: Icon(
-                                    Icons.person_search,
-                                    color: Colors.blueGrey,
-                                  )),
-                                ),
-                                title: Text(
-                                  'สมาชิกทีมตรวจ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                trailing: Icon(
-                                  Icons.keyboard_arrow_right,
-                                ),
-                              ),
-                            ),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MemberTeamPage(
-                                          team_id: _userx.team_display,
-                                        ))),
-                          ),
-                        ),
-                      ),
-                      Consumer<UserData>(
-                        builder: (context, _userx, _) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(2),
-                              height: 80,
-                              alignment: Alignment.centerLeft,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                              ),
-                              child: ListTile(
-                                leading: Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.grey.shade200,
-                                  ),
-                                  child: Center(
-                                      child: Icon(
-                                    Icons.approval,
-                                    color: Colors.green,
-                                  )),
-                                ),
-                                title: Text(
-                                  'อนุมัติใบเบิก',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                trailing: Icon(
-                                  Icons.keyboard_arrow_right,
-                                ),
-                              ),
-                            ),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StoreissueApprovePage(
-                                          team_id: _userx.team_display,
-                                        ))),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.fire_extinguisher,
-                                  color: Colors.red,
-                                )),
-                              ),
-                              title: Text(
-                                'ตรวจถังดับเพลิง',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SecuritycheckAreaPage())),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.accessibility_new_outlined,
-                                  color: Colors.lightBlue,
-                                )),
-                              ),
-                              title: Text(
-                                'ระบุเบอร์เสื้อ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
-                            ),
-                          ),
-                          onTap: () async {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ShirtempPage()));
-                          },
-                        ),
-                      ),
-                    ]),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 5,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: 100,
-                  width: 100,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(
-                      50,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(1, 1),
+                      _buildEmployeeInfoItem(
+                        icon: Icons.account_balance_wallet_rounded,
+                        gradientColors: [const Color(0xFFFFAB40), const Color(0xFFFF9100)],
+                        title: 'เงินกู้สวัสดิการ',
                       ),
                     ],
                   ),
-                  child: image2.isNotEmpty
-                      ? CircleAvatar(
-                          radius: 45,
-                          child: CircleAvatar(
-                              radius: 45,
-                              backgroundImage:
-                                  Image.file(File(image2[0].path)).image),
-                        )
-                      : CircleAvatar(
-                          radius: 45,
-                          backgroundImage: NetworkImage(display_photo),
-                          // backgroundImage:
-                          //     NetworkImage("172.16.0.240/uploads/1635j0541.jpg"),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 12.0),
+                        child: Text(
+                          'เมนูและบริการทีมตรวจ',
+                          style: TextStyle(
+                            fontFamily: 'Prompt',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
-                  // child: const Icon(
-                  //   Icons.person,
-                  //   color: Colors.purple,
-                  //   size: 50,
-                  // ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Consumer<UserData>(
-                  builder: (context, _user, _) => Text(
-                    "${current_username.toString()} (ทีมตรวจ ${_user.team_display.toString()}) (${display_section_code})",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.calendar_month,
+                        gradientColors: [const Color(0xFF4A5AE7), const Color(0xFF6B8DF8)],
+                        title: 'แผนและตารางตรวจ',
+                        subtitle: 'ดูแผนการตรวจและตารางงานที่ได้รับมอบหมาย',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlanPage(),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.check_box_outlined,
+                        gradientColors: [const Color(0xFFFF7E36), const Color(0xFFFFAD3B)],
+                        title: 'ตรวจกิจกรรม 5ส.',
+                        subtitle: 'บันทึกและประเมินผลการจัดกิจกรรม 5ส. ในพื้นที่',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => JobplanAreaPage(),
+                          ),
+                        ),
+                      ),
+                      if (user.team_safety_display != null &&
+                          user.team_safety_display.isNotEmpty &&
+                          user.team_safety_display != '0' &&
+                          user.team_safety_display != 'null')
+                        _buildMenuCard(
+                          icon: Icons.safety_check,
+                          gradientColors: [const Color(0xFF0F9B73), const Color(0xFF2EC89F)],
+                          title: 'ตรวจ Safety',
+                          subtitle: 'บันทึกการตรวจสอบความปลอดภัยของพื้นที่และพนักงาน',
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SafetyplanAreaPage(),
+                            ),
+                          ),
+                        ),
+                      _buildMenuCard(
+                        icon: Icons.cancel_outlined,
+                        gradientColors: [const Color(0xFFFF5252), const Color(0xFFFF1744)],
+                        title: 'จัดการใบ CAR',
+                        subtitle: 'สร้างและติดตามใบรายงานการแก้ไขข้อบกพร่อง (CAR)',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CarlistPage(),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.checklist_rounded,
+                        gradientColors: [const Color(0xFF00E676), const Color(0xFF00B0FF)],
+                        title: 'ตรวจ Big Cleaning',
+                        subtitle: 'บันทึกการประเมินกิจกรรมทำความสะอาดครั้งใหญ่',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BigcleanAreaPage(),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.people_alt_rounded,
+                        gradientColors: [const Color(0xFF7E57C2), const Color(0xFFB39DDB)],
+                        title: 'สมาชิกทีมตรวจ',
+                        subtitle: 'ดูรายชื่อและข้อมูลสมาชิกภายในทีมตรวจของคุณ',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MemberTeamPage(
+                              team_id: user.team_display,
+                            ),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.approval_rounded,
+                        gradientColors: [const Color(0xFF00897B), const Color(0xFF4DB6AC)],
+                        title: 'อนุมัติใบเบิก',
+                        subtitle: 'ตรวจสอบและอนุมัติใบเบิกวัสดุอุปกรณ์ของทีม',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => StoreissueApprovePage(
+                              team_id: user.team_display,
+                            ),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.fire_extinguisher_rounded,
+                        gradientColors: [const Color(0xFFE53935), const Color(0xFFEF5350)],
+                        title: 'ตรวจถังดับเพลิง',
+                        subtitle: 'บันทึกผลการตรวจสอบถังดับเพลิงในความรับผิดชอบ',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SecuritycheckAreaPage(),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.show_chart_rounded,
+                        gradientColors: [const Color(0xFF1565C0), const Color(0xFF42A5F5)],
+                        title: 'Production Dashboard',
+                        subtitle: 'ยอดผลิตประจำวัน/สัปดาห์ เทียบเป้าหมายรายแผนก',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ProductionDashboardPage(),
+                          ),
+                        ),
+                      ),
+                      _buildMenuCard(
+                        icon: Icons.accessibility_new_rounded,
+                        gradientColors: [const Color(0xFF1E88E5), const Color(0xFF42A5F5)],
+                        title: 'ระบุเบอร์เสื้อ',
+                        subtitle: 'บันทึกข้อมูลและเลือกขนาดเสื้อเครื่องแบบพนักงาน',
+                        onTap: () async {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ShirtempPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                // FutureBuilder(
-                //     future: _displayname(),
-                //     builder: (context, snapshort) {
-                //       if (!snapshort.hasData) {}
-                //       return Text(
-                //         "${snapshort.data}",
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           fontWeight: FontWeight.bold,
-                //           color: Colors.white,
-                //         ),
-                //       );
-                //     }),
+                const SizedBox(height: 80),
               ],
             ),
           ),
           DraggableFAB(
+            initialAlignment: Alignment.centerRight,
             onTap: () {
               Navigator.push(
                 context,

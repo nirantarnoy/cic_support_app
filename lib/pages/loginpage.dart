@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cic_support/app_config.dart';
 import 'package:flutter_cic_support/appcache/appcache.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/pages/profilenormal.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter_cic_support/widgets/version_info.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = "loginpage";
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF073F2F), Color(0xFF1E8F68)],
+            colors: [Color(0xFFF5F7FB), Color(0xFFE3E8F0)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -228,8 +228,8 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Card(
-                          elevation: 12,
-                          shadowColor: Colors.black38,
+                          elevation: 8,
+                          shadowColor: Colors.black.withOpacity(0.04),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28),
                           ),
@@ -252,15 +252,17 @@ class _LoginPageState extends State<LoginPage> {
                                               fontSize: 32,
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: 1.2,
+                                              fontFamily: 'Prompt',
                                             ),
                                           ),
                                           TextSpan(
                                             text: "SUPPORT",
                                             style: TextStyle(
-                                              color: Color(0xFF2DAC7B),
+                                              color: Color(0xFF0F9B73),
                                               fontSize: 32,
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: 1.2,
+                                              fontFamily: 'Prompt',
                                             ),
                                           ),
                                         ],
@@ -275,6 +277,7 @@ class _LoginPageState extends State<LoginPage> {
                                     color: Colors.grey[600],
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
+                                    fontFamily: 'Prompt',
                                   ),
                                 ),
                                 const SizedBox(height: 36),
@@ -297,13 +300,13 @@ class _LoginPageState extends State<LoginPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(16),
                                       gradient: const LinearGradient(
-                                        colors: [Color(0xFF2DAC7B), Color(0xFF1D8F60)],
+                                        colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: const Color(0xFF2DAC7B).withOpacity(0.3),
+                                          color: const Color(0xFF0F9B73).withOpacity(0.3),
                                           spreadRadius: 1,
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
@@ -326,6 +329,7 @@ class _LoginPageState extends State<LoginPage> {
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: 1.0,
+                                              fontFamily: 'Prompt',
                                             ),
                                           ),
                                         ),
@@ -338,15 +342,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 32),
-                        Text(
-                          'Build version ${AppConfig.buildVersion}',
-                          style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Release date ${AppConfig.buildDate}',
-                          style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
+                        const VersionInfoWidget(),
                       ],
                     ),
                   ),
@@ -355,8 +351,8 @@ class _LoginPageState extends State<LoginPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Card(
-                      elevation: 12,
-                      shadowColor: Colors.black38,
+                      elevation: 8,
+                      shadowColor: Colors.black.withOpacity(0.04),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                       color: Colors.white,
                       child: Padding(
@@ -377,6 +373,7 @@ class _LoginPageState extends State<LoginPage> {
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
+                                fontFamily: 'Prompt',
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -387,24 +384,42 @@ class _LoginPageState extends State<LoginPage> {
                                 fontSize: 14,
                                 color: Colors.grey[600],
                                 height: 1.4,
+                                fontFamily: 'Prompt',
                               ),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 28),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2DAC7B),
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF0F9B73), Color(0xFF2EC89F)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
                               ),
-                              onPressed: _checkInternet,
-                              child: const Text(
-                                'ลองใหม่อีกครั้ง',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                                ),
+                                onPressed: () {
+                                  _checkInternet();
+                                },
+                                child: const Text(
+                                  'ลองใหม่อีกครั้ง',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    fontFamily: 'Prompt',
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -424,12 +439,13 @@ class _LoginPageState extends State<LoginPage> {
       child: TextFormField(
         controller: passwordText,
         obscureText: _obscurePassword,
+        style: const TextStyle(fontFamily: 'Prompt', fontSize: 14),
         decoration: InputDecoration(
           labelText: 'Password / รหัสผ่าน',
-          labelStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+          labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14, fontFamily: 'Prompt'),
           prefixIcon: const Icon(
             Icons.lock_outline_rounded,
-            color: Color(0xFF2DAC7B),
+            color: Color(0xFF0F9B73),
           ),
           suffixIcon: IconButton(
             icon: Icon(
@@ -443,14 +459,14 @@ class _LoginPageState extends State<LoginPage> {
             },
           ),
           filled: true,
-          fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(
+          fillColor: Colors.grey.shade50,
+          enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.grey.shade200),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFF2DAC7B), width: 1.5),
+            borderSide: const BorderSide(color: Color(0xFF0F9B73), width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -480,22 +496,23 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: TextFormField(
         controller: usernameText,
+        style: const TextStyle(fontFamily: 'Prompt', fontSize: 14),
         decoration: InputDecoration(
           labelText: 'Username / ชื่อผู้ใช้งาน',
-          labelStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+          labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14, fontFamily: 'Prompt'),
           prefixIcon: const Icon(
             Icons.person_outline_rounded,
-            color: Color(0xFF2DAC7B),
+            color: Color(0xFF0F9B73),
           ),
           filled: true,
-          fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(
+          fillColor: Colors.grey.shade50,
+          enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.grey.shade200),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFF2DAC7B), width: 1.5),
+            borderSide: const BorderSide(color: Color(0xFF0F9B73), width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -539,7 +556,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 24,
                 child: Checkbox(
                   value: isChecked,
-                  activeColor: const Color(0xFF2DAC7B),
+                  activeColor: const Color(0xFF0F9B73),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -554,9 +571,10 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 "จดจำเพื่อเข้าระบบครั้งต่อไป",
                 style: TextStyle(
-                  color: Colors.grey[800],
+                  color: Colors.grey[700],
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
+                  fontFamily: 'Prompt',
                 ),
               ),
             ],

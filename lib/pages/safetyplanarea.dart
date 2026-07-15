@@ -54,7 +54,8 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
       }
     });
 
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((result) {
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((result) {
       setState(() {
         _isOffline = result == ConnectivityResult.none;
       });
@@ -73,158 +74,154 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
   }
 
   Widget _buildList(List<JobSafetyplanArea> listcheck) {
-    Widget cardlist;
-    if (listcheck.length > 0) {
-      cardlist = ListView.builder(
-          itemCount: listcheck.length,
-          itemBuilder: (BuildContext contex, int index) {
-            int line_is_checked = Provider.of<PlanData>(contex, listen: false)
-                .checkhaschecklist(listcheck[index].plan_area_id);
+    if (listcheck.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assignment_turned_in_outlined,
+                size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            const Text("ไม่พบรายการตรวจ",
+                style: TextStyle(
+                    fontFamily: 'Prompt', fontSize: 18, color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: listcheck.length,
+      itemBuilder: (BuildContext context, int index) {
+        int line_is_checked = Provider.of<PlanData>(context, listen: false)
+            .checkhaschecklist(listcheck[index].plan_area_id);
 
-            Color _bgcolor = Colors.green.shade50;
-            // Color _line_color = Colors.black;
+        Color _bgcolor = Colors.white;
+        Color _iconBgColor = const Color(0xFFE99A24).withOpacity(0.1);
+        Color _iconColor = const Color(0xFFE99A24);
 
-            // if (current_section_code == listcheck[index].section_code) {
-            //   _line_color = Colors.red;
-            // }
+        if (line_is_checked > 0) {
+          _bgcolor = const Color(0xFFF0FDF4); // Very light green
+          _iconBgColor = const Color(0xFF0F9B73).withOpacity(0.1);
+          _iconColor = const Color(0xFF0F9B73);
+        }
 
-            if (line_is_checked > 0) {
-              _bgcolor = Colors.green.shade400;
-            } else {
-              _bgcolor = Colors.green.shade50;
-            }
-
-            return Slidable(
-              key: const ValueKey(0),
-              enabled: true,
-              startActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                // dismissible: DismissiblePane(onDismissed: () {}),
-                children: [
-                  SlidableAction(
-                    onPressed: (BuildContext context) {
-                      print("you pressed meeee");
-                      _removesafetycheckeditem(listcheck[index].plan_area_id);
-                    },
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Clear',
-                  ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.red,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.delete,
-                  //   label: 'Delete',
-                  // ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
-                ],
+        return Slidable(
+          key: ValueKey(listcheck[index].plan_area_id),
+          startActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12)),
+                onPressed: (BuildContext context) {
+                  _removesafetycheckeditem(listcheck[index].plan_area_id);
+                },
+                backgroundColor: const Color(0xFFE53935),
+                foregroundColor: Colors.white,
+                icon: Icons.delete_outline_rounded,
+                label: 'Clear',
               ),
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(
-                    // flex: 2,
-                    // onPressed:
-                    //     _removecheckeditem(listcheck[index].plan_area_id),
-                    onPressed: (BuildContext context) {
-                      InspectionSafetyTrans _item = InspectionSafetyTrans(
-                        module_type_id: "2",
-                        plan_id: listcheck[index].plan_id,
-                        trans_date: DateTime.now().toIso8601String(),
-                        emp_id: "0",
-                        area_group_id: "0",
-                        area_id: listcheck[index].plan_area_id,
-                        team_id: "0",
-                        score: "1",
-                        status: "1",
-                        note: "",
-                        plan_num: listcheck[index].plan_num,
-                      );
-                      Provider.of<PlanData>(context, listen: false)
-                          .addInspectionSafetyTrans(_item);
-                    },
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    icon: Icons.check,
-                    label: 'OK',
-                  ),
-                  SlidableAction(
-                    onPressed: (BuildContext context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateSafetyCar(
-                            plan_area_id: listcheck[index].plan_area_id,
-                            plan_area_name: listcheck[index].plan_area_name,
-                          ),
-                        ),
-                      );
-                    },
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    icon: Icons.error,
-                    label: 'CAR',
-                  ),
-                  // SlidableAction(
-                  //   onPressed: doNothing,
-                  //   backgroundColor: Colors.green,
-                  //   foregroundColor: Colors.white,
-                  //   icon: Icons.share,
-                  //   label: 'Share',
-                  // )
-                ],
+            ],
+          ),
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (BuildContext context) {
+                  InspectionSafetyTrans _item = InspectionSafetyTrans(
+                    module_type_id: "2",
+                    plan_id: listcheck[index].plan_id,
+                    trans_date: DateTime.now().toIso8601String(),
+                    emp_id: "0",
+                    area_group_id: "0",
+                    area_id: listcheck[index].plan_area_id,
+                    team_id: "0",
+                    score: "1",
+                    status: "1",
+                    note: "",
+                    plan_num: listcheck[index].plan_num,
+                  );
+                  Provider.of<PlanData>(context, listen: false)
+                      .addInspectionSafetyTrans(_item);
+                },
+                backgroundColor: const Color(0xFF0F9B73),
+                foregroundColor: Colors.white,
+                icon: Icons.check_circle_outline_rounded,
+                label: 'OK',
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: GestureDetector(
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.only(top: 1),
-                      decoration: BoxDecoration(
-                          color: _bgcolor,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: ListTile(
-                        leading: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                              child: Text(
-                            "${(index + 1).toString()}",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )),
-                        ),
-                        title: Text(
-                          '${listcheck[index].plan_area_name}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+              SlidableAction(
+                borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(12),
+                    bottomRight: Radius.circular(12)),
+                onPressed: (BuildContext context) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateSafetyCar(
+                        plan_area_id: listcheck[index].plan_area_id,
+                        plan_area_name: listcheck[index].plan_area_name,
                       ),
                     ),
-                    onTap: () {}),
+                  );
+                },
+                backgroundColor: const Color(0xFFE53935),
+                foregroundColor: Colors.white,
+                icon: Icons.error_outline_rounded,
+                label: 'CAR',
               ),
-            );
-          });
-      return cardlist;
-      //return Text('data');
-    } else {
-      return Text('No data');
-    }
+            ],
+          ),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: _bgcolor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ListTile(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              leading: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _iconBgColor,
+                ),
+                child: Center(
+                  child: Text(
+                    "${index + 1}",
+                    style: TextStyle(
+                      color: _iconColor,
+                      fontFamily: 'Prompt',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              title: Text(
+                '${listcheck[index].plan_area_name}',
+                style: const TextStyle(
+                  fontFamily: 'Prompt',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void doNothing(BuildContext context) {}
@@ -239,35 +236,29 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
     current_section_code =
         Provider.of<UserData>(context, listen: false).getCurrenUserSection();
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 233, 154, 36),
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: Text("แผนพื้นที่ตรวจ Safety"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: const Text(
+          "แผนพื้นที่ตรวจ Safety",
+          style: TextStyle(
+              fontFamily: 'Prompt',
+              fontWeight: FontWeight.bold,
+              color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
           IconButton(
             onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SafetyCheckPage(),
-              ),
-            ),
-            icon: Icon(Icons.list),
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SafetyCheckPage())),
+            icon: const Icon(Icons.list_alt_rounded),
           ),
-          // IconButton(
-          //   onPressed: () => Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => CarlistPage(),
-          //     ),
-          //   ),
-          //   icon: Icon(Icons.error_outline),
-          // ),
         ],
       ),
-      body: Container(
-        color: Colors.grey.shade100,
-        width: double.infinity,
+      body: SafeArea(
         child: Column(children: <Widget>[
           if (_isOffline)
             Container(
@@ -277,7 +268,8 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.wifi_off_rounded, color: Colors.red.shade700, size: 16),
+                  Icon(Icons.wifi_off_rounded,
+                      color: Colors.red.shade700, size: 16),
                   const SizedBox(width: 8),
                   Text(
                     "ขณะนี้คุณกำลังทำงานในโหมดออฟไลน์ (Offline Mode)",
@@ -297,11 +289,13 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                 return Container(
                   width: double.infinity,
                   color: Colors.amber.shade50,
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.cloud_upload_outlined, color: Colors.amber.shade800, size: 16),
+                      Icon(Icons.cloud_upload_outlined,
+                          color: Colors.amber.shade800, size: 16),
                       const SizedBox(width: 8),
                       Text(
                         "มีรายการตรวจค้างส่งออฟไลน์: ${planData.totalOfflineCount} รายการ",
@@ -320,7 +314,8 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                             planData.syncOfflineData();
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.amber.shade800,
                               borderRadius: BorderRadius.circular(4),
@@ -347,64 +342,50 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
             height: 10,
           ),
           Expanded(
-            flex: 5,
             child: Consumer<PlanData>(
               builder: ((context, _plans, _) => _plans.finishedsafetycheck > 0
                   ? Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Text(""),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Column(children: [
-                              Icon(
-                                Icons.block,
-                                size: 50,
-                                color: Color.fromARGB(255, 45, 172, 123),
-                              ),
-                              Center(
-                                  child: Text(
-                                'ไม่พบรายการตรวจ',
-                                style: TextStyle(
+                          Icon(Icons.assignment_turned_in_outlined,
+                              size: 64, color: Colors.grey.shade400),
+                          const SizedBox(height: 16),
+                          const Text("ไม่มีแผนการตรวจค้าง",
+                              style: TextStyle(
+                                  fontFamily: 'Prompt',
                                   fontSize: 18,
-                                  color: Colors.grey,
-                                ),
-                              )),
-                            ]),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(""),
-                          ),
+                                  color: Colors.grey)),
                         ],
                       ),
                     )
-                  : _buildList(
-                      _plans.getSafetyAreaTitle(),
-                    )),
+                  : _buildList(_plans.getSafetyAreaTitle())),
             ),
           ),
-          //_plans.checkfinish()
           Consumer<PlanData>(
             builder: ((context, _plans, _) => _plans.finishedcheck <= 0
                 ? Container(
-                    height: 50,
+                    margin: const EdgeInsets.all(16),
                     width: double.infinity,
-                    color: Color.fromARGB(255, 233, 154, 36),
-                    child: GestureDetector(
-                      child: Center(
-                        child: Text(
-                          "ยืนยันการตรวจ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE99A24),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        "ยืนยันการตรวจ",
+                        style: TextStyle(
+                          fontFamily: 'Prompt',
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onTap: () {
+                      onPressed: () {
                         // Provider.of<PlanData>(context, listen: false)
                         //     .submitInspection();
                         int MustChekAll = _plans.getAllMushCheckSafetyArea();
@@ -634,7 +615,7 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                       },
                     ),
                   )
-                : Text("")),
+                : const SizedBox.shrink()),
           ),
         ]),
       ),

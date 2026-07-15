@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/storeissue.dart';
-import 'package:flutter_cic_support/pages/ai_assistant_page.dart';
+
 import 'package:flutter_cic_support/pages/bigcleanarea.dart';
 import 'package:flutter_cic_support/widgets/draggable_fab.dart';
 
@@ -18,7 +18,7 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
-import 'package:flutter_cic_support/pages/production_dashboard.dart';
+
 import 'package:flutter_cic_support/pages/securitycheckarea.dart';
 import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/shirtorderinform.dart';
@@ -785,17 +785,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                             ),
                           ],
                         ),
-                      _buildMenuCard(
-                        icon: Icons.show_chart_rounded,
-                        gradientColors: [const Color(0xFF1565C0), const Color(0xFF42A5F5)],
-                        title: 'Production Dashboard',
-                        subtitle: 'ยอดผลิตประจำวัน/สัปดาห์ เทียบเป้าหมายรายแผนก',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ProductionDashboardPage(),
-                          ),
-                        ),
-                      ),
+
                       _buildMenuCard(
                         icon: Icons.accessibility_new_rounded,
                         gradientColors: [const Color(0xFF4A5AE7), const Color(0xFF6B8DF8)],
@@ -834,17 +824,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
               ],
             ),
           ),
-          DraggableFAB(
-            initialAlignment: Alignment.centerRight,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AIAssistantPage(),
-                ),
-              );
-            },
-          ),
+
         ],
       ),
     );

@@ -721,7 +721,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                       height: 12,
                                     ),
                                     Text(
-                                      'พบข้อมูลการตรวจไม่ครบหัวข้อ ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                                      'พบข้อมูลการตรวจไม่ครบหัวข้อ ต้องการดำเนินการต่อใช่หรือไม่ ??',
                                       style: TextStyle(
                                           fontWeight: FontWeight.normal),
                                     ),
@@ -738,77 +738,74 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () async {
-                                              final isAvailable =
-                                                  await LocalAuthApi
-                                                      .hasBiometrics();
-                                              if (isAvailable) {
-                                                final isAuthenticated =
-                                                    await LocalAuthApi
-                                                        .authenticate();
-                                                if (isAuthenticated) {
-                                                  print("success");
-                                                  await EasyLoading.show(
-                                                      status:
-                                                          "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider
-                                                          .of<PlanData>(context,
-                                                              listen: false)
-                                                      .submitInspection("1");
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess(
-                                                        'บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PlancheckcompletePage()));
-                                                  }
-                                                  EasyLoading.dismiss();
-                                                }
-                                              } else {
-                                                print("no bio auth");
-                                                await EasyLoading.show(
-                                                    status:
-                                                        "กำลังบันทึกข้อมูล");
-                                                bool isSave =
-                                                    await Provider.of<PlanData>(
-                                                            context,
-                                                            listen: false)
-                                                        .submitInspection("1");
-                                                if (isSave == true) {
-                                                  await EasyLoading.showSuccess(
-                                                      'บันทึกรายการเรียบร้อย');
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlancheckcompletePage()));
-                                                }
-                                                EasyLoading.dismiss();
-                                              }
-                                              //  _timer?.cancel();
-                                              // await EasyLoading.show(
-                                              //     status: "กำลังบันทึกข้อมูล");
-                                              // bool isSave =
-                                              //     await Provider.of<PlanData>(
-                                              //             context,
-                                              //             listen: false)
-                                              //         .submitInspection();
-                                              // if (isSave == true) {
-                                              //   await EasyLoading.showSuccess(
-                                              //       'บันทึกรายการเรียบร้อย');
-                                              //   // Navigator.popUntil(context, ModalRoute.withName("/profile"));
-                                              //   Navigator.push(
-                                              //       context,
-                                              //       MaterialPageRoute(
-                                              //           builder: (context) =>
-                                              //               PlancheckcompletePage()));
-                                              //   // (route) => false);
-                                              //   // int count = 0;
-                                              //   // Navigator.of(context).popUntil(
-                                              //   //     (_) => count++ >= 2);
+                                              print("You click Me!!!");
+                                              // final isAvailable =
+                                              //     await LocalAuthApi
+                                              //         .hasBiometrics();
+                                              // if (isAvailable) {
+                                              //   final isAuthenticated =
+                                              //       await LocalAuthApi
+                                              //           .authenticate();
+                                              //   if (isAuthenticated) {
+                                              //     print("success");
+                                              //     await EasyLoading.show(
+                                              //         status:
+                                              //             "กำลังบันทึกข้อมูล");
+                                              //     bool isSave = await Provider
+                                              //             .of<PlanData>(context,
+                                              //                 listen: false)
+                                              //         .submitInspection("1");
+                                              //     if (isSave == true) {
+                                              //       await EasyLoading.showSuccess(
+                                              //           'บันทึกรายการเรียบร้อย');
+                                              //       Navigator.push(
+                                              //           context,
+                                              //           MaterialPageRoute(
+                                              //               builder: (context) =>
+                                              //                   PlancheckcompletePage()));
+                                              //     }
+                                              //     EasyLoading.dismiss();
+                                              //   }
+                                              // } else {
+                                              //   print("no bio auth");
+                                              //   await EasyLoading.show(
+                                              //       status:
+                                              //           "กำลังบันทึกข้อมูล");
+                                              //   bool isSave =
+                                              //       await Provider.of<PlanData>(
+                                              //               context,
+                                              //               listen: false)
+                                              //           .submitInspection("1");
+                                              //   if (isSave == true) {
+                                              //     await EasyLoading.showSuccess(
+                                              //         'บันทึกรายการเรียบร้อย');
+                                              //     Navigator.push(
+                                              //         context,
+                                              //         MaterialPageRoute(
+                                              //             builder: (context) =>
+                                              //                 PlancheckcompletePage()));
+                                              //   }
+                                              //   EasyLoading.dismiss();
                                               // }
-                                              // EasyLoading.dismiss();
+
+                                              print("no bio auth");
+                                              await EasyLoading.show(
+                                                  status: "กำลังบันทึกข้อมูล");
+                                              bool isSave =
+                                                  await Provider.of<PlanData>(
+                                                          context,
+                                                          listen: false)
+                                                      .submitInspection("1");
+                                              if (isSave == true) {
+                                                await EasyLoading.showSuccess(
+                                                    'บันทึกรายการเรียบร้อย');
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlancheckcompletePage()));
+                                              }
+                                              EasyLoading.dismiss();
                                             },
                                             child: Text(
                                               'ใช่',
@@ -895,54 +892,73 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () async {
-                                              final isAvailable =
-                                                  await LocalAuthApi
-                                                      .hasBiometrics();
-                                              if (isAvailable) {
-                                                final isAuthenticated =
-                                                    await LocalAuthApi
-                                                        .authenticate();
-                                                if (isAuthenticated) {
-                                                  print("success");
-                                                  await EasyLoading.show(
-                                                      status:
-                                                          "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider
-                                                          .of<PlanData>(context,
-                                                              listen: false)
+                                              // final isAvailable =
+                                              //     await LocalAuthApi
+                                              //         .hasBiometrics();
+                                              // if (isAvailable) {
+                                              //   final isAuthenticated =
+                                              //       await LocalAuthApi
+                                              //           .authenticate();
+                                              //   if (isAuthenticated) {
+                                              //     print("success");
+                                              //     await EasyLoading.show(
+                                              //         status:
+                                              //             "กำลังบันทึกข้อมูล");
+                                              //     bool isSave = await Provider
+                                              //             .of<PlanData>(context,
+                                              //                 listen: false)
+                                              //         .submitInspection("1");
+                                              //     if (isSave == true) {
+                                              //       await EasyLoading.showSuccess(
+                                              //           'บันทึกรายการเรียบร้อย');
+                                              //       Navigator.push(
+                                              //           context,
+                                              //           MaterialPageRoute(
+                                              //               builder: (context) =>
+                                              //                   PlancheckcompletePage()));
+                                              //     }
+                                              //     EasyLoading.dismiss();
+                                              //   }
+                                              // } else {
+                                              //   print("no bio auth");
+                                              //   await EasyLoading.show(
+                                              //       status:
+                                              //           "กำลังบันทึกข้อมูล");
+                                              //   bool isSave =
+                                              //       await Provider.of<PlanData>(
+                                              //               context,
+                                              //               listen: false)
+                                              //           .submitInspection("1");
+                                              //   if (isSave == true) {
+                                              //     await EasyLoading.showSuccess(
+                                              //         'บันทึกรายการเรียบร้อย');
+                                              //     Navigator.push(
+                                              //         context,
+                                              //         MaterialPageRoute(
+                                              //             builder: (context) =>
+                                              //                 PlancheckcompletePage()));
+                                              //   }
+                                              //   EasyLoading.dismiss();
+                                              // }
+
+                                              await EasyLoading.show(
+                                                  status: "กำลังบันทึกข้อมูล");
+                                              bool isSave =
+                                                  await Provider.of<PlanData>(
+                                                          context,
+                                                          listen: false)
                                                       .submitInspection("1");
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess(
-                                                        'บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PlancheckcompletePage()));
-                                                  }
-                                                  EasyLoading.dismiss();
-                                                }
-                                              } else {
-                                                print("no bio auth");
-                                                await EasyLoading.show(
-                                                    status:
-                                                        "กำลังบันทึกข้อมูล");
-                                                bool isSave =
-                                                    await Provider.of<PlanData>(
-                                                            context,
-                                                            listen: false)
-                                                        .submitInspection("1");
-                                                if (isSave == true) {
-                                                  await EasyLoading.showSuccess(
-                                                      'บันทึกรายการเรียบร้อย');
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlancheckcompletePage()));
-                                                }
-                                                EasyLoading.dismiss();
+                                              if (isSave == true) {
+                                                await EasyLoading.showSuccess(
+                                                    'บันทึกรายการเรียบร้อย');
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlancheckcompletePage()));
                                               }
+                                              EasyLoading.dismiss();
+
                                               // final biometrics =
                                               //     await LocalAuthApi
                                               //         .getBiometrics();

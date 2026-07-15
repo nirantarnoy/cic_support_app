@@ -1,5 +1,5 @@
 name: flutter_cic_support
-description: A new Flutter project.
+description: A new Flutter project from calmel tire company.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.2
   flutter_svg: ^1.0.3
+  connectivity: ^3.0.6
   flutter_rating_bar: ^4.0.0-nullsafety.0
   carousel_slider: ^4.0.0
   syncfusion_flutter_charts: ^20.1.59
@@ -65,11 +66,28 @@ dependencies:
   sqflite: ^2.0.2+1
   googleapis:
   googleapis_auth: ^1.4.1
+  qr_flutter:
+  flutter_barcode_scanner: ^2.0.0
+  fluttertoast: ^8.0.6
+  barcode_widget:
+  permission_handler:
+  firebase_core: ^2.11.0
+  firebase_auth: ^4.0.1
+  flutter_markdown: ^0.6.19
+  share_plus: ^7.2.2
+ 
   
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+#   flutter_launcher_icons: ^0.12.0
+# flutter_icons:
+#   image_path: "assets/logo/logo.png"
+#   ios: true,
+#   android: "launcher_icon"
+#   min_sdk_android: 21
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -93,6 +111,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -115,6 +134,11 @@ flutter:
     - family: Kanit-Regular
       fonts:
         - asset: assets/fonts/Kanit-Regular.ttf  
+    - family: Prompt
+      fonts:
+        - asset: assets/fonts/Prompt-Regular.ttf
+        - asset: assets/fonts/Prompt-Bold.ttf
+          weight: 700
   # fonts:
   #   - family: Schyler
   #     fonts:

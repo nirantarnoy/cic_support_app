@@ -10,18 +10,20 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/profile.dart';
 import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/pages/securitypoint.dart';
+import 'package:flutter_cic_support/pages/shirtorderpage.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
+import 'package:flutter_cic_support/pages/test2fa.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
+import 'package:flutter_cic_support/providers/securityplan.dart';
+import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/providers/topicitem.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_cic_support/services/localnoti.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_cic_support/providers/person.dart';
-import 'package:flutter_cic_support/providers/user.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hive/hive.dart';
@@ -149,7 +151,10 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<CarData>.value(value: CarData()),
           ChangeNotifierProvider<TeamnotifyData>.value(value: TeamnotifyData()),
           ChangeNotifierProvider<PersonData>.value(value: PersonData()),
-          ChangeNotifierProvider<StoreissueData>.value(value: StoreissueData())
+          ChangeNotifierProvider<StoreissueData>.value(value: StoreissueData()),
+          ChangeNotifierProvider<SecurityplanData>.value(
+              value: SecurityplanData()),
+          ChangeNotifierProvider<ShirtempData>.value(value: ShirtempData())
         ],
         child: Consumer<UserData>(
           builder: (context, _users, _) {
@@ -172,6 +177,7 @@ class MyApp extends StatelessWidget {
               ),
               home: LoginPage(),
               // home: SecurityPointPage(),
+              //  home: Test2FaPage(),
               routes: {
                 LoginPage.routeName: (ctx) => LoginPage(),
                 ProfilePage.routeName: (ctx) => ProfilePage(),
@@ -179,6 +185,7 @@ class MyApp extends StatelessWidget {
                 StoreissueApprovePage.routeName: (ctx) =>
                     StoreissueApprovePage(team_id: ''),
                 MainPage.routeName: (ctx) => MainPage(),
+                ShirtorderPage.routeName: (ctx) => ShirtorderPage(),
               },
               builder: EasyLoading.init(),
             );

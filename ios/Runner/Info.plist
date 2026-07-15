@@ -53,5 +53,14 @@
 	<true/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>app-1-327372551535-ios-384fdefb7a0cefda59e49a</string>
+		</array>
+	</dict>
+	</array>
 </dict>
 </plist>

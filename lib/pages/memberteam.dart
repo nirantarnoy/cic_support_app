@@ -20,6 +20,7 @@ class _MemberTeamPageState extends State<MemberTeamPage> {
   @override
   void initState() {
     Provider.of<UserData>(context, listen: false).findTeamMember();
+    Provider.of<UserData>(context, listen: false).findTeamSafetyMember();
     super.initState();
   }
 
@@ -34,6 +35,36 @@ class _MemberTeamPageState extends State<MemberTeamPage> {
                 leading: Icon(
                   Icons.account_circle,
                   color: Color.fromARGB(255, 45, 172, 123),
+                ),
+                title: Text(
+                    '${_listcheck[index].fname} ${_listcheck[index].lname}'),
+                trailing: _listcheck[index].team_leader == "1"
+                    ? Icon(
+                        Icons.star,
+                        color: Color.fromARGB(216, 211, 214, 11),
+                      )
+                    : Text(""),
+              ),
+            );
+          });
+
+      return cards;
+    } else {
+      return Center(child: Text("No Data"));
+    }
+  }
+
+  Widget _buildlistsafety(List<TeamMember> _listcheck) {
+    Widget cards;
+    if (_listcheck.length > 0) {
+      cards = new ListView.builder(
+          itemCount: _listcheck.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child: ListTile(
+                leading: Icon(
+                  Icons.account_circle,
+                  color: Color.fromARGB(255, 172, 75, 45),
                 ),
                 title: Text(
                     '${_listcheck[index].fname} ${_listcheck[index].lname}'),
@@ -74,11 +105,28 @@ class _MemberTeamPageState extends State<MemberTeamPage> {
           SizedBox(
             height: 10,
           ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text("รายชื่อสมาชิก  5 ส."),
+          ),
           Expanded(
             child: Consumer<UserData>(
               builder: ((context, memberteam, child) =>
                   _buildlist(memberteam.listmemberteam)),
             ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text("รายชื่อสมาชิก Safety"),
+          ),
+          Expanded(
+            child: Consumer<UserData>(
+              builder: ((context, memberteam, child) =>
+                  _buildlistsafety(memberteam.listmembersafetyteam)),
+            ),
+          ),
+          SizedBox(
+            height: 10,
           ),
         ]),
       ),

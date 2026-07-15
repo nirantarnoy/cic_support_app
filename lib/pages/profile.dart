@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/models/storeissue.dart';
+import 'package:flutter_cic_support/pages/ai_assistant_page.dart';
 import 'package:flutter_cic_support/pages/bigcleanarea.dart';
+import 'package:flutter_cic_support/widgets/draggable_fab.dart';
 
 import 'package:flutter_cic_support/pages/carlistpage.dart';
 import 'package:flutter_cic_support/pages/jobplanarea.dart';
@@ -15,7 +17,10 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
+import 'package:flutter_cic_support/pages/securitycheckarea.dart';
+import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
+import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
@@ -338,6 +343,14 @@ class _ProfilePageState extends State<ProfilePage> {
           Consumer<UserData>(
             builder: (context, _users, _) => IconButton(
                 icon: const Icon(
+                  Icons.settings_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () => _logout(_users)),
+          ),
+          Consumer<UserData>(
+            builder: (context, _users, _) => IconButton(
+                icon: const Icon(
                   Icons.logout_rounded,
                   color: Colors.white,
                 ),
@@ -456,89 +469,305 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   height: 5,
                 ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Row(
+                        children: [
+                          Text(
+                            'ข้อมูลพนักงาน',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          Text(
+                            ' (ยังไม่เปิดใช้งาน)',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 9,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      )),
+                ),
                 Expanded(
                   flex: 1,
-                  child: Row(children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(children: [
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
-                          height: 50,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(child: Text('5s.')),
+                              Center(
+                                child: Icon(Icons.local_hospital_outlined,
+                                    color: Colors.red, size: 30),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Center(
                                 child: Text(
-                                  '10',
+                                  'สถานพยาบาล',
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 11,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
-                          height: 50,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(child: Text('Safety')),
+                              Center(
+                                child: Icon(
+                                  Icons.school_outlined,
+                                  color: Colors.blue,
+                                  size: 30,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Center(
                                 child: Text(
-                                  '10',
+                                  'อบรม',
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 11,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Container(
-                          height: 50,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(child: Text('Kaizen')),
+                              Center(
+                                child: Icon(Icons.data_exploration,
+                                    color: Color.fromARGB(205, 76, 66, 221),
+                                    size: 30),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Center(
                                 child: Text(
-                                  '5',
+                                  'เช็ควันลา',
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 11,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                  ]),
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Icon(
+                                  Icons.health_and_safety_outlined,
+                                  color: Colors.green,
+                                  size: 30,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Center(
+                                child: Text(
+                                  'ตรวจสุขภาพ',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Icon(
+                                    Icons.account_balance_wallet_outlined,
+                                    color: Color.fromARGB(235, 224, 142, 43),
+                                    size: 30),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Center(
+                                child: Text(
+                                  'เงินกู้สวัสดิการ',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text('ข้อมูลกิจกรรม',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                            fontWeight: FontWeight.normal,
+                          ))),
+                ),
+                // Expanded(
+                //   flex: 1,
+                //   child: Row(children: <Widget>[
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Container(
+                //           height: 50,
+                //           child: Column(
+                //             children: [
+                //               Center(child: Text('5s.')),
+                //               Center(
+                //                 child: Text(
+                //                   '10',
+                //                   style: TextStyle(
+                //                     fontSize: 10,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Container(
+                //           height: 50,
+                //           child: Column(
+                //             children: [
+                //               Center(child: Text('Safety')),
+                //               Center(
+                //                 child: Text(
+                //                   '10',
+                //                   style: TextStyle(
+                //                     fontSize: 10,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Container(
+                //           height: 50,
+                //           child: Column(
+                //             children: [
+                //               Center(child: Text('Kaizen')),
+                //               Center(
+                //                 child: Text(
+                //                   '5',
+                //                   style: TextStyle(
+                //                     fontSize: 10,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ]),
+                // ),
                 Expanded(
                   flex: 5,
                   child: SingleChildScrollView(
@@ -765,48 +994,96 @@ class _ProfilePageState extends State<ProfilePage> {
                                   builder: (context) => BigcleanAreaPage())),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(2),
-                            height: 80,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ListTile(
-                              leading: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.grey.shade200,
+                      Consumer<UserData>(
+                        builder: (context, _userx, _) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(2),
+                              height: 80,
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: ListTile(
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.person_search,
+                                    color: Colors.blueGrey,
+                                  )),
                                 ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.person_search,
-                                  color: Colors.blueGrey,
-                                )),
-                              ),
-                              title: Text(
-                                'สมาชิกทีมตรวจ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                title: Text(
+                                  'สมาชิกทีมตรวจ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  Icons.keyboard_arrow_right,
                                 ),
                               ),
-                              trailing: Icon(
-                                Icons.keyboard_arrow_right,
-                              ),
                             ),
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MemberTeamPage(
+                                          team_id: _userx.team_display,
+                                        ))),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MemberTeamPage(
-                                        team_id: '1',
-                                      ))),
+                        ),
+                      ),
+                      Consumer<UserData>(
+                        builder: (context, _userx, _) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(2),
+                              height: 80,
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: ListTile(
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.approval,
+                                    color: Colors.green,
+                                  )),
+                                ),
+                                title: Text(
+                                  'อนุมัติใบเบิก',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  Icons.keyboard_arrow_right,
+                                ),
+                              ),
+                            ),
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => StoreissueApprovePage(
+                                          team_id: _userx.team_display,
+                                        ))),
+                          ),
                         ),
                       ),
                       Padding(
@@ -831,12 +1108,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 child: Center(
                                     child: Icon(
-                                  Icons.approval,
-                                  color: Colors.green,
+                                  Icons.fire_extinguisher,
+                                  color: Colors.red,
                                 )),
                               ),
                               title: Text(
-                                'อนุมัติใบเบิก',
+                                'ตรวจถังดับเพลิง',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -846,11 +1123,53 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                           ),
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => StoreissueApprovePage(
-                                        team_id: '1',
-                                      ))),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SecuritycheckAreaPage())),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(2),
+                            height: 80,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.accessibility_new_outlined,
+                                  color: Colors.lightBlue,
+                                )),
+                              ),
+                              title: Text(
+                                'ระบุเบอร์เสื้อ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.keyboard_arrow_right,
+                              ),
+                            ),
+                          ),
+                          onTap: () async {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ShirtempPage()));
+                          },
                         ),
                       ),
                     ]),
@@ -930,6 +1249,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 //     }),
               ],
             ),
+          ),
+          DraggableFAB(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AIAssistantPage(),
+                ),
+              );
+            },
           ),
         ],
       ),

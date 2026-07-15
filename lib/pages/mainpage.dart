@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/pages/ai_assistant_page.dart';
 import 'package:flutter_cic_support/pages/notificationpage.dart';
+import 'package:flutter_cic_support/widgets/draggable_fab.dart';
 import 'package:flutter_cic_support/pages/settingpage.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/services/localnoti.dart';
@@ -60,7 +62,9 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
+      body: Stack(
+        children: [
+          NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
@@ -257,6 +261,18 @@ class _MainPageState extends State<MainPage>
             ),
           ),
         ),
+      ),
+          DraggableFAB(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AIAssistantPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: bottomnav(),
     );

@@ -440,42 +440,44 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           physics: const BouncingScrollPhysics(),
           itemBuilder: (BuildContext contex, int index) {
-            int total_topic = Provider.of<PlanData>(contex, listen: false)
-                .countTopicitem(listcheck[index].plan_area_id);
-            int total_topic_counted =
-                Provider.of<PlanData>(contex, listen: false)
+            return FutureBuilder<int>(
+              future: getAreacheckCount(listcheck[index].plan_area_id),
+              builder: (contex, snapshot) {
+                int total_topic = Provider.of<PlanData>(contex, listen: false)
+                    .countTopicitem(listcheck[index].plan_area_id);
+                int total_topic_counted = snapshot.data ?? Provider.of<PlanData>(contex, listen: false)
                     .countCheckedTopicitem(listcheck[index].plan_area_id);
 
-            Color _bgcolor = Colors.white;
-            Color _line_color = Colors.black87;
-            Color _status_color = const Color(0xFF4A5AE7); // Default blue
-            String _status_text = 'แตะเพื่อเริ่มตรวจ / Tap to inspect';
+                Color _bgcolor = Colors.white;
+                Color _line_color = Colors.black87;
+                Color _status_color = const Color(0xFF4A5AE7); // Default blue
+                String _status_text = 'แตะเพื่อเริ่มตรวจ / Tap to inspect';
 
-            final bool isOwnSection = current_section_code == listcheck[index].section_code;
+                final bool isOwnSection = current_section_code == listcheck[index].section_code;
 
-            if (isOwnSection) {
-              _line_color = Colors.red.shade400;
-              _status_color = Colors.grey;
-              _status_text = 'พื้นที่ของแผนกคุณ (ตรวจไม่ได้) / Your Section';
-              _bgcolor = const Color(0xFFF5F5F5); // Soft grey
-            } else {
-              if (total_topic_counted <= 0) {
-                _bgcolor = Colors.white;
-                _status_color = const Color(0xFF4A5AE7); // Blue
-                _status_text = 'ยังไม่ได้ตรวจ / Tap to inspect';
-              } else if (total_topic_counted > 0 &&
-                  total_topic_counted < total_topic) {
-                _bgcolor = const Color(0xFFFFF8E1); // Soft yellow
-                _status_color = const Color(0xFFFFAD3B); // Yellow
-                _status_text = 'ตรวจค้างอยู่ / In progress';
-              } else if (total_topic_counted == total_topic) {
-                _bgcolor = const Color(0xFFE8F5E9); // Soft green
-                _status_color = const Color(0xFF0F9B73); // Green
-                _status_text = 'ตรวจเสร็จสิ้น / Completed';
-              }
-            }
+                if (isOwnSection) {
+                  _line_color = Colors.red.shade400;
+                  _status_color = Colors.grey;
+                  _status_text = 'พื้นที่ของแผนกคุณ (ตรวจไม่ได้) / Your Section';
+                  _bgcolor = const Color(0xFFF5F5F5); // Soft grey
+                } else {
+                  if (total_topic_counted <= 0) {
+                    _bgcolor = Colors.white;
+                    _status_color = const Color(0xFF4A5AE7); // Blue
+                    _status_text = 'ยังไม่ได้ตรวจ / Tap to inspect';
+                  } else if (total_topic_counted > 0 &&
+                      total_topic_counted < total_topic) {
+                    _bgcolor = const Color(0xFFFFF8E1); // Soft yellow
+                    _status_color = const Color(0xFFFFAD3B); // Yellow
+                    _status_text = 'ตรวจค้างอยู่ / In progress';
+                  } else if (total_topic_counted == total_topic) {
+                    _bgcolor = const Color(0xFFE8F5E9); // Soft green
+                    _status_color = const Color(0xFF0F9B73); // Green
+                    _status_text = 'ตรวจเสร็จสิ้น / Completed';
+                  }
+                }
 
-            return Padding(
+                return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
               child: Container(
                 decoration: BoxDecoration(
@@ -626,6 +628,8 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                   ),
                 ),
               ),
+            );
+              },
             );
           });
       return cardlist;
@@ -843,7 +847,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                               showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                builder: (context) => Dialog(
+                                builder: (dialogContext) => Dialog(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(24)),
                                   child: Padding(
@@ -898,20 +902,33 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   elevation: 0,
                                                 ),
                                                 onPressed: () async {
-                                                  Navigator.of(context).pop();
+                                                  Navigator.of(dialogContext).pop();
                                                   await EasyLoading.show(status: "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider.of<PlanData>(context, listen: false)
-                                                      .submitInspection("1");
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) => PlancheckcompletePage(),
-                                                      ),
-                                                    );
+                                                  try {
+                                                    bool isSave = await Provider.of<PlanData>(context, listen: false)
+                                                        .submitInspection("1");
+                                                    if (isSave == true) {
+                                                      await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
+                                                      if (context.mounted) {
+                                                        await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => PlancheckcompletePage(),
+                                                          ),
+                                                        );
+                                                        if (context.mounted) {
+                                                          await _obtainPlanArea();
+                                                          setState(() {});
+                                                        }
+                                                      }
+                                                    } else {
+                                                      await EasyLoading.showError('ไม่พบข้อมูลการตรวจ หรือบันทึกไม่สำเร็จ');
+                                                    }
+                                                  } catch (e) {
+                                                    await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
+                                                  } finally {
+                                                    EasyLoading.dismiss();
                                                   }
-                                                  EasyLoading.dismiss();
                                                 },
                                                 child: const Text(
                                                   'ใช่',
@@ -933,7 +950,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                                 ),
                                                 onPressed: () {
-                                                  Navigator.of(context).pop(false);
+                                                  Navigator.of(dialogContext).pop(false);
                                                 },
                                                 child: const Text(
                                                   'ไม่ใช่',
@@ -955,7 +972,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                               showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                builder: (context) => Dialog(
+                                builder: (dialogContext) => Dialog(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(24)),
                                   child: Padding(
@@ -1010,20 +1027,33 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   elevation: 0,
                                                 ),
                                                 onPressed: () async {
-                                                  Navigator.of(context).pop();
+                                                  Navigator.of(dialogContext).pop();
                                                   await EasyLoading.show(status: "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider.of<PlanData>(context, listen: false)
-                                                      .submitInspection("1");
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) => PlancheckcompletePage(),
-                                                      ),
-                                                    );
+                                                  try {
+                                                    bool isSave = await Provider.of<PlanData>(context, listen: false)
+                                                        .submitInspection("1");
+                                                    if (isSave == true) {
+                                                      await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
+                                                      if (context.mounted) {
+                                                        await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => PlancheckcompletePage(),
+                                                          ),
+                                                        );
+                                                        if (context.mounted) {
+                                                          await _obtainPlanArea();
+                                                          setState(() {});
+                                                        }
+                                                      }
+                                                    } else {
+                                                      await EasyLoading.showError('ไม่พบข้อมูลการตรวจ หรือบันทึกไม่สำเร็จ');
+                                                    }
+                                                  } catch (e) {
+                                                    await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
+                                                  } finally {
+                                                    EasyLoading.dismiss();
                                                   }
-                                                  EasyLoading.dismiss();
                                                 },
                                                 child: const Text(
                                                   'ใช่',
@@ -1045,7 +1075,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                                 ),
                                                 onPressed: () {
-                                                  Navigator.of(context).pop(false);
+                                                  Navigator.of(dialogContext).pop(false);
                                                 },
                                                 child: const Text(
                                                   'ไม่ใช่',

@@ -10,11 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StoreissueData extends ChangeNotifier {
   final String url_issue_list =
       "https://api.cicsupports.com/api/storeissue/listbyemp";
-  // final String url_issue_list =
-  //     "http://192.168.60.197:1223/api/storeissue/listbyemp";
   final String url_issue_list_detail =
       "https://api.cicsupports.com/api/storeissue/fetchissuedetail";
-
   final String url_issue_approve =
       "https://api.cicsupports.com/api/storeissue/approveissue";
 
@@ -44,14 +41,18 @@ class StoreissueData extends ChangeNotifier {
     //final Map<String, dynamic> fileterData = {'empid': user_id};
     // print("data for issue is ${user_id}");
     try {
+      final uri = Uri.parse(url_issue_list + "/" + emp_code!);
+      print("DEBUG storeissue GET: $uri");
       http.Response response;
       response = await http.get(
-        Uri.parse(url_issue_list + "/" + emp_code!),
+        uri,
         headers: {'Authorization': token},
         // body: json.encode(fileterData),
       );
+      print("DEBUG storeissue status: ${response.statusCode}");
+      print("DEBUG storeissue body: ${utf8.decode(response.bodyBytes)}");
       if (response.statusCode == 200) {
-        List<dynamic> res = json.decode(response.body);
+        List<dynamic> res = json.decode(utf8.decode(response.bodyBytes));
         List<Storeissue> data = [];
         if (res == null) {
           print('no data');
@@ -60,13 +61,16 @@ class StoreissueData extends ChangeNotifier {
           // listIssue.clear();
           // print("ok");
           for (var i = 0; i < res.length; i++) {
+            final statusStr = res[i]['STATUS'].toString();
+            if (statusStr != "0") continue; // เฉพาะรายการที่รออนุมัติ (STATUS == 0)
+
             final Storeissue personRes = Storeissue(
                 id: res[i]['ID'].toString(),
                 journal_no: res[i]['JOURNAL_NO'].toString(),
                 trans_date: res[i]['TRANS_DATE'].toString(),
                 created_by: res[i]['REQUEST_BY'].toString(),
                 created_name: res[i]['REQUEST_BY'].toString(),
-                status: res[i]['STATUS'].toString(),
+                status: statusStr,
                 emp_full_name: res[i]['EMP_FULL_NAME']);
             data.add(personRes);
           }
@@ -103,7 +107,7 @@ class StoreissueData extends ChangeNotifier {
         // body: json.encode(fileterData),
       );
       if (response.statusCode == 200) {
-        List<dynamic> res = json.decode(response.body);
+        List<dynamic> res = json.decode(utf8.decode(response.bodyBytes));
         List<Storeissueline> data = [];
         if (res == null) {
           print('no data');
@@ -124,6 +128,7 @@ class StoreissueData extends ChangeNotifier {
               qty: res[i]['QTY'].toString(),
               remark: res[i]['REMARK'].toString(),
               unit_name: res[i]['UNIT_NAME'].toString(),
+              price: res[i]['PRICE']?.toString() ?? '0',
             );
             data.add(personRes);
           }
@@ -154,16 +159,24 @@ class StoreissueData extends ChangeNotifier {
     };
     print("data approve is ${approveData}");
     try {
-      http.Response response;
-      response = await http.post(
-        Uri.parse(url_issue_approve),
+      print("data approve is issue_id=$issue_id, approve_status=$approve_type, user_id=$user_id");
+      final Map<String, dynamic> approveData = {
+        'user_id': int.tryParse(user_id ?? '0') ?? 0,
+        'approve_status': approve_type,
+        'issue_id': int.tryParse(issue_id) ?? 0
+      };
+      
+      final uri = Uri.parse(url_issue_approve);
+      http.Response response = await http.post(
+        uri,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token,
         },
         body: json.encode(approveData),
       );
-      if (response.statusCode == 201) {
+      print("approve response: ${response.statusCode} ${utf8.decode(response.bodyBytes)}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
         return false;

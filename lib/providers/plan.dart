@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -617,6 +620,26 @@ class PlanData extends ChangeNotifier {
     int cnt = 0;
     listJobplanArea.forEach((element) {
       print('topic name enable is ${element.is_enable}');
+      if (element.scored != "-1") {
+        cnt += 1;
+      }
+    });
+    return cnt;
+  }
+
+  int getAllMushCheckTopicRepeat() {
+    int cnt = 0;
+    listJobplanAreaRepeat.forEach((element) {
+      if (element.is_enable == "1") {
+        cnt += 1;
+      }
+    });
+    return cnt;
+  }
+
+  int getAllCheckedTopicRepeat() {
+    int cnt = 0;
+    listJobplanAreaRepeat.forEach((element) {
       if (element.scored != "-1") {
         cnt += 1;
       }
@@ -1471,36 +1494,136 @@ class PlanData extends ChangeNotifier {
     }
   }
 
+  // --- วิธีที่ 3: ระบบบันทึก/กู้คืนข้อมูลฉุกเฉินลงไฟล์ (Physical File) ---
+
+  Future<void> saveEmergencyBackup() async {
+    if (listInspectiontrans.isEmpty) return;
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/emergency_5s_backup.json');
+      
+      var backupData = listInspectiontrans.map((e) => {
+        'module_type_id': e.module_type_id,
+        'plan_id': e.plan_id,
+        'trans_date': e.trans_date,
+        'emp_id': e.emp_id,
+        'area_group_id': e.area_group_id,
+        'area_id': e.area_id,
+        'team_id': e.team_id,
+        'topic_id': e.topic_id,
+        'topic_item_id': e.topic_item_id,
+        'score': e.score,
+        'status': e.status,
+        'note': e.note,
+        'plan_num': e.plan_num,
+      }).toList();
+
+      final String payloadJson = json.encode(backupData);
+      await file.writeAsString(payloadJson);
+      print("Emergency backup saved to ${file.path}");
+    } catch (e) {
+      print("Failed to save emergency backup: $e");
+    }
+  }
+
+  Future<bool> loadEmergencyBackup() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/emergency_5s_backup.json');
+      
+      if (await file.exists()) {
+        String contents = await file.readAsString();
+        List<dynamic> jsonData = json.decode(contents);
+        
+        List<InspectionTrans> recoveredData = jsonData.map((e) => InspectionTrans(
+          module_type_id: e['module_type_id']?.toString() ?? '',
+          plan_id: e['plan_id']?.toString() ?? '',
+          trans_date: e['trans_date']?.toString() ?? '',
+          emp_id: e['emp_id']?.toString() ?? '',
+          area_group_id: e['area_group_id']?.toString() ?? '',
+          area_id: e['area_id']?.toString() ?? '',
+          team_id: e['team_id']?.toString() ?? '',
+          topic_id: e['topic_id']?.toString() ?? '',
+          topic_item_id: e['topic_item_id']?.toString() ?? '',
+          score: e['score']?.toString() ?? '',
+          status: e['status']?.toString() ?? '',
+          note: e['note']?.toString() ?? '',
+          plan_num: e['plan_num']?.toString() ?? '',
+        )).toList();
+        
+        if (recoveredData.isNotEmpty) {
+          _inspectiontrans = recoveredData;
+          notifyListeners();
+          print("Successfully loaded emergency backup with ${recoveredData.length} records");
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      print("Failed to load emergency backup: $e");
+      return false;
+    }
+  }
+
+  Future<void> clearEmergencyBackup() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/emergency_5s_backup.json');
+      if (await file.exists()) {
+        await file.delete();
+        print("Emergency backup deleted");
+      }
+    } catch (e) {
+      print("Failed to clear emergency backup: $e");
+    }
+  }
+
+  // -------------------------------------------------------------
+
   Future<bool> submitInspection(String action_type_id) async {
-    print("list data is ${listInspectiontrans[0].area_id}");
-    //return false;
-    if (listInspectiontrans.isNotEmpty) {
+    if (listInspectiontrans.isEmpty) {
+      print("listInspectiontrans is empty");
+      return false;
+    }
+
+    try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String user_id = prefs.getString("user_id").toString();
-      final String team_id = prefs.getString("team_id").toString();
-      final String token = prefs.getString("token").toString();
+      final String userIdStr = prefs.getString("user_id") ?? "0";
+      final String teamIdStr = prefs.getString("team_id") ?? "0";
+      final String token = prefs.getString("token") ?? "";
+
+      int parsedUserId = int.tryParse(userIdStr) ?? 0;
+      int parsedTeamId = int.tryParse(teamIdStr) ?? 0;
+      int parsedActionTypeId = int.tryParse(action_type_id) ?? 1;
 
       var addData = listInspectiontrans
           .map((e) => {
-                'module_type_id': int.parse(e.module_type_id),
-                'plan_id': int.parse(e.plan_num),
-                'trans_date': e.trans_date,
-                'emp_id': int.parse(user_id),
-                'area_group_id': int.parse(e.area_group_id),
-                'area_id': int.parse(e.area_id),
-                'team_id': int.parse(team_id),
-                'topic_id': int.parse(e.topic_id),
-                'topic_item_id': int.parse(e.topic_item_id),
-                'score': int.parse(e.score),
-                'status': int.parse(e.status),
-                'note': e.note,
-                'created_at': int.parse('0'),
-                'created_by': int.parse(user_id),
-                'action_type_id': int.parse(action_type_id),
+                'module_type_id': int.tryParse(e.module_type_id ?? '') ?? 0,
+                'plan_id': int.tryParse(e.plan_num ?? '') ?? 0,
+                'trans_date': e.trans_date ?? '',
+                'emp_id': parsedUserId,
+                'area_group_id': int.tryParse(e.area_group_id ?? '') ?? 0,
+                'area_id': int.tryParse(e.area_id ?? '') ?? 0,
+                'team_id': parsedTeamId,
+                'topic_id': int.tryParse(e.topic_id ?? '') ?? 0,
+                'topic_item_id': int.tryParse(e.topic_item_id ?? '') ?? 0,
+                'score': int.tryParse(e.score ?? '') ?? 0,
+                'status': int.tryParse(e.status ?? '') ?? 0,
+                'note': e.note ?? '',
+                'created_at': 0,
+                'created_by': parsedUserId,
+                'action_type_id': parsedActionTypeId,
               })
           .toList();
-      
+
       final String payloadJson = json.encode(addData);
+
+      try {
+        final file = File('/Users/itcamel/flutter_apps/flutter_cic_support/payload_debug.json');
+        await file.writeAsString(payloadJson);
+      } catch(e) {
+        print("Write error: $e");
+      }
 
       // Save to offline queue list first
       List<String> offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];
@@ -1508,38 +1631,38 @@ class PlanData extends ChangeNotifier {
       await prefs.setStringList("offline_5s_inspections", offlineQueue);
       await loadOfflineCounts();
 
-      try {
-        http.Response response;
-        response = await http.post(
-          Uri.parse(url_to_add_inspection_trans),
-          headers: {"Authorization": token},
-          body: payloadJson,
-        ).timeout(const Duration(seconds: 10));
+      http.Response response = await http.post(
+        Uri.parse(url_to_add_inspection_trans),
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: payloadJson,
+      ).timeout(const Duration(seconds: 10));
 
-        if (response.statusCode == 200) {
-          // If successful, remove it from queue
-          offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];
-          offlineQueue.remove(payloadJson);
-          await prefs.setStringList("offline_5s_inspections", offlineQueue);
-          await loadOfflineCounts();
+      if (response.statusCode == 200) {
+        // If successful, remove it from queue
+        offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];
+        offlineQueue.remove(payloadJson);
+        await prefs.setStringList("offline_5s_inspections", offlineQueue);
+        await loadOfflineCounts();
 
-          print("save transaction ok");
-          clearInspectionTrans(); // clear list after save finished
-          return true;
-        } else {
-          clearInspectionTrans();
-          EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
-          return true;
-        }
-      } catch (err) {
-        print("has eerror is ${err.toString()}");
+        print("save transaction ok");
+        clearInspectionTrans(); // clear list after save finished
+        return true;
+      } else if (response.statusCode == 401) {
+        EasyLoading.showError('เซสชันหมดอายุ กรุณาล็อกเอาท์และเข้าสู่ระบบใหม่');
+        return false;
+      } else {
         clearInspectionTrans();
         EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
         return true;
       }
-    } else {
-      print("not save naja");
-      return false;
+    } catch (err) {
+      print("submitInspection error: ${err.toString()}");
+      clearInspectionTrans();
+      EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
+      return true;
     }
   }
 
@@ -1556,8 +1679,8 @@ class PlanData extends ChangeNotifier {
       var addData = listInspectiontrans
           .map((e) => {
                 'module_type_id': 3,
-                'plan_id': int.parse(e.plan_num),
-                'trans_date': e.trans_date,
+                'plan_id': int.tryParse(e.plan_num ?? '') ?? 0,
+                'trans_date': e.trans_date ?? '',
                 'emp_id': int.parse(user_id),
                 'area_group_id': int.parse(e.area_group_id),
                 'area_id': int.parse(e.area_id),
@@ -1567,7 +1690,7 @@ class PlanData extends ChangeNotifier {
                 'score': int.parse(e.score),
                 'status': int.parse(e.status),
                 'note': e.note,
-                'created_at': int.parse('0'),
+                'created_at': 0,
                 'created_by': int.parse(user_id),
                 'action_type_id': 1,
               })
@@ -1579,7 +1702,10 @@ class PlanData extends ChangeNotifier {
         http.Response response;
         response = await http.post(
           Uri.parse(url_to_add_bigclean_inspection_trans),
-          headers: {"Authorization": token},
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json; charset=UTF-8",
+          },
           body: json.encode(addData),
         );
 
@@ -1617,7 +1743,7 @@ class PlanData extends ChangeNotifier {
       var addData = listInspectionSafetytrans
           .map((e) => {
                 'module_type_id': int.parse(e.module_type_id),
-                'plan_id': int.parse(e.plan_num),
+                'plan_id': int.parse(e.plan_id),
                 'trans_date': e.trans_date,
                 'emp_id': int.parse(user_id),
                 'area_group_id': int.parse(e.area_group_id),
@@ -1626,7 +1752,7 @@ class PlanData extends ChangeNotifier {
                 'score': int.parse(e.score),
                 'status': int.parse(e.status),
                 'note': e.note,
-                'created_at': int.parse('0'),
+                'created_at': 0,
                 'created_by': int.parse(user_id),
               })
           .toList();
@@ -1643,7 +1769,10 @@ class PlanData extends ChangeNotifier {
         http.Response response;
         response = await http.post(
           Uri.parse(url_to_add_safety_inspection_trans),
-          headers: {"Authorization": token},
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json; charset=UTF-8",
+          },
           body: payloadJson,
         ).timeout(const Duration(seconds: 10));
 
@@ -1922,7 +2051,7 @@ class PlanData extends ChangeNotifier {
     try {
       var connectivityResult = await Connectivity().checkConnectivity();
       if (connectivityResult == ConnectivityResult.none) {
-        print("ยังไม่มีสัญญาณอินเทอร์เน็ตในการซิงค์ข้อมูล");
+        EasyLoading.showError("ไม่มีสัญญาณอินเทอร์เน็ต");
         return;
       }
 
@@ -1934,22 +2063,42 @@ class PlanData extends ChangeNotifier {
       List<String> remaining5s = List.from(offline5s);
       bool is5sSuccess = true;
 
+      String? errorMessage;
       for (String itemJson in offline5s) {
         try {
+          // Discard corrupted payloads from previous bug
+          List<dynamic> payloadData = json.decode(itemJson);
+          if (payloadData.isNotEmpty && payloadData[0]['plan_id'] == 0) {
+            print("Found corrupted 5s payload with plan_id 0, discarding...");
+            remaining5s.remove(itemJson);
+            continue;
+          }
+
           http.Response response = await http.post(
             Uri.parse(url_to_add_inspection_trans),
-            headers: {"Authorization": token},
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json; charset=UTF-8",
+            },
             body: itemJson,
           ).timeout(const Duration(seconds: 15));
 
-          if (response.statusCode == 200) {
+          if (response.statusCode == 200 || response.statusCode == 400) {
             remaining5s.remove(itemJson);
+            if (response.statusCode == 400) {
+              print("Discarded corrupted item due to 400 Bad Request");
+            }
           } else {
             is5sSuccess = false;
+            errorMessage = "Server error ${response.statusCode}: ${response.body}";
+            print("Sync failed with status: ${response.statusCode}");
+            print("Response body: ${response.body}");
+            print("Payload was: $itemJson");
             break; // Stop syncing if server error to retry later
           }
         } catch (e) {
           is5sSuccess = false;
+          errorMessage = "Exception: $e";
           print("Error syncing 5s inspection item: $e");
           break; // Network dropped or timeout
         }
@@ -1963,20 +2112,36 @@ class PlanData extends ChangeNotifier {
 
       for (String itemJson in offlineSafety) {
         try {
+          // Discard corrupted payloads from previous bug
+          List<dynamic> payloadData = json.decode(itemJson);
+          if (payloadData.isNotEmpty && payloadData[0]['plan_id'] == 0) {
+            print("Found corrupted safety payload with plan_id 0, discarding...");
+            remainingSafety.remove(itemJson);
+            continue;
+          }
+
           http.Response response = await http.post(
             Uri.parse(url_to_add_safety_inspection_trans),
-            headers: {"Authorization": token},
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json; charset=UTF-8",
+            },
             body: itemJson,
           ).timeout(const Duration(seconds: 15));
 
-          if (response.statusCode == 200) {
+          if (response.statusCode == 200 || response.statusCode == 400) {
             remainingSafety.remove(itemJson);
+            if (response.statusCode == 400) {
+              print("Discarded corrupted safety item due to 400 Bad Request");
+            }
           } else {
             isSafetySuccess = false;
+            errorMessage = "Safety error ${response.statusCode}: ${response.body}";
             break;
           }
         } catch (e) {
           isSafetySuccess = false;
+          errorMessage = "Safety exception: $e";
           print("Error syncing safety inspection item: $e");
           break;
         }
@@ -1989,11 +2154,16 @@ class PlanData extends ChangeNotifier {
         if (remaining5s.isEmpty && remainingSafety.isEmpty) {
           EasyLoading.showSuccess('ซิงค์ข้อมูลออฟไลน์เรียบร้อยแล้ว');
         } else if (!is5sSuccess || !isSafetySuccess) {
-          print("ซิงค์ข้อมูลบางส่วนค้างอยู่");
+          EasyLoading.showError("ค้างอยู่: ${errorMessage ?? 'ไม่ทราบสาเหตุ'}");
+        } else {
+          EasyLoading.dismiss();
         }
+      } else {
+        EasyLoading.dismiss();
       }
     } catch (e) {
       print("Error in syncOfflineData: $e");
+      EasyLoading.showError("เกิดข้อผิดพลาด: $e");
     }
   }
 }

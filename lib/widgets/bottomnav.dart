@@ -78,35 +78,39 @@ class _bottomnavState extends State<bottomnav> {
                   children: <Widget>[
                     Icon(Icons.notifications_active),
                     Consumer<TeamnotifyData>(
-                      builder: (context, _notifydata, _) =>
-                          _notifydata.listteamnotify.length <= 0
-                              ? Text('')
-                              : Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        width: 15,
-                                        height: 15,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          color: Colors.red,
-                                        ),
-                                        child: Align(
-                                          alignment: Alignment.topCenter,
-                                          child: Text(
-                                            "1",
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.white,
-                                            ),
+                      builder: (context, _notifydata, _) {
+                        final unreadCount = _notifydata.listteamnotify
+                            .where((n) => n.read_status == "0")
+                            .length;
+                        return unreadCount <= 0
+                            ? Text('')
+                            : Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width: 15,
+                                      height: 15,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(50),
+                                        color: Colors.red,
+                                      ),
+                                      child: Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Text(
+                                          unreadCount.toString(),
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  )),
+                                    ),
+                                  ],
+                                ));
+                      },
                     ),
                   ],
                 ),

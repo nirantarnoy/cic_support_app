@@ -6,6 +6,7 @@ class Storeissueline {
   final String qty;
   final String remark;
   final String unit_name;
+  final String price;
 
   Storeissueline({
     required this.id,
@@ -15,5 +16,6 @@ class Storeissueline {
     required this.qty,
     required this.remark,
     required this.unit_name,
+    required this.price,
   });
 }

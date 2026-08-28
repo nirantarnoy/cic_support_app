@@ -271,12 +271,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           ),
                         ),
                       ),
-<<<<<<< HEAD
-                      style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(255, 45, 172, 123),
-                          minimumSize: const Size.fromHeight(50)),
-=======
->>>>>>> 218d612367fc6493ce078d4f21ca0ae587790fc4
+
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -299,12 +294,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           ),
                         ),
                       ),
-<<<<<<< HEAD
-                      style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(255, 45, 172, 123),
-                          minimumSize: const Size.fromHeight(50)),
-=======
->>>>>>> 218d612367fc6493ce078d4f21ca0ae587790fc4
+
                     ),
                   ],
                 ),

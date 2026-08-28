@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/it_support_notify.dart';
 import 'package:flutter_cic_support/pages/it_support_ticket_list.dart';
+import 'package:flutter_cic_support/pages/it_support_create_ticket.dart';
+import 'package:flutter_cic_support/pages/it_support_admin_dashboard.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ITSupportDashboardPage extends StatefulWidget {
@@ -58,6 +60,18 @@ class _ITSupportDashboardPageState extends State<ITSupportDashboardPage> {
         ),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.admin_panel_settings, color: Colors.black87),
+            tooltip: 'Admin Dashboard',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ITSupportAdminDashboardPage(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Stack(
               children: [
@@ -376,13 +390,12 @@ class _ITSupportDashboardPageState extends State<ITSupportDashboardPage> {
   }) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'กำลังเข้าสู่: $title',
-              style: const TextStyle(fontFamily: 'Prompt'),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ITSupportCreateTicketPage(
+              initialCategory: title,
             ),
-            backgroundColor: colors[0],
           ),
         );
       },

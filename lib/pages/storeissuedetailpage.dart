@@ -127,20 +127,21 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                                     //  _timer?.cancel();
                                     await EasyLoading.show(
                                         status: "กำลังบันทึกข้อมูล");
-                                    bool isSave =
-                                        await Provider.of<StoreissueData>(
-                                                context,
-                                                listen: false)
-                                            .approveissue(1, widget.issue_id);
-                                    if (isSave == true) {
-                                      await EasyLoading.showSuccess(
-                                          'บันทึกรายการเรียบร้อย');
-
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             PlancheckcompletePage()));
+                                    try {
+                                      bool isSave =
+                                          await Provider.of<StoreissueData>(
+                                                  context,
+                                                  listen: false)
+                                              .approveissue(1, widget.issue_id);
+                                      if (isSave == true) {
+                                        await EasyLoading.showSuccess(
+                                            'บันทึกรายการเรียบร้อย');
+                                      }
+                                    } catch (e) {
+                                      EasyLoading.dismiss();
+                                      await EasyLoading.showError(e.toString().replaceAll('Exception: ', ''));
+                                      Navigator.of(context).pop(); // Close the dialog
+                                      return; // Stop execution, don't navigate away
                                     }
 
                                     EasyLoading.dismiss();
@@ -269,17 +270,13 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                                           //     MaterialPageRoute(
                                           //         builder: (context) =>
                                           //             PlancheckcompletePage()));
+                                        } catch (e) {
+                                          EasyLoading.dismiss();
+                                          await EasyLoading.showError(e.toString().replaceAll('Exception: ', ''));
+                                          Navigator.of(context).pop(); // Close the dialog
+                                          return; // Stop execution, don't navigate away
                                         }
                                         EasyLoading.dismiss();
-                                        // Navigator.of(context)
-                                        //     .pushAndRemoveUntil(
-                                        //         MaterialPageRoute(
-                                        //             builder: (context) =>
-                                        //                 StoreissueApprovePage(
-                                        //                   team_id: "",
-                                        //                 )),
-                                        //         (Route<dynamic> route) =>
-                                        //             false);
 
                                         if (widget.team_id == "") {
                                           Navigator.of(context)

@@ -444,16 +444,22 @@ class _BigcleanAreaPageState extends State<BigcleanAreaPage> {
 
   Future<void> _submitInspection(PlanData plans) async {
     await EasyLoading.show(status: "กำลังบันทึกข้อมูล");
-    bool isSave = await plans.submitBigcleanInspection();
-    if (isSave == true) {
-      await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PlancheckcompletePage()),
-        );
+    try {
+      bool isSave = await plans.submitBigcleanInspection();
+      if (isSave == true) {
+        await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => PlancheckcompletePage()),
+          );
+        }
+      } else {
+        await EasyLoading.showError('บันทึกไม่สำเร็จ');
       }
-    } else {
+    } catch (e) {
+      await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
+    } finally {
       EasyLoading.dismiss();
     }
   }

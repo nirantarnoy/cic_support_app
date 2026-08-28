@@ -5,7 +5,7 @@ class Teamnotify {
   final String emp_id;
   final String title;
   final String detail;
-  final String read_status;
+  String read_status;
   final String notify_date;
 
   Teamnotify({

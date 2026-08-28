@@ -347,6 +347,10 @@ class _JobCheckNewPageState extends State<JobCheckNewPage> {
 
   void _addselected(String score, dynamic topic_id, dynamic topic_item_id) {
     if (score != '') {
+      DateTime now = DateTime.now();
+      String formattedDate =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
+
       InspectionTrans _inspec = InspectionTrans(
         area_group_id: '0',
         emp_id: '0',
@@ -360,7 +364,7 @@ class _JobCheckNewPageState extends State<JobCheckNewPage> {
         topic_item_id: topic_item_id,
         module_type_id: '1',
         note: '',
-        trans_date: DateTime.now().toIso8601String(),
+        trans_date: formattedDate,
       );
 
       Provider.of<PlanData>(context, listen: false).addInspectionTrans(_inspec);

@@ -24,6 +24,31 @@ class JobplanAreaRepeatPage extends StatefulWidget {
 }
 
 class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
+  Future<void> _submitData(BuildContext context) async {
+    await EasyLoading.show(status: "กำลังบันทึกข้อมูล");
+    try {
+      bool isSave = await Provider.of<PlanData>(context, listen: false)
+          .submitInspection("2");
+      if (isSave == true) {
+        await EasyLoading.showSuccess('บันทึกรายการเรียบร้อย');
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlancheckcompletePage(),
+            ),
+          );
+        }
+      } else {
+        await EasyLoading.showError('ไม่พบข้อมูลการตรวจ หรือบันทึกไม่สำเร็จ');
+      }
+    } catch (e) {
+      await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
   String current_section_code = '';
   Future _obtainPlanArea() async {
     return await Provider.of<PlanData>(context, listen: false)
@@ -376,13 +401,13 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                       onPressed: () {
                         // Provider.of<PlanData>(context, listen: false)
                         //     .submitInspection();
-                        int MustChekAll = _plans.getAllMushCheckTopic();
-                        int AllChecked = _plans.getAllCheckedTopic();
+                        int MustChekAll = _plans.getAllMushCheckTopicRepeat();
+                        int AllChecked = _plans.getAllCheckedTopicRepeat();
                         if (AllChecked < MustChekAll) {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (context) => Dialog(
+                            builder: (dialogContext) => Dialog(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               child: Padding(
@@ -429,6 +454,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () async {
+                                              Navigator.of(dialogContext).pop();
                                               final isAvailable =
                                                   await LocalAuthApi
                                                       .hasBiometrics();
@@ -438,44 +464,11 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                                                         .authenticate();
                                                 if (isAuthenticated) {
                                                   print("success");
-                                                  await EasyLoading.show(
-                                                      status:
-                                                          "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider
-                                                          .of<PlanData>(context,
-                                                              listen: false)
-                                                      .submitInspection("2");
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess(
-                                                        'บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PlancheckcompletePage()));
-                                                  }
-                                                  EasyLoading.dismiss();
+                                                  await _submitData(context);
                                                 }
                                               } else {
                                                 print("no bio auth");
-                                                await EasyLoading.show(
-                                                    status:
-                                                        "กำลังบันทึกข้อมูล");
-                                                bool isSave =
-                                                    await Provider.of<PlanData>(
-                                                            context,
-                                                            listen: false)
-                                                        .submitInspection("2");
-                                                if (isSave == true) {
-                                                  await EasyLoading.showSuccess(
-                                                      'บันทึกรายการเรียบร้อย');
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlancheckcompletePage()));
-                                                }
-                                                EasyLoading.dismiss();
+                                                await _submitData(context);
                                               }
                                               //  _timer?.cancel();
                                               // await EasyLoading.show(
@@ -518,7 +511,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () {
-                                              Navigator.of(context).pop(false);
+                                              Navigator.of(dialogContext).pop(false);
                                             },
                                             child: Text(
                                               'ไม่ใช่',
@@ -539,7 +532,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (context) => Dialog(
+                            builder: (dialogContext) => Dialog(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               child: Padding(
@@ -586,6 +579,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             onPressed: () async {
+                                              Navigator.of(dialogContext).pop();
                                               final isAvailable =
                                                   await LocalAuthApi
                                                       .hasBiometrics();
@@ -595,44 +589,11 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                                                         .authenticate();
                                                 if (isAuthenticated) {
                                                   print("success");
-                                                  await EasyLoading.show(
-                                                      status:
-                                                          "กำลังบันทึกข้อมูล");
-                                                  bool isSave = await Provider
-                                                          .of<PlanData>(context,
-                                                              listen: false)
-                                                      .submitInspection("2");
-                                                  if (isSave == true) {
-                                                    await EasyLoading.showSuccess(
-                                                        'บันทึกรายการเรียบร้อย');
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PlancheckcompletePage()));
-                                                  }
-                                                  EasyLoading.dismiss();
+                                                  await _submitData(context);
                                                 }
                                               } else {
                                                 print("no bio auth");
-                                                await EasyLoading.show(
-                                                    status:
-                                                        "กำลังบันทึกข้อมูล");
-                                                bool isSave =
-                                                    await Provider.of<PlanData>(
-                                                            context,
-                                                            listen: false)
-                                                        .submitInspection("2");
-                                                if (isSave == true) {
-                                                  await EasyLoading.showSuccess(
-                                                      'บันทึกรายการเรียบร้อย');
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlancheckcompletePage()));
-                                                }
-                                                EasyLoading.dismiss();
+                                                await _submitData(context);
                                               }
                                               // final biometrics =
                                               //     await LocalAuthApi

@@ -9,12 +9,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreissueData extends ChangeNotifier {
   final String url_issue_list =
+<<<<<<< HEAD
       "http://172.16.0.231:3000/api/storeissue/listbyemp";
   // final String url_issue_list =
   //     "http://192.168.60.197:1223/api/storeissue/listbyemp";
   final String url_issue_list_detail =
       "http://172.16.0.231:3000/api/storeissue/fetchissuedetail";
 
+=======
+      "https://api.cicsupports.com/api/storeissue/listbyemp";
+  final String url_issue_list_detail =
+      "https://api.cicsupports.com/api/storeissue/fetchissuedetail";
+>>>>>>> e22eb7c6d1c95d0455da2e90fabde345106aff56
   final String url_issue_approve =
       "http://172.16.0.231:3000/api/storeissue/approveissue";
 
@@ -41,6 +47,7 @@ class StoreissueData extends ChangeNotifier {
     final String? emp_code = pref.getString('emp_code');
     final String token = pref.getString("token").toString();
 
+<<<<<<< HEAD
     String targetEmp = (emp_code != null && emp_code.isNotEmpty) ? emp_code : (user_id ?? '');
 
     List<String> listUrls = [
@@ -85,6 +92,43 @@ class StoreissueData extends ChangeNotifier {
             res = decoded;
           } else if (decoded is Map && decoded['data'] is List) {
             res = decoded['data'];
+=======
+    //final Map<String, dynamic> fileterData = {'empid': user_id};
+    // print("data for issue is ${user_id}");
+    try {
+      final uri = Uri.parse(url_issue_list + "/" + emp_code!);
+      print("DEBUG storeissue GET: $uri");
+      http.Response response;
+      response = await http.get(
+        uri,
+        headers: {'Authorization': token},
+        // body: json.encode(fileterData),
+      );
+      print("DEBUG storeissue status: ${response.statusCode}");
+      print("DEBUG storeissue body: ${utf8.decode(response.bodyBytes)}");
+      if (response.statusCode == 200) {
+        List<dynamic> res = json.decode(utf8.decode(response.bodyBytes));
+        List<Storeissue> data = [];
+        if (res == null) {
+          print('no data');
+        } else {
+          print(res);
+          // listIssue.clear();
+          // print("ok");
+          for (var i = 0; i < res.length; i++) {
+            final statusStr = res[i]['STATUS'].toString();
+            if (statusStr != "0") continue; // เฉพาะรายการที่รออนุมัติ (STATUS == 0)
+
+            final Storeissue personRes = Storeissue(
+                id: res[i]['ID'].toString(),
+                journal_no: res[i]['JOURNAL_NO'].toString(),
+                trans_date: res[i]['TRANS_DATE'].toString(),
+                created_by: res[i]['REQUEST_BY'].toString(),
+                created_name: res[i]['REQUEST_BY'].toString(),
+                status: statusStr,
+                emp_full_name: res[i]['EMP_FULL_NAME']);
+            data.add(personRes);
+>>>>>>> e22eb7c6d1c95d0455da2e90fabde345106aff56
           }
 
           if (res != null && res.isNotEmpty) {
@@ -129,6 +173,7 @@ class StoreissueData extends ChangeNotifier {
     final pref = await SharedPreferences.getInstance();
     final String token = pref.getString("token").toString();
 
+<<<<<<< HEAD
     List<String> detailUrls = [
       url_issue_list_detail + "/" + _issueid,
       "http://172.16.0.231:3000/api/findjournaldetail",
@@ -167,6 +212,42 @@ class StoreissueData extends ChangeNotifier {
             res = decoded;
           } else if (decoded is Map && decoded['data'] is List) {
             res = decoded['data'];
+=======
+    //final Map<String, dynamic> fileterData = {'empid': user_id};
+    // print("data for issue is ${user_id}");
+    try {
+      http.Response response;
+      response = await http.get(
+        Uri.parse(url_issue_list_detail + "/" + _issueid),
+        headers: {'Authorization': token},
+        // body: json.encode(fileterData),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> res = json.decode(utf8.decode(response.bodyBytes));
+        List<Storeissueline> data = [];
+        if (res == null) {
+          print('no data');
+        } else {
+          print(res);
+          if (res.length == 0) {
+            listIssue.clear();
+            notifyListeners();
+            return listIssue;
+          }
+          // print("ok");
+          for (var i = 0; i < res.length; i++) {
+            final Storeissueline personRes = Storeissueline(
+              id: res[i]['ID'].toString(),
+              issue_id: res[i]['ISSUE_ID'].toString(),
+              product_id: res[i]['ITEM_ID'].toString(),
+              product_name: res[i]['ITEM_NAME'].toString(),
+              qty: res[i]['QTY'].toString(),
+              remark: res[i]['REMARK'].toString(),
+              unit_name: res[i]['UNIT_NAME'].toString(),
+              price: res[i]['PRICE']?.toString() ?? '0',
+            );
+            data.add(personRes);
+>>>>>>> e22eb7c6d1c95d0455da2e90fabde345106aff56
           }
 
           if (res != null && res.isNotEmpty) {
@@ -217,6 +298,7 @@ class StoreissueData extends ChangeNotifier {
       'id': issue_id
     };
     print("data approve is ${approveData}");
+<<<<<<< HEAD
 
     List<String> approveUrls = [
       url_issue_approve,
@@ -250,6 +332,30 @@ class StoreissueData extends ChangeNotifier {
       } catch (err) {
         print("Error approving issue at $url: $err");
         throw err; // Re-throw to show in UI
+=======
+    try {
+      print("data approve is issue_id=$issue_id, approve_status=$approve_type, user_id=$user_id");
+      final Map<String, dynamic> approveData = {
+        'user_id': int.tryParse(user_id ?? '0') ?? 0,
+        'approve_status': approve_type,
+        'issue_id': int.tryParse(issue_id) ?? 0
+      };
+      
+      final uri = Uri.parse(url_issue_approve);
+      http.Response response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        body: json.encode(approveData),
+      );
+      print("approve response: ${response.statusCode} ${utf8.decode(response.bodyBytes)}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+>>>>>>> e22eb7c6d1c95d0455da2e90fabde345106aff56
       }
     }
     return false;

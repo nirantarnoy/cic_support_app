@@ -133,7 +133,7 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                   InspectionSafetyTrans _item = InspectionSafetyTrans(
                     module_type_id: "2",
                     plan_id: listcheck[index].plan_id,
-                    trans_date: DateTime.now().toIso8601String(),
+                    trans_date: "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')} ${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}",
                     emp_id: "0",
                     area_group_id: "0",
                     area_id: listcheck[index].plan_area_id,

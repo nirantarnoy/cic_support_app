@@ -7,7 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamnotifyData extends ChangeNotifier {
   final String url_to_get_notify =
-      "https://api.cicsupports.com/api/teamnotify/findempnotify";
+      "https://api.cicsupports.com/api/notifications";
+  final String url_to_read_notify =
+      "https://api.cicsupports.com/api/notifications/read";
   final String url_to_get_team_notify =
       "https://api.cicsupports.com/api/teamnotify/findteamnotify";
 
@@ -31,26 +33,28 @@ class TeamnotifyData extends ChangeNotifier {
   List<Teamnotify> _mapItems(List<dynamic> res) {
     return res.map((item) {
       return Teamnotify(
-        id: item['id'].toString(),
-        trans_ref_id: item['trans_ref_id'].toString(),
-        module_type_id: item['module_type_id'].toString(),
-        emp_id: item['emp_id'].toString(),
-        title: item['title'].toString(),
-        detail: item['detail'].toString(),
-        read_status: item['read_status'].toString(),
-        notify_date: item['notify_date'].toString(),
+        id: item['id']?.toString() ?? '',
+        trans_ref_id: item['journal_no']?.toString() ?? item['trans_ref_id']?.toString() ?? '',
+        module_type_id: item['module_type_id']?.toString() ?? '',
+        emp_id: item['emp_code']?.toString() ?? item['emp_id']?.toString() ?? '',
+        title: item['title']?.toString() ?? '',
+        detail: item['body']?.toString() ?? item['detail']?.toString() ?? '',
+        read_status: item['is_read']?.toString() ?? item['read_status']?.toString() ?? '0',
+        notify_date: item['created_at']?.toString() ?? item['notify_date']?.toString() ?? '',
       );
     }).toList();
   }
 
   Future<dynamic> teamnotifyFetch() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String userId = prefs.getString("user_id").toString();
+    final String empCode = prefs.getString("emp_code").toString();
     final String token = prefs.getString("token").toString();
 
     try {
+      final uri = Uri.parse("$url_to_get_notify?emp_code=$empCode");
+      print("DEBUG calling GET: $uri");
       final response = await http.get(
-        Uri.parse("$url_to_get_notify/$userId"),
+        uri,
         headers: {"Authorization": token},
       );
 
@@ -107,6 +111,64 @@ class TeamnotifyData extends ChangeNotifier {
       }
     } catch (err) {
       print("teamnotifyAllFetch error: $err");
+      return false;
+    }
+  }
+
+  Future<bool> markAsRead(int notificationId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token").toString();
+
+    try {
+      final response = await http.post(
+        Uri.parse(url_to_read_notify),
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json",
+        },
+        body: json.encode({"notification_id": notificationId}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final index = _teamnotify.indexWhere((n) => n.id == notificationId.toString());
+        if (index != -1) {
+          _teamnotify[index].read_status = "1";
+          notifyListeners();
+        }
+        return true;
+      }
+      return false;
+    } catch (err) {
+      print("markAsRead error: $err");
+      return false;
+    }
+  }
+
+  Future<bool> markAllAsRead() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String empCode = prefs.getString("emp_code").toString();
+    final String token = prefs.getString("token").toString();
+
+    try {
+      final response = await http.post(
+        Uri.parse(url_to_read_notify),
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json",
+        },
+        body: json.encode({"emp_code": empCode}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        for (var n in _teamnotify) {
+          n.read_status = "1";
+        }
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      print("markAllAsRead error: $err");
       return false;
     }
   }

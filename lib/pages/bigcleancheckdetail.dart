@@ -332,7 +332,7 @@ class _BigCleanCheckDetailPageState extends State<BigCleanCheckDetailPage> {
         topic_item_id: topic_item_id,
         module_type_id: '1',
         note: '',
-        trans_date: DateTime.now().toIso8601String(),
+        trans_date: "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')} ${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}",
       );
 
       Provider.of<PlanData>(context, listen: false)

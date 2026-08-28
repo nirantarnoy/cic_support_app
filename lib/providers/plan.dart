@@ -1644,7 +1644,11 @@ class PlanData extends ChangeNotifier {
         // If successful, remove it from queue
         offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];
         offlineQueue.remove(payloadJson);
-        await prefs.setStringList("offline_5s_inspections", offlineQueue);
+        if (offlineQueue.isEmpty) {
+          await prefs.remove("offline_5s_inspections");
+        } else {
+          await prefs.setStringList("offline_5s_inspections", offlineQueue);
+        }
         await loadOfflineCounts();
 
         print("save transaction ok");
@@ -1742,18 +1746,18 @@ class PlanData extends ChangeNotifier {
 
       var addData = listInspectionSafetytrans
           .map((e) => {
-                'module_type_id': int.parse(e.module_type_id),
-                'plan_id': int.parse(e.plan_id),
+                'module_type_id': int.tryParse(e.module_type_id) ?? 2,
+                'plan_id': int.tryParse(e.plan_id) ?? 0,
                 'trans_date': e.trans_date,
-                'emp_id': int.parse(user_id),
-                'area_group_id': int.parse(e.area_group_id),
-                'area_id': int.parse(e.area_id),
-                'team_id': int.parse(team_safety_id),
-                'score': int.parse(e.score),
-                'status': int.parse(e.status),
+                'emp_id': int.tryParse(user_id) ?? 0,
+                'area_group_id': int.tryParse(e.area_group_id) ?? 0,
+                'area_id': int.tryParse(e.area_id) ?? 0,
+                'team_id': int.tryParse(team_safety_id) ?? 0,
+                'score': int.tryParse(e.score) ?? 0,
+                'status': int.tryParse(e.status) ?? 0,
                 'note': e.note,
                 'created_at': 0,
-                'created_by': int.parse(user_id),
+                'created_by': int.tryParse(user_id) ?? 0,
               })
           .toList();
 
@@ -1780,7 +1784,11 @@ class PlanData extends ChangeNotifier {
           // If successful, remove it from queue
           offlineQueue = prefs.getStringList("offline_safety_inspections") ?? [];
           offlineQueue.remove(payloadJson);
-          await prefs.setStringList("offline_safety_inspections", offlineQueue);
+          if (offlineQueue.isEmpty) {
+            await prefs.remove("offline_safety_inspections");
+          } else {
+            await prefs.setStringList("offline_safety_inspections", offlineQueue);
+          }
           await loadOfflineCounts();
 
           print("save transaction ok");
@@ -2103,7 +2111,11 @@ class PlanData extends ChangeNotifier {
           break; // Network dropped or timeout
         }
       }
-      await prefs.setStringList("offline_5s_inspections", remaining5s);
+      if (remaining5s.isEmpty) {
+        await prefs.remove("offline_5s_inspections");
+      } else {
+        await prefs.setStringList("offline_5s_inspections", remaining5s);
+      }
 
       // 2. Sync Safety Inspections
       List<String> offlineSafety = prefs.getStringList("offline_safety_inspections") ?? [];
@@ -2146,11 +2158,17 @@ class PlanData extends ChangeNotifier {
           break;
         }
       }
-      await prefs.setStringList("offline_safety_inspections", remainingSafety);
+      
+      if (remainingSafety.isEmpty) {
+        await prefs.remove("offline_safety_inspections");
+      } else {
+        await prefs.setStringList("offline_safety_inspections", remainingSafety);
+      }
 
       await loadOfflineCounts();
 
-      if (offline5s.isNotEmpty || offlineSafety.isNotEmpty) {
+      bool didAttemptSync = offline5s.isNotEmpty || offlineSafety.isNotEmpty;
+      if (didAttemptSync) {
         if (remaining5s.isEmpty && remainingSafety.isEmpty) {
           EasyLoading.showSuccess('ซิงค์ข้อมูลออฟไลน์เรียบร้อยแล้ว');
         } else if (!is5sSuccess || !isSafetySuccess) {

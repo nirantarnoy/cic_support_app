@@ -1,0 +1,1 @@
+<?php $m = new mysqli("172.16.0.231", "root", "Tamakogi2012", "cic_support"); $m->set_charset("utf8"); $res = $m->query("SHOW COLUMNS FROM employee"); while($row=$res->fetch_assoc()){ echo $row["Field"]." "; } echo "\n\n"; $res = $m->query("SHOW COLUMNS FROM department"); while($row=$res->fetch_assoc()){ echo $row["Field"]." "; } ?>

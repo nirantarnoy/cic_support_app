@@ -23,7 +23,7 @@ import 'package:flutter_cic_support/models/transhistoryemp.dart';
 import 'package:flutter_cic_support/sqlite/inspectionmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:sqflite/sqflite.dart';
+// import 'package:sqflite/sqflite.dart';
 import 'package:flutter_cic_support/sqlite/dbprovider.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -2021,28 +2021,28 @@ class PlanData extends ChangeNotifier {
   }
 
   Future<bool> addInspectionTransSqlite(InspectionTransDB data) async {
-    if (data != null) {
-      final topic_item_id = data.topic_item_id;
-      final area_id = data.area_id;
-      int check_id = 0;
-      String new_score = '0';
-      Database db = await DbProvider.instance.database;
-      List<Map> old_data = await db.rawQuery(
-          'SELEC id FROM event_trans WHERE topic_item_id=? AND area_id=?',
-          [topic_item_id, area_id]);
+    // if (data != null) {
+    //   final topic_item_id = data.topic_item_id;
+    //   final area_id = data.area_id;
+    //   int check_id = 0;
+    //   String new_score = '0';
+    //   Database db = await DbProvider.instance.database;
+    //   List<Map> old_data = await db.rawQuery(
+    //       'SELEC id FROM event_trans WHERE topic_item_id=? AND area_id=?',
+    //       [topic_item_id, area_id]);
 
-      check_id = int.parse(old_data[0]['id']);
-      if (check_id > 0) {
-        new_score = data.score;
-        final update_id = await db.rawQuery(
-            'UPDATE event_trans SET score=? WHERE id=?', [new_score, check_id]);
-      } else {
-        final save_id = await db.insert('event_trans', data.toJson());
-        return save_id > 0 ? true : false;
-      }
-    } else {
-      return false;
-    }
+    //   check_id = int.parse(old_data[0]['id']);
+    //   if (check_id > 0) {
+    //     new_score = data.score;
+    //     final update_id = await db.rawQuery(
+    //         'UPDATE event_trans SET score=? WHERE id=?', [new_score, check_id]);
+    //   } else {
+    //     final save_id = await db.insert('event_trans', data.toJson());
+    //     return save_id > 0 ? true : false;
+    //   }
+    // } else {
+    //   return false;
+    // }
 
     return false;
   }

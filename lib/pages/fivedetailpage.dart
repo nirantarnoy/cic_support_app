@@ -370,7 +370,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 45, 172, 123)),
+                      primary: Color.fromARGB(255, 45, 172, 123)),
                   child: Text('ค้นหา'),
                   onPressed: () {
                     setState(() {
@@ -508,7 +508,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 45, 172, 123)),
+                      primary: Color.fromARGB(255, 45, 172, 123)),
                   child: Text('ค้นหา'),
                   onPressed: () {
                     setState(() {

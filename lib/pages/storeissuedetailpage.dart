@@ -327,6 +327,128 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
             color: Colors.black87,
           ),
         ),
+<<<<<<< HEAD
+        Expanded(
+          flex: 1,
+          child: Row(children: [
+            Expanded(
+                child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Icon(
+                            Icons.privacy_tip_outlined,
+                            size: 32,
+                            color: Colors.green.shade400,
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Text(
+                            'ยืนยันการทำรายการ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Text(
+                            'ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                            style: TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: MaterialButton(
+                                  color: Color.fromARGB(255, 45, 172, 123),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50)),
+                                  onPressed: () async {
+                                    //  _timer?.cancel();
+                                    await EasyLoading.show(
+                                        status: "กำลังบันทึกข้อมูล");
+                                    try {
+                                      bool isSave =
+                                          await Provider.of<StoreissueData>(
+                                                  context,
+                                                  listen: false)
+                                              .approveissue(1, widget.issue_id);
+                                      if (isSave == true) {
+                                        await EasyLoading.showSuccess(
+                                            'บันทึกรายการเรียบร้อย');
+                                      }
+                                    } catch (e) {
+                                      EasyLoading.dismiss();
+                                      await EasyLoading.showError(e.toString().replaceAll('Exception: ', ''));
+                                      Navigator.of(context).pop(); // Close the dialog
+                                      return; // Stop execution, don't navigate away
+                                    }
+
+                                    EasyLoading.dismiss();
+                                    if (widget.team_id == "") {
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  StoreissueApprovePage(
+                                                    team_id: "",
+                                                  )),
+                                          (Route<dynamic> route) => false);
+                                    } else {
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  StoreissueApprovePage(
+                                                    team_id: widget.team_id,
+                                                  )),
+                                          (Route<dynamic> route) => false);
+                                    }
+                                  },
+                                  child: Text(
+                                    'ใช่',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                              Expanded(
+                                child: MaterialButton(
+                                  color: Colors.grey[400],
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50)),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text(
+                                    'ไม่ใช่',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+=======
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
@@ -362,11 +484,152 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
+>>>>>>> e22eb7c6d1c95d0455da2e90fabde345106aff56
                       ),
                       onPressed: () => _showConfirmDialog(context, false), // Reject
                       child: const Text('ไม่อนุมัติ', style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
+<<<<<<< HEAD
+                );
+              },
+              child: Container(
+                color: Colors.green,
+                child: Center(child: Text('อนุมัติ')),
+              ),
+            )),
+            Expanded(
+              child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => Dialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Icon(
+                                Icons.privacy_tip_outlined,
+                                size: 32,
+                                color: Colors.green.shade400,
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                'ยืนยันการทำรายการ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Text(
+                                'ต้องการดำเนินการต่อใช่หรือไม่ ?',
+                                style: TextStyle(fontWeight: FontWeight.normal),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: MaterialButton(
+                                      color: Color.fromARGB(255, 45, 172, 123),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                      onPressed: () async {
+                                        //  _timer?.cancel();
+                                        await EasyLoading.show(
+                                            status: "กำลังบันทึกข้อมูล");
+                                        bool isSave =
+                                            await Provider.of<StoreissueData>(
+                                                    context,
+                                                    listen: false)
+                                                .approveissue(
+                                                    3, widget.issue_id);
+                                        if (isSave == true) {
+                                          await EasyLoading.showSuccess(
+                                              'บันทึกรายการเรียบร้อย');
+
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             PlancheckcompletePage()));
+                                        } catch (e) {
+                                          EasyLoading.dismiss();
+                                          await EasyLoading.showError(e.toString().replaceAll('Exception: ', ''));
+                                          Navigator.of(context).pop(); // Close the dialog
+                                          return; // Stop execution, don't navigate away
+                                        }
+                                        EasyLoading.dismiss();
+
+                                        if (widget.team_id == "") {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          StoreissueApprovePage(
+                                                            team_id: "",
+                                                          )),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        } else {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          StoreissueApprovePage(
+                                                            team_id:
+                                                                widget.team_id,
+                                                          )),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        }
+                                      },
+                                      child: Text(
+                                        'ใช่',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Expanded(
+                                    child: MaterialButton(
+                                      color: Colors.grey[400],
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                      child: Text(
+                                        'ไม่ใช่',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+=======
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
@@ -376,6 +639,7 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
+>>>>>>> e22eb7c6d1c95d0455da2e90fabde345106aff56
                       ),
                       onPressed: () => _showConfirmDialog(context, true), // Approve
                       child: const Text('อนุมัติ', style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold)),

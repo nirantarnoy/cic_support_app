@@ -271,6 +271,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           ),
                         ),
                       ),
+
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -293,6 +294,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                           ),
                         ),
                       ),
+
                     ),
                   ],
                 ),

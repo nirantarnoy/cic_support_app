@@ -141,8 +141,9 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
                                     size: 12, color: Colors.grey),
                                 const SizedBox(width: 4),
                                 Text(
-                                  dateformatter
-                                      .format(DateTime.parse(item.trans_date)),
+                                  DateTime.tryParse(item.trans_date) != null
+                                      ? dateformatter.format(DateTime.parse(item.trans_date))
+                                      : item.trans_date,
                                   style: const TextStyle(
                                     fontFamily: 'Prompt',
                                     fontSize: 11,

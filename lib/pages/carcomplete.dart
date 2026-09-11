@@ -77,14 +77,10 @@ class CarcompletePage extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    onTap: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ProfilePage()),
-                      ModalRoute.withName("profile"),
-                    ),
+                    onTap: () => Navigator.pop(context),
                     child: const Center(
                       child: Text(
-                        "กลับหน้าหลัก",
+                        "กลับสู่หน้าเดิม",
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Prompt',

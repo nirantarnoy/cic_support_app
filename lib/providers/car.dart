@@ -75,7 +75,12 @@ class CarData extends ChangeNotifier {
       response = await http.post(Uri.parse(url_to_addcar),
           headers: {"Authorization": token, 'Content-Type': 'application/json'},
           body: json.encode(insertData));
-      return true;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        print('Server error: ${response.statusCode} - ${response.body}');
+        return false;
+      }
     } catch (err) {
       print('has error na ja ${err}');
       return false;

@@ -367,8 +367,8 @@ class _SecuritycheckDetailPageState extends State<SecuritycheckDetailPage> {
       final image = await ImagePicker().pickImage(
           source: ImageSource.camera,
           imageQuality: 60,
-          // maxHeight: 400,
-          // maxWidth: 400,
+          maxHeight: 800,
+          maxWidth: 800,
           preferredCameraDevice: CameraDevice.rear);
 
       if (image == null) return;

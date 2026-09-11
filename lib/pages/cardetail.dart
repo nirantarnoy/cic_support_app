@@ -89,8 +89,8 @@ class _CarDetailPageState extends State<CarDetailPage> {
         final image = await ImagePicker().pickImage(
             source: ImageSource.camera,
             imageQuality: 60,
-            // maxHeight: 400,
-            // maxWidth: 400,
+            maxHeight: 800,
+            maxWidth: 800,
             preferredCameraDevice: CameraDevice.rear);
 
         if (image == null) return;
@@ -626,7 +626,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
         .closeCar(widget.car_id, 'Close', base64ImageList);
 
     if (isSave) {
-      Navigator.push(
+      Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => CarcompletePage()));
     } else {
       showDialog(

@@ -307,8 +307,8 @@ class _CreateCarState extends State<CreateCar> {
       final image = await ImagePicker().pickImage(
           source: ImageSource.camera,
           imageQuality: 60,
-          // maxHeight: 400,
-          // maxWidth: 400,
+          maxHeight: 800,
+          maxWidth: 800,
           preferredCameraDevice: CameraDevice.rear);
 
       if (image == null) return;
@@ -491,7 +491,7 @@ class _CreateCarState extends State<CreateCar> {
       );
       EasyLoading.dismiss();
       if (isSave == true) {
-        Navigator.push(context,
+        Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => CarcompletePage()));
       }
     } else {

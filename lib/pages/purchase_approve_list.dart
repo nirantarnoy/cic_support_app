@@ -11,6 +11,7 @@ class PurchaseApproveListPage extends StatefulWidget {
   State<PurchaseApproveListPage> createState() => _PurchaseApproveListPageState();
 }
 
+class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
   @override
   void initState() {
     super.initState();

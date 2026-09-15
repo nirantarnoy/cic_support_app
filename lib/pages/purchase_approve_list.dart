@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/purchase_approve_detail.dart';
+import 'package:flutter_cic_support/providers/purchase_approve.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PurchaseApproveListPage extends StatefulWidget {
   const PurchaseApproveListPage({Key? key}) : super(key: key);
@@ -9,41 +11,16 @@ class PurchaseApproveListPage extends StatefulWidget {
   State<PurchaseApproveListPage> createState() => _PurchaseApproveListPageState();
 }
 
-class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
-  // Demo Data
-  final List<Map<String, dynamic>> _demoRequests = [
-    {
-      'id': 'PR-202310-001',
-      'requestor': 'นายสมชาย ใจดี',
-      'department': 'IT Support',
-      'date': '2023-10-01 10:30',
-      'total': 15500.00,
-      'status': 'รออนุมัติ',
-      'has_attachment': true,
-    },
-    {
-      'id': 'PR-202310-002',
-      'requestor': 'นางสาวสมศรี รักงาน',
-      'department': 'HR',
-      'date': '2023-10-02 09:15',
-      'total': 2400.00,
-      'status': 'รออนุมัติ',
-      'has_attachment': false,
-    },
-    {
-      'id': 'PR-202310-005',
-      'requestor': 'นายสมศักดิ์ ขยัน',
-      'department': 'Production',
-      'date': '2023-10-05 14:20',
-      'total': 45000.00,
-      'status': 'รออนุมัติ',
-      'has_attachment': true,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PurchaseApproveProvider>(context, listen: false).fetchPendingList();
+    });
+  }
 
   Future<void> _refreshData() async {
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() {});
+    await Provider.of<PurchaseApproveProvider>(context, listen: false).fetchPendingList();
   }
 
   @override
@@ -70,35 +47,49 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
         ),
         centerTitle: true,
       ),
-      body: _demoRequests.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.shopping_cart_checkout_rounded, size: 48, color: Colors.grey),
+      body: Consumer<PurchaseApproveProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF8E24AA)));
+          }
+
+          if (provider.errorMessage.isNotEmpty) {
+            return Center(
+              child: Text(provider.errorMessage, style: const TextStyle(fontFamily: 'Prompt', color: Colors.red)),
+            );
+          }
+
+          final _requests = provider.pendingList;
+
+          return _requests.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.shopping_cart_checkout_rounded, size: 48, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "ไม่พบรายการรออนุมัติขอซื้อ",
+                        style: TextStyle(fontFamily: 'Prompt', fontSize: 16, color: Colors.grey),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "ไม่พบรายการรออนุมัติขอซื้อ",
-                    style: TextStyle(fontFamily: 'Prompt', fontSize: 16, color: Colors.grey),
-                  ),
-                ],
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _refreshData,
-              color: const Color(0xFF8E24AA),
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                itemCount: _demoRequests.length,
-                itemBuilder: (context, index) {
-                  final item = _demoRequests[index];
+                )
+              : RefreshIndicator(
+                  onRefresh: _refreshData,
+                  color: const Color(0xFF8E24AA),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    itemCount: _requests.length,
+                    itemBuilder: (context, index) {
+                      final item = _requests[index];
                   return GestureDetector(
                     onTap: () => Navigator.push(
                       context,
@@ -146,7 +137,7 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        item['id'],
+                                        item['pr_no'] ?? '',
                                         style: const TextStyle(
                                           fontFamily: 'Prompt',
                                           fontWeight: FontWeight.bold,
@@ -174,7 +165,7 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    '${item['requestor']} (${item['department']})',
+                                    '${item['requestor_name'] ?? ''} (${item['req_dept'] ?? ''})',
                                     style: const TextStyle(
                                       fontFamily: 'Prompt',
                                       fontSize: 13,
@@ -190,7 +181,7 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
                                           const Icon(Icons.access_time_rounded, size: 12, color: Colors.grey),
                                           const SizedBox(width: 4),
                                           Text(
-                                            item['date'],
+                                            item['request_date'] ?? '',
                                             style: const TextStyle(
                                               fontFamily: 'Prompt',
                                               fontSize: 11,
@@ -206,7 +197,7 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
                                             const SizedBox(width: 8),
                                           ],
                                           Text(
-                                            '฿${formatter.format(item['total'])}',
+                                            '฿${formatter.format(item['total_amount'] ?? 0)}',
                                             style: const TextStyle(
                                               fontFamily: 'Prompt',
                                               fontSize: 13,
@@ -226,9 +217,11 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
                       ),
                     ),
                   );
-                },
-              ),
-            ),
+                    },
+                  ),
+                );
+        },
+      ),
     );
   }
 }

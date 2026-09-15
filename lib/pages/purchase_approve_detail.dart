@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cic_support/providers/purchase_approve.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PurchaseApproveDetailPage extends StatefulWidget {
   final Map<String, dynamic> requestData;
@@ -11,28 +13,16 @@ class PurchaseApproveDetailPage extends StatefulWidget {
 }
 
 class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
-  // Demo Items Data
-  final List<Map<String, dynamic>> _demoItems = [
-    {
-      'product_name': 'คอมพิวเตอร์ Notebook (Dell Latitude 3420)',
-      'qty': 1,
-      'unit': 'เครื่อง',
-      'price': 15000.00,
-      'remark': 'สำหรับพนักงานใหม่',
-    },
-    {
-      'product_name': 'เมาส์ไร้สาย Logitech',
-      'qty': 1,
-      'unit': 'อัน',
-      'price': 500.00,
-      'remark': '',
-    }
-  ];
-
-  final List<Map<String, String>> _demoAttachments = [
-    {'name': 'ใบเสนอราคา_Dell.pdf', 'size': '1.2 MB'},
-    {'name': 'เอกสารเปรียบเทียบราคา.pdf', 'size': '800 KB'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      int prId = widget.requestData['pr_id'] ?? 0;
+      if (prId > 0) {
+        Provider.of<PurchaseApproveProvider>(context, listen: false).fetchPrDetail(prId);
+      }
+    });
+  }
 
   Widget _buildInfoColumn(String label, String value, {Color? valueColor}) {
     return Column(
@@ -137,12 +127,23 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 0,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.pop(dialogContext);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('ส่งตีกลับเรียบร้อยแล้ว')),
+                        final success = await Provider.of<PurchaseApproveProvider>(context, listen: false).actionPr(
+                          widget.requestData['pr_id'] ?? 0,
+                          '3', // RETURN
+                          reasonController.text,
                         );
-                        Navigator.pop(context);
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('ส่งตีกลับเรียบร้อยแล้ว')),
+                          );
+                          Navigator.pop(context); // close page
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('เกิดข้อผิดพลาดในการทำรายการ')),
+                          );
+                        }
                       },
                       child: const Text('ยืนยันตีกลับ', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
                     ),
@@ -204,12 +205,24 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 0,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.pop(dialogContext);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(isApprove ? 'อนุมัติรายการเรียบร้อย' : 'ไม่อนุมัติรายการเรียบร้อย')),
+                        final actionStr = isApprove ? '1' : '2'; // 1=APPROVE, 2=REJECT
+                        final success = await Provider.of<PurchaseApproveProvider>(context, listen: false).actionPr(
+                          widget.requestData['pr_id'] ?? 0,
+                          actionStr,
+                          '',
                         );
-                        Navigator.pop(context);
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(isApprove ? 'อนุมัติรายการเรียบร้อย' : 'ไม่อนุมัติรายการเรียบร้อย')),
+                          );
+                          Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('เกิดข้อผิดพลาดในการทำรายการ')),
+                          );
+                        }
                       },
                       child: const Text('ยืนยัน', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
                     ),
@@ -237,7 +250,7 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          widget.requestData['id'],
+          widget.requestData['pr_no'] ?? '',
           style: const TextStyle(
             color: Colors.black87,
             fontFamily: 'Prompt',
@@ -247,7 +260,17 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
         ),
         centerTitle: true,
       ),
-      body: Column(
+      body: Consumer<PurchaseApproveProvider>(
+        builder: (context, provider, child) {
+          if (provider.isDetailLoading) {
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF0F9B73)));
+          }
+
+          final detail = provider.currentPrDetail ?? {};
+          final lines = (detail['lines'] as List<dynamic>?) ?? [];
+          final attachments = (detail['attachments'] as List<dynamic>?) ?? [];
+
+          return Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
@@ -281,15 +304,15 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            Expanded(child: _buildInfoColumn('ผู้ขอ', widget.requestData['requestor'])),
-                            Expanded(child: _buildInfoColumn('แผนก', widget.requestData['department'])),
+                            Expanded(child: _buildInfoColumn('ผู้ขอ', detail['requestor_name'] ?? '')),
+                            Expanded(child: _buildInfoColumn('แผนก', detail['req_dept'] ?? '')),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            Expanded(child: _buildInfoColumn('วันที่ขอ', widget.requestData['date'])),
-                            Expanded(child: _buildInfoColumn('สถานะ', widget.requestData['status'], valueColor: const Color(0xFFFF7E36))),
+                            Expanded(child: _buildInfoColumn('วันที่ขอ', detail['request_date'] ?? '')),
+                            Expanded(child: _buildInfoColumn('สถานะ', detail['status'] ?? '', valueColor: const Color(0xFFFF7E36))),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -305,8 +328,8 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                             color: Colors.blue.shade50,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text(
-                            'พนักงานใหม่แผนก IT และทดแทนของเดิมที่ชำรุด',
+                          child: Text(
+                            detail['remark'] ?? '-',
                             style: TextStyle(fontFamily: 'Prompt', fontSize: 13, color: Colors.black87),
                           ),
                         ),
@@ -325,10 +348,11 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _demoItems.length,
+                    itemCount: lines.length,
                     itemBuilder: (context, index) {
-                      final item = _demoItems[index];
-                      final total = item['price'] * item['qty'];
+                      final item = lines[index];
+                      final total = item['total_price'] ?? 0.0;
+                      final pricePerUnit = item['price_per_unit'] ?? 0.0;
                       
                       return Card(
                         elevation: 0,
@@ -356,7 +380,7 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      item['product_name'],
+                                      item['description'] ?? '',
                                       style: const TextStyle(
                                         fontFamily: 'Prompt',
                                         fontSize: 14,
@@ -374,11 +398,11 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildInfoColumn('จำนวน', '${item['qty']} ${item['unit']}'),
-                                  _buildInfoColumn('ราคา/หน่วย', formatter.format(item['price'])),
+                                  _buildInfoColumn('ราคา/หน่วย', formatter.format(pricePerUnit)),
                                   _buildInfoColumn('ราคารวม', formatter.format(total)),
                                 ],
                               ),
-                              if ((item['remark'] as String).isNotEmpty) ...[
+                              if ((item['remark'] ?? '').toString().isNotEmpty) ...[
                                 const SizedBox(height: 12),
                                 Container(
                                   width: double.infinity,
@@ -429,7 +453,7 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                           style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0F9B73)),
                         ),
                         Text(
-                          '฿${formatter.format(widget.requestData['total'])}',
+                          '฿${formatter.format(detail['total_amount'] ?? 0)}',
                           style: const TextStyle(fontFamily: 'Prompt', fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0F9B73)),
                         ),
                       ],
@@ -437,17 +461,17 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                   ),
                   
                   // Attachments Section
-                  if (widget.requestData['has_attachment'] == true) ...[
+                  if (attachments.isNotEmpty) ...[
                     const SizedBox(height: 24),
                     const Text(
                       'ไฟล์แนบ',
                       style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                     ),
                     const SizedBox(height: 12),
-                    ..._demoAttachments.map((file) => GestureDetector(
+                    ...attachments.map((file) => GestureDetector(
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('กำลังเปิดไฟล์ ${file['name']} ...')),
+                          SnackBar(content: Text('กำลังเปิดไฟล์ ${file['file_name']} ...')),
                         );
                       },
                       child: Container(
@@ -474,13 +498,13 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    file['name']!,
+                                    file['file_name'] ?? 'เอกสารแนบ',
                                     style: const TextStyle(fontFamily: 'Prompt', fontSize: 13, fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
-                                    file['size']!,
-                                    style: const TextStyle(fontFamily: 'Prompt', fontSize: 11, color: Colors.grey),
-                                  ),
+                                  // Text(
+                                  //   file['size'] ?? '',
+                                  //   style: const TextStyle(fontFamily: 'Prompt', fontSize: 11, color: Colors.grey),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -580,6 +604,8 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
             ),
           ),
         ],
+      );
+        },
       ),
     );
   }

@@ -22,6 +22,7 @@ import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 import 'package:flutter_cic_support/providers/topicitem.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_cic_support/providers/purchase_approve.dart';
 import 'package:flutter_cic_support/services/localnoti.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -154,7 +155,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<StoreissueData>.value(value: StoreissueData()),
           ChangeNotifierProvider<SecurityplanData>.value(
               value: SecurityplanData()),
-          ChangeNotifierProvider<ShirtempData>.value(value: ShirtempData())
+          ChangeNotifierProvider<ShirtempData>.value(value: ShirtempData()),
+          ChangeNotifierProvider<PurchaseApproveProvider>.value(value: PurchaseApproveProvider())
         ],
         child: Consumer<UserData>(
           builder: (context, _users, _) {

@@ -18,7 +18,7 @@ import 'package:flutter_cic_support/pages/memberteam.dart';
 import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/pages/safetycheck.dart';
 import 'package:flutter_cic_support/pages/safetyplanarea.dart';
-
+import 'package:flutter_cic_support/pages/purchase_approve_list.dart';
 import 'package:flutter_cic_support/pages/securitycheckarea.dart';
 import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/shirtorderinform.dart';
@@ -773,6 +773,20 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                   ),
                                 ),
                               ),
+                            ),
+                            _buildMenuCard(
+                              icon: Icons.shopping_cart_checkout_rounded,
+                              gradientColors: [const Color(0xFF8E24AA), const Color(0xFFBA68C8)],
+                              title: 'อนุมัติขอซื้อ',
+                              subtitle: 'ตรวจสอบและอนุมัติรายการขอซื้อ',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PurchaseApproveListPage(),
+                                  ),
+                                );
+                              },
                             ),
                             _buildMenuCard(
                               icon: Icons.fire_extinguisher_rounded,

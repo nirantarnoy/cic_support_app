@@ -27,6 +27,7 @@ import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
 import 'package:flutter_cic_support/providers/user.dart';
+import 'package:flutter_cic_support/providers/purchase_approve.dart';
 import 'package:flutter_cic_support/widgets/newswidget.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:googleapis/mybusinesslodging/v1.dart';
@@ -64,6 +65,9 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
   void initState() {
     // TODO: implement initState
     //Provider.of<UserData>(context, listen: false).fetchProfile();
+    Future.microtask(() {
+      Provider.of<PurchaseApproveProvider>(context, listen: false).fetchPendingList();
+    });
     // Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
     current_username =
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
@@ -397,6 +401,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    int? badgeCount,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -462,6 +467,28 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                       ],
                     ),
                   ),
+                  if (badgeCount != null && badgeCount > 0)
+                    Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      constraints: const BoxConstraints(
+                        minWidth: 24,
+                        minHeight: 24,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: Colors.redAccent,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        badgeCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: Colors.grey[400],
@@ -774,17 +801,22 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                 ),
                               ),
                             ),
-                            _buildMenuCard(
-                              icon: Icons.shopping_cart_checkout_rounded,
-                              gradientColors: [const Color(0xFF8E24AA), const Color(0xFFBA68C8)],
-                              title: 'อนุมัติขอซื้อ',
-                              subtitle: 'ตรวจสอบและอนุมัติรายการขอซื้อ',
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const PurchaseApproveListPage(),
-                                  ),
+                            Consumer<PurchaseApproveProvider>(
+                              builder: (context, prProvider, child) {
+                                return _buildMenuCard(
+                                  icon: Icons.shopping_cart_checkout_rounded,
+                                  gradientColors: [const Color(0xFF8E24AA), const Color(0xFFBA68C8)],
+                                  title: 'อนุมัติขอซื้อ',
+                                  subtitle: 'ตรวจสอบและอนุมัติรายการขอซื้อ',
+                                  badgeCount: prProvider.pendingList.length,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const PurchaseApproveListPage(),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),

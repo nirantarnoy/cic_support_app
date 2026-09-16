@@ -518,14 +518,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black87,
-            size: 20,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        automaticallyImplyLeading: false,
         title: const Text(
           'ข้อมูลผู้ใช้งาน / Profile',
           style: TextStyle(

@@ -15,6 +15,7 @@ class _newswidgetState extends State<newswidget> {
   bool isLoading = true;
   int _current = 0;
 
+  // URL from user request
   final String apiUrl = "http://172.16.0.231:3000/api/qa-news";
 
   @override
@@ -27,11 +28,16 @@ class _newswidgetState extends State<newswidget> {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString("token") ?? "";
+      print("QA News Fetch - URL: $apiUrl");
+      print("QA News Fetch - Token: $token");
 
       final response = await http.get(
         Uri.parse(apiUrl),
-        headers: {"Authorization": token},
+        headers: {"Authorization": "Bearer $token"},
       );
+
+      print("QA News Fetch - Status Code: ${response.statusCode}");
+      print("QA News Fetch - Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -79,6 +85,25 @@ class _newswidgetState extends State<newswidget> {
       );
     }
 
+    // Flatten images into individual slides
+    List<Map<String, dynamic>> slideList = [];
+    for (var news in newsList) {
+      List<dynamic> images = news['images'] ?? [];
+      if (images.isEmpty) {
+        slideList.add({
+          'news': news,
+          'image': null,
+        });
+      } else {
+        for (var img in images) {
+          slideList.add({
+            'news': news,
+            'image': img,
+          });
+        }
+      }
+    }
+
     return Column(
       children: [
         CarouselSlider(
@@ -94,11 +119,9 @@ class _newswidgetState extends State<newswidget> {
                   _current = index;
                 });
               }),
-          items: newsList.map((news) {
-            String? firstImage;
-            if (news['images'] != null && (news['images'] as List).isNotEmpty) {
-              firstImage = news['images'][0];
-            }
+          items: slideList.map((slide) {
+            var news = slide['news'];
+            String? image = slide['image'];
 
             return Builder(
               builder: (BuildContext context) {
@@ -118,10 +141,10 @@ class _newswidgetState extends State<newswidget> {
                     borderRadius: BorderRadius.circular(16),
                     child: Stack(
                       children: [
-                        // Background Image or Solid Color
-                        firstImage != null
+                        // Background Image
+                        image != null
                             ? Image.network(
-                                firstImage,
+                                image,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -184,30 +207,6 @@ class _newswidgetState extends State<newswidget> {
                             ],
                           ),
                         ),
-                        
-                        // Badge if multiple images exist
-                        if (news['images'] != null && (news['images'] as List).length > 1)
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.photo_library, color: Colors.white, size: 12),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "${(news['images'] as List).length}",
-                                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
                       ],
                     ),
                   ),
@@ -219,8 +218,8 @@ class _newswidgetState extends State<newswidget> {
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: newsList.map((news) {
-            int index = newsList.indexOf(news);
+          children: slideList.asMap().entries.map((entry) {
+            int index = entry.key;
             bool isSelected = _current == index;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),

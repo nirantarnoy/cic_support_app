@@ -26,7 +26,7 @@ class _newswidgetState extends State<newswidget> {
 
   Future<void> fetchNews() async {
     final List<String> baseUrls = [
-      'http://api.cicsupports.com:1223/api/qa-news',
+      'https://api.cicsupports.com/api/qa-news',
       'http://172.16.0.231:3000/api/qa-news'
     ];
 

@@ -25,33 +25,48 @@ class _newswidgetState extends State<newswidget> {
   }
 
   Future<void> fetchNews() async {
+    final List<String> baseUrls = [
+      'http://api.cicsupports.com:1223/api/qa-news',
+      'http://172.16.0.231:3000/api/qa-news',
+      'http://192.168.60.195:3000/api/qa-news'
+    ];
+
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString("token") ?? "";
-      print("QA News Fetch - URL: $apiUrl");
-      print("QA News Fetch - Token: $token");
 
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {"Authorization": "Bearer $token"},
-      );
+      bool success = false;
+      for (String url in baseUrls) {
+        try {
+          final response = await http.get(
+            Uri.parse(url),
+            headers: {
+              "Authorization": "Bearer $token",
+              "Content-Type": "application/json"
+            },
+          ).timeout(const Duration(seconds: 4));
 
-      print("QA News Fetch - Status Code: ${response.statusCode}");
-      print("QA News Fetch - Body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['status'] == true && data['data'] != null) {
-          setState(() {
-            newsList = data['data'];
-            isLoading = false;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-          });
+          if (response.statusCode == 200) {
+            final data = json.decode(response.body);
+            if (data['status'] == true && data['data'] != null) {
+              setState(() {
+                newsList = data['data'];
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                isLoading = false;
+              });
+            }
+            success = true;
+            break; // Stop looping if successful
+          }
+        } catch (e) {
+          print("Error fetching QA news from $url: $e");
         }
-      } else {
+      }
+      
+      if (!success) {
         setState(() {
           isLoading = false;
         });

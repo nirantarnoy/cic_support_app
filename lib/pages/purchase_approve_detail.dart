@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/providers/purchase_approve.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class PurchaseApproveDetailPage extends StatefulWidget {
   final Map<String, dynamic> requestData;
@@ -129,16 +130,48 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                       ),
                       onPressed: () async {
                         Navigator.pop(dialogContext);
+                        EasyLoading.show(status: 'กำลังดำเนินการ...');
                         final success = await Provider.of<PurchaseApproveProvider>(context, listen: false).actionPr(
                           widget.requestData['pr_id'] ?? 0,
                           '3', // RETURN
                           reasonController.text,
                         );
+                        EasyLoading.dismiss();
+                        if (!context.mounted) return;
                         if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('ส่งตีกลับเรียบร้อยแล้ว')),
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext successContext) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.check_circle, color: Color(0xFF0F9B73), size: 60),
+                                    const SizedBox(height: 16),
+                                    const Text('สำเร็จ', style: TextStyle(fontFamily: 'Prompt', fontSize: 20, fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 8),
+                                    const Text('ส่งตีกลับเรียบร้อยแล้ว', style: TextStyle(fontFamily: 'Prompt', fontSize: 14)),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF0F9B73),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        minimumSize: const Size(double.infinity, 45),
+                                        elevation: 0,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(successContext);
+                                        Navigator.pop(context, true);
+                                      },
+                                      child: const Text('ตกลง', style: TextStyle(fontFamily: 'Prompt', color: Colors.white, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           );
-                          Navigator.pop(context); // close page
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('เกิดข้อผิดพลาดในการทำรายการ')),
@@ -208,18 +241,50 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                       onPressed: () async {
                         Navigator.pop(dialogContext);
                         final actionStr = isApprove ? '1' : '2'; // 1=APPROVE, 2=REJECT
-                        final success = await Provider.of<PurchaseApproveProvider>(context, listen: false).actionPr(
+                        EasyLoading.show(status: 'กำลังดำเนินการ...');
+                        final success = await Provider.of<PurchaseApproveProvider>(parentContext, listen: false).actionPr(
                           widget.requestData['pr_id'] ?? 0,
                           actionStr,
                           '',
                         );
+                        EasyLoading.dismiss();
+                        if (!parentContext.mounted) return;
                         if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(isApprove ? 'อนุมัติรายการเรียบร้อย' : 'ไม่อนุมัติรายการเรียบร้อย')),
+                          showDialog(
+                            context: parentContext,
+                            barrierDismissible: false,
+                            builder: (BuildContext successContext) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.check_circle, color: Color(0xFF0F9B73), size: 60),
+                                    const SizedBox(height: 16),
+                                    const Text('สำเร็จ', style: TextStyle(fontFamily: 'Prompt', fontSize: 20, fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 8),
+                                    Text(isApprove ? 'อนุมัติรายการเรียบร้อย' : 'ไม่อนุมัติรายการเรียบร้อย', style: const TextStyle(fontFamily: 'Prompt', fontSize: 14)),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF0F9B73),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        minimumSize: const Size(double.infinity, 45),
+                                        elevation: 0,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(successContext);
+                                        Navigator.pop(parentContext, true);
+                                      },
+                                      child: const Text('ตกลง', style: TextStyle(fontFamily: 'Prompt', color: Colors.white, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           );
-                          Navigator.pop(context);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(parentContext).showSnackBar(
                             const SnackBar(content: Text('เกิดข้อผิดพลาดในการทำรายการ')),
                           );
                         }

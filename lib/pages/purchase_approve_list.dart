@@ -91,15 +91,21 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
                     itemCount: _requests.length,
                     itemBuilder: (context, index) {
                       final item = _requests[index];
-                  return GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PurchaseApproveDetailPage(
-                          requestData: item,
+                      return GestureDetector(
+                        onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PurchaseApproveDetailPage(
+                            requestData: item,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                      if (result == true) {
+                        if (!context.mounted) return;
+                        _refreshData();
+                      }
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(

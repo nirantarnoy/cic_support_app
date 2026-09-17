@@ -489,8 +489,8 @@ class _CreateCarState extends State<CreateCar> {
         base64ImageList,
         1,
       );
-      EasyLoading.dismiss();
       if (isSave == true) {
+        EasyLoading.dismiss();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => CarcompletePage()));
       }

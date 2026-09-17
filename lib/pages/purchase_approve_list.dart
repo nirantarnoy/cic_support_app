@@ -15,9 +15,7 @@ class _PurchaseApproveListPageState extends State<PurchaseApproveListPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<PurchaseApproveProvider>(context, listen: false).fetchPendingList();
-    });
+    Provider.of<PurchaseApproveProvider>(context, listen: false).fetchPendingList();
   }
 
   Future<void> _refreshData() async {

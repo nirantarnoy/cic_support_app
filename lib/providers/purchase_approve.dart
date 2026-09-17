@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class PurchaseApproveProvider with ChangeNotifier {
   List<dynamic> _pendingList = [];
@@ -138,6 +140,12 @@ class PurchaseApproveProvider with ChangeNotifier {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? empCode = prefs.getString('emp_code');
+
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต กรุณาลองใหม่');
+        return false;
+      }
 
       for (String baseUrl in baseUrls) {
         try {

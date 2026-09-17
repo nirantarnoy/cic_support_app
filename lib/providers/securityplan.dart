@@ -25,6 +25,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_cic_support/sqlite/dbprovider.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class SecurityplanData extends ChangeNotifier {
   // final String url_to_security_checkplan_by_emp =
@@ -278,13 +280,19 @@ class SecurityplanData extends ChangeNotifier {
 
       print('data save is ${json.encode(insertData)}');
       // return false;
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต กรุณาลองใหม่');
+        return false;
+      }
+      
       try {
         http.Response response;
         response = await http.post(
           Uri.parse(url_to_add_security_check_trans),
           headers: {"Authorization": token, 'Content-Type': 'application/json'},
           body: json.encode(insertData),
-        );
+        ).timeout(const Duration(seconds: 15));
 
         if (response.statusCode == 200) {
           // List<JobplanArea> data = [];
@@ -296,10 +304,14 @@ class SecurityplanData extends ChangeNotifier {
           print("save security check is ok");
           clearCheckedTrans(); // clear list after save finished
           updateSecurityCheckList(_asset_id); // update line after save data
+        } else {
+          EasyLoading.showError('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
+          return false;
         }
         return true;
       } catch (err) {
         print("has eerror is ${err.toString()}");
+        EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต หรือเซิร์ฟเวอร์ไม่ตอบสนอง');
         return false;
       }
       //return true;

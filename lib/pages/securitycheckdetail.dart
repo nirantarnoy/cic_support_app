@@ -262,8 +262,8 @@ class _SecuritycheckDetailPageState extends State<SecuritycheckDetailPage> {
                                 _remarkController.text,
                                 base64ImageList,
                                 widget.plan_id);
-                        EasyLoading.dismiss();
                         if (res == true) {
+                          EasyLoading.dismiss();
                           showDialog(
                             context: context,
                             barrierDismissible: false,

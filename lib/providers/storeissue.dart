@@ -4,7 +4,8 @@ import 'package:flutter_cic_support/models/storeissue.dart';
 import 'package:flutter_cic_support/models/storeissueline.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreissueData extends ChangeNotifier {
@@ -215,6 +216,12 @@ class StoreissueData extends ChangeNotifier {
       'id': issue_id
     };
     print("data approve is ${approveData}");
+
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต กรุณาลองใหม่');
+      return false;
+    }
 
     List<String> approveUrls = [
       url_issue_approve,

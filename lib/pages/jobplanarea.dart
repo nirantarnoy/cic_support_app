@@ -926,8 +926,6 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                     }
                                                   } catch (e) {
                                                     await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
-                                                  } finally {
-                                                    EasyLoading.dismiss();
                                                   }
                                                 },
                                                 child: const Text(
@@ -1051,8 +1049,6 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                                     }
                                                   } catch (e) {
                                                     await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
-                                                  } finally {
-                                                    EasyLoading.dismiss();
                                                   }
                                                 },
                                                 child: const Text(

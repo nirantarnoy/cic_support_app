@@ -726,6 +726,8 @@ class PlanData extends ChangeNotifier {
           //print("no data to add");
         }
       });
+      
+      saveEmergencyBackup();
 
       notifyListeners();
       return true;
@@ -817,6 +819,8 @@ class PlanData extends ChangeNotifier {
       //   }
       // });
 
+      saveEmergencyBackup();
+
       notifyListeners();
       return true;
     } else {
@@ -867,6 +871,8 @@ class PlanData extends ChangeNotifier {
           //print("no data to add");
         }
       });
+      
+      saveEmergencyBackup();
 
       notifyListeners();
       return true;
@@ -1599,7 +1605,7 @@ class PlanData extends ChangeNotifier {
       var addData = listInspectiontrans
           .map((e) => {
                 'module_type_id': int.tryParse(e.module_type_id ?? '') ?? 0,
-                'plan_id': int.tryParse(e.plan_num ?? '') ?? 0,
+                'plan_id': int.tryParse(e.plan_id ?? '') ?? 0,
                 'trans_date': e.trans_date ?? '',
                 'emp_id': parsedUserId,
                 'area_group_id': int.tryParse(e.area_group_id ?? '') ?? 0,
@@ -1631,6 +1637,14 @@ class PlanData extends ChangeNotifier {
       await prefs.setStringList("offline_5s_inspections", offlineQueue);
       await loadOfflineCounts();
 
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        clearInspectionTrans();
+        clearEmergencyBackup(); // Clear emergency backup once queued
+        EasyLoading.showInfo('ไม่มีสัญญาณอินเทอร์เน็ต บันทึกข้อมูลออฟไลน์เรียบร้อย');
+        return true;
+      }
+
       http.Response response = await http.post(
         Uri.parse(url_to_add_inspection_trans),
         headers: {
@@ -1653,18 +1667,21 @@ class PlanData extends ChangeNotifier {
 
         print("save transaction ok");
         clearInspectionTrans(); // clear list after save finished
+        clearEmergencyBackup(); // clear backup after success
         return true;
       } else if (response.statusCode == 401) {
         EasyLoading.showError('เซสชันหมดอายุ กรุณาล็อกเอาท์และเข้าสู่ระบบใหม่');
         return false;
       } else {
         clearInspectionTrans();
+        clearEmergencyBackup(); // clear backup after queued
         EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
         return true;
       }
     } catch (err) {
       print("submitInspection error: ${err.toString()}");
       clearInspectionTrans();
+      clearEmergencyBackup(); // clear backup after queued
       EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
       return true;
     }
@@ -1683,7 +1700,7 @@ class PlanData extends ChangeNotifier {
       var addData = listInspectiontrans
           .map((e) => {
                 'module_type_id': 3,
-                'plan_id': int.tryParse(e.plan_num ?? '') ?? 0,
+                'plan_id': int.tryParse(e.plan_id ?? '') ?? 0,
                 'trans_date': e.trans_date ?? '',
                 'emp_id': int.parse(user_id),
                 'area_group_id': int.parse(e.area_group_id),
@@ -1702,6 +1719,11 @@ class PlanData extends ChangeNotifier {
 
       print('data bigclean save is ${json.encode(addData)}');
       // return false;
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        EasyLoading.showInfo('ไม่มีสัญญาณอินเทอร์เน็ต กรุณาลองใหม่เมื่อมีสัญญาณ');
+        return false;
+      }
       try {
         http.Response response;
         response = await http.post(
@@ -1711,7 +1733,7 @@ class PlanData extends ChangeNotifier {
             "Content-Type": "application/json; charset=UTF-8",
           },
           body: json.encode(addData),
-        );
+        ).timeout(const Duration(seconds: 15));
 
         if (response.statusCode == 200) {
           // List<JobplanArea> data = [];
@@ -1768,6 +1790,13 @@ class PlanData extends ChangeNotifier {
       offlineQueue.add(payloadJson);
       await prefs.setStringList("offline_safety_inspections", offlineQueue);
       await loadOfflineCounts();
+
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        clearInspectionTrans();
+        EasyLoading.showInfo('ไม่มีสัญญาณอินเทอร์เน็ต บันทึกข้อมูลออฟไลน์เรียบร้อย');
+        return true;
+      }
 
       try {
         http.Response response;

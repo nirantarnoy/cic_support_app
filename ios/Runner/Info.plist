@@ -52,6 +52,8 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires to access camera for take a photo</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to microphone when recording video</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Ahtheticate by using face id</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

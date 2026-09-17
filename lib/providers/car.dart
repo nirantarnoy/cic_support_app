@@ -9,6 +9,8 @@ import 'package:flutter_cic_support/models/carphotolist.dart';
 import 'package:flutter_cic_support/models/nonconformselected.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class CarData extends ChangeNotifier {
   // final String url_to_addcar = "http://192.168.60.85:1223/api/car/createcar";
@@ -70,19 +72,27 @@ class CarData extends ChangeNotifier {
       'module_type_id': module_type_id,
     };
     print('photo are ${json.encode(photoJson)}');
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต กรุณาลองใหม่');
+      return false;
+    }
+    
     try {
       http.Response response;
       response = await http.post(Uri.parse(url_to_addcar),
           headers: {"Authorization": token, 'Content-Type': 'application/json'},
-          body: json.encode(insertData));
+          body: json.encode(insertData)).timeout(const Duration(seconds: 15));
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
         print('Server error: ${response.statusCode} - ${response.body}');
+        EasyLoading.showError('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
         return false;
       }
     } catch (err) {
       print('has error na ja ${err}');
+      EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต หรือเซิร์ฟเวอร์ไม่ตอบสนอง');
       return false;
     }
     // return true;
@@ -242,21 +252,28 @@ class CarData extends ChangeNotifier {
       'close_by': int.parse(user_id),
     };
     print('data close is ${json.encode(insertData)}');
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต กรุณาลองใหม่');
+      return false;
+    }
+    
     try {
       http.Response response;
       response = await http.post(Uri.parse(url_to_close_car),
           headers: {"Authorization": token, 'Content-Type': 'application/json'},
-          body: json.encode(insertData));
+          body: json.encode(insertData)).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 201) {
         return true;
       } else {
         print("res code is ${response.statusCode} error is");
-
+        EasyLoading.showError('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
         return false;
       }
     } catch (err) {
       print('has error na ja ${err}');
+      EasyLoading.showError('ไม่มีสัญญาณอินเทอร์เน็ต หรือเซิร์ฟเวอร์ไม่ตอบสนอง');
       return false;
     }
     // return true;

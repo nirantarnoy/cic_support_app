@@ -44,8 +44,6 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
       }
     } catch (e) {
       await EasyLoading.showError('เกิดข้อผิดพลาด: $e');
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 

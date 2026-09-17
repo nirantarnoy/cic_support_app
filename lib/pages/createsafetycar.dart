@@ -427,8 +427,8 @@ class _CreateSafetyCarState extends State<CreateSafetyCar> {
         base64ImageList,
         2,
       );
-      EasyLoading.dismiss();
       if (isSave == true) {
+        EasyLoading.dismiss();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => CarcompletePage()));
       }

@@ -12,7 +12,7 @@ class PushNotificationService {
       "project_id": "fcmflutter-ed115",
       "private_key_id": "b3f5c8c75fcb93bb0caf939655874849a56ccffa",
       "private_key":
-          "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCWx9EQuiWDrbaT\nGYWf4rF2vnRfYxb5c9Sz0Hl6O8qGYHuViJfYoFGubJ2B4VqhhMax+b4l8wo7ugP0\naPl/EeT1XylMPbFaCYJw68zjSF8sLJQYRW9u0axRqpNYeoAdD1qu9DLkYmDbTztm\nX5RREDOm8cMQwydKt0gt/To4kTydTw/+R5bAJ79OQaS+zhTOcNvSA38WaH4DZ7na\ndjQ+GaowQBW6An2dWYKE2BJrw0/EaamzdGgiqtsQqyMBzF6POaIBwW/hZsrF4+Aq\nmnNAXQpO5Fbi3ebm2L+6cJbqErzAbkJJjqF/otxJFzceBxA+PQ9dn/knqVVcUfYV\nsQcxJRI/AgMBAAECggEABq2B0lpUKAFNCTXDp8Gb93TW5ZSXY2PgYzhT8Pht70ad\nopFCnFr5Ux7HWQW4hFfDjwVPCRI6/UsvOqddiWWq/L0CsLg4vxKVvteKovRFFslA\no9SLa16I4bMKxIvkWaUg8IerK1c6D+xx5oZMJMzxZK7nYzopZtM4NKU262NvSk4x\nJRh0nx5nA7HPxBaN8/n4KxDTzEXms8zlddtam9HfLqPzHTa0rjzuPLaejIG6zBhC\nZlM9yWLhjwmAxgfEVPGgvdRBLOFqKH/xZFq73LxfTQUg8A/mg9AEvEEElLKdp4qK\nrD5Ep4jjehiDszv5ot5jndkqkRx1r+dVbMeythLNlQKBgQDTulDZ922JkIndmLqK\nCqtI9FjRmI36KN5qUQ09Z9MjwbpB/P6xMLVzTymHXapy9+drFDZDmp/GpEF0fHqM\nHT7TCfnXeTgUM9TfXHGhDaZAmkfW9S08zvukZ2/xuj1v3BhuL0Dfz+LVgaP4LpGG\n7v8TerMUcm4y4L1VQYsIr+SchQKBgQC2TwYnPBc0dCFmlCph1lg8vFPbZAmdra2U\n+MdXT/LpWMUWiQlz4G/6x1tCaVC11HxhO6cXM7WedqN4JIRI1by+WJROhxas4Ehu\nR3ebyA9LD2AK3te666wyGY/ldytlfF/dS2RjjPOUCFJozvEo68Afw0fhBe52dgWr\n40OKt/qA8wKBgGM5KJTNcMcMNp/j6F+y2kypPkqTfM3kgz891r+VPYy/SEOOhemS\nEycDzUmD6tJQPWKgKUILX59e8NHfWCr7tap/PVfulgpZtAQtNY8tb2FNLCef5OBf\ne+yzEPIuvoYClmxktrlsmjhGtgokAM1EicOeN/h4HA655eDjg33BuJhlAoGAZoh9\nYnWma2bhHis4xvvhdo9I7nwN+HOky8M7gfzCFsFJX4pFGbnh4P5ccjZ/ITTXm2wM\nZr07aVs6RyjqiXhEhh2Vk7DgbOxbcEKbn67eAw4rqxF37XX8y9SanKjwbEyOMgzj\n8iVlHR2tE6tH8QbecD7JX2KRomhweiMAarVcm0cCgYEAhxVa3K7Ox2A4DL5beXen\n8oN18Mm0WshnUb/+W6gam6fdsxgEevi3Ma8HlPWxDBFpiBW6ZoXExECu7GH9upvz\n9NkpZoE8E6YaKsGzMr0P2f3CYvMHE6GOHJk93zX1EmXKOzBZ378DoH64qahUTrQd\nbvnRLV8kbSiEIwQ9voBLUKA=\n-----END PRIVATE KEY-----\n",
+          "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDNOkgMF6gxXXN8\nqyMIBAfvE3U7ds9FeeC4JKHNL8TjwQFHwR+gsfVBp4vpMzI2iU/1npfZeAZoBswc\nFv2E+dTQKc9QVP4saPCypTihqF1rM9NOwZEyMNR89EoVCjNPTqA9KNEs6T/Oqaej\nYv8/6OoUpRkgffOqVr4QVXahIINDM4pnTBS2LypkjuaJ0ua3w+we+5OdXtJWsA1O\n80vtxFkvlkEYxSCld7ZM/npuQOz1EH+WHd4j3m/A1dIxPCvWYhhsmpCcgksBqJcs\nITmXzxCXh+2+F5su/HzMKQyRIwOIOjQUxiFueBEvT+0idkrJTrJrmRpK37L+bETa\n1ydHlNPxAgMBAAECggEAILC2LcDt8HEVlofvJFV6Cw3TKHXwJb24ezSQlm3Tw8Co\naszbNB5stfjRi0O1raS5OSN6RjB9esAMbrQFzZL7IG5sgLwNIbdUkexKBUwbl1ox\nwFOKhI9tJXtHOqs9iZY5ZYyVJz1/RbTWCGtaQ8yezsuOoVOWxu0ayODILPnQFtm7\nOSfVtvFnFhELjLMdZUiZjuNFgsarbp6ilhYvDEeNiniEW7wALGR//UyNcbx+lGTB\nImltiXUJAJ4j+Rpg91O3Aa5m4SqTnOFH4bMVbUYufUGslYuBw5WS3uua2z89svNP\niwnTXDxs4lrJAVWyHoNy9tJrzfySqNKriTESIZR9zQKBgQDOmSJrjBkaAdRFrMPg\nQzMOD6Z3m7Mb7yu2OYbJWMAvLsnc/bPVCchVqUhibVnJhsmRIj+ItE/5IJb6pp/S\noGg5Ye1H5pgOe4VmJqulN5IOnxq40NuPITO5HfXghK7zrZwOPE67GIU+LB6fwYB3\ny+koBC+PfCUnXp5/q5WjWwkDZQKBgQD+TUA7KqKUQglvj3uZBL99POf8OtqD73a5\nliM59vn0aGsQaMWIyHDtRtkyyBEL2tTbTvdaurktUTxLpRx9qLOixGJqEO0qiy30\n7CcPfXw6LBFS1tSp2yYILdRfTILAn0Qhe/UNFVedxc04zRhKyn9xhNYbmtj2X+t7\nrkgV7eRTnQKBgQCeX3eqWBBaBnLyInlZbkoyCj9DS2EnFdY9b6XqrZVN1iE6vmVf\n94rSV928TjVZLnFQR5/KrObthFUYuiikbwDWlEIwLw37dCcT4qsMEShu+vqiGMFm\n3D3pN5Vn0m7HMBwEMajs9eQWf/3N26kerHsEiQjohnN41ajNF/yy6DNlnQKBgQCr\nzJ6vGh+Zz382ahXTC50eS65h/ZSwe2+W83I677pvvrdN76o7vUZlVm7X2seBXcZd\nntyG5AzEK9RzOkmkLvuk482k4GiJTFuw0nWVBm6NkkXl1BL56X6pGeUWuMbAwRgz\nEt47h4aYpQ/+5rgZlvJAS8CmB5e54pVhCh3TCtMtFQKBgQCcWKIgv/DYItf7ITP5\nTKijqyVKzDJZV0+SpU/bZOBfnAqd41aSpAVc2ktkfSRLD39xYhqsz2xNCKAn9HMH\n0GQeUWSsfZ4mASqm1CK2YCpd9beeQgSDtKvo4rdDxHz1+Iy69S5Cl29MMgRLyIZ/\niz6/AFtevXYRnNFULyLILI9IZw==\n-----END PRIVATE KEY-----\n",
       "client_email":
           "firebase-adminsdk-2is1t@fcmflutter-ed115.iam.gserviceaccount.com",
       "client_id": "103677406355625078371",
@@ -26,9 +26,9 @@ class PushNotificationService {
     };
 
     List<String> scopes = [
-      "https://www.gogleapis.com/auth/userinfo.email",
-      "https://www.gogleapis.com/auth/firebase.database",
-      "https://www.gogleapis.com/auth/firebase.messaging",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/firebase.database",
+      "https://www.googleapis.com/auth/firebase.messaging",
     ];
 
     http.Client client = await auth.clientViaServiceAccount(
@@ -65,7 +65,7 @@ class PushNotificationService {
       String deviceToken, BuildContext context, String tripID) async {
     final String serverAcessTokenKey = await getAccessToken();
     String endpointFirebaseCloudMessaging =
-        'https://fcm.googleapis.com/v1/projects/fmcflutter-ed115/messages:send';
+        'https://fcm.googleapis.com/v1/projects/fcmflutter-ed115/messages:send';
 
     final Map<String, dynamic> message = {
       'message': {

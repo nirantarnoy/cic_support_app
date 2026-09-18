@@ -11,17 +11,8 @@ class VersionInfoWidget extends StatelessWidget {
     this.fontSize = 12,
   }) : super(key: key);
 
-  String _getCurrentDateString() {
-    final now = DateTime.now();
-    final day = now.day.toString().padLeft(2, '0');
-    final month = now.month.toString().padLeft(2, '0');
-    final year = now.year.toString();
-    return '$day-$month-$year';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final String currentDateStr = _getCurrentDateString();
     final Color textColor = color ?? Colors.grey.shade600;
 
     return Column(
@@ -38,7 +29,7 @@ class VersionInfoWidget extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Release date $currentDateStr',
+          'Release date ${AppConfig.buildDate}',
           style: TextStyle(
             color: textColor,
             fontSize: fontSize,

@@ -658,9 +658,10 @@ class _StoreIssueCartPageState extends State<StoreIssueCartPage> {
 
                                         EasyLoading.dismiss();
                                         Provider.of<ProductData>(context, listen: false).clearcartitem();
-                                        setState(() {
-                                          isSubmitted = true;
-                                        });
+                                        EasyLoading.showSuccess('บันทึกข้อมูลสำเร็จ');
+                                        await Future.delayed(const Duration(seconds: 1));
+                                        Navigator.of(context).pop(); // close dialog
+                                        Navigator.of(context).pop(true); // close cart page
                                       } else {
                                         EasyLoading.dismiss();
                                         setState(() {

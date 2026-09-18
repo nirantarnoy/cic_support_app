@@ -29,7 +29,10 @@ class LocalNoti {
   }
 
   static void onNotificationTap(NotificationResponse notificationResponse) {
-    navigatorKey.currentState!.pushNamed("storeissueapprove");
+    String? route = notificationResponse.payload;
+    if (route != null && route.isNotEmpty) {
+      navigatorKey.currentState!.pushNamed(route);
+    }
   }
 
   static Future showBigTextNotification(
@@ -51,6 +54,6 @@ class LocalNoti {
     var not = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: DarwinNotificationDetails());
-    await fln.show(0, title, body, not);
+    await fln.show(0, title, body, not, payload: payload?.toString());
   }
 }

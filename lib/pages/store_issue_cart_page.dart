@@ -597,6 +597,9 @@ class _StoreIssueCartPageState extends State<StoreIssueCartPage> {
                                                 },
                                                 'android': {
                                                   'notification': {'channel_id': 'cicsupportnoti_silent_2'}
+                                                },
+                                                'data': {
+                                                  'route': 'storeissueapprove'
                                                 }
                                               }
                                             };
@@ -636,6 +639,9 @@ class _StoreIssueCartPageState extends State<StoreIssueCartPage> {
                                                         },
                                                         'android': {
                                                           'notification': {'channel_id': 'cicsupportnoti_silent_2'}
+                                                        },
+                                                        'data': {
+                                                          'route': 'storeissueapprove'
                                                         }
                                                       }
                                                     };

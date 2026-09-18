@@ -43,6 +43,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.notification!.body}");
 }
 
+String? _getRouteFromMessage(RemoteMessage message) {
+  if (message.data['route'] != null) {
+    return message.data['route'];
+  }
+  String title = message.notification?.title ?? '';
+  if (title.contains('อนุมัติใบเบิก') || title.contains('เบิกซ้ำซ้อน') || title.contains('สโตร์') || title.contains('เบิกสินค้า')) {
+    return 'storeissueapprove';
+  }
+  return null;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -62,14 +73,20 @@ void main() async {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (message.notification != null) {
         print("have data from firebase");
-        navigatorKey.currentState!.pushNamed("storeissueapprove");
+        String? route = _getRouteFromMessage(message);
+        if (route != null) {
+          navigatorKey.currentState!.pushNamed(route);
+        }
       }
     });
 
     FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
       if (message != null && message.notification != null) {
         Future.delayed(const Duration(seconds: 2), () {
-          navigatorKey.currentState?.pushNamed("storeissueapprove");
+          String? route = _getRouteFromMessage(message);
+          if (route != null) {
+            navigatorKey.currentState?.pushNamed(route);
+          }
         });
       }
     });
@@ -141,8 +158,9 @@ void setupNotification() async {
         FlutterLocalNotificationsPlugin();
     LocalNoti.initialize(flutterLocalNotificationsPlugin);
     LocalNoti.showBigTextNotification(
-        title: 'แจ้งเตือน',
+        title: '${_msg.notification!.title ?? 'แจ้งเตือน'}',
         body: '${_msg.notification!.body}',
+        payload: _getRouteFromMessage(_msg),
         fln: flutterLocalNotificationsPlugin);
   });
 }

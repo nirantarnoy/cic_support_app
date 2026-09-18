@@ -48,6 +48,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String display_url =
       "https://img.cicsupports.com/profile/"; //http://cic-support.net/uploads/
   String display_photo = "";
+  String _emp_level = "0";
+  int _is_can_issue = 0;
   String display_section_code = "";
 
   late Future<XFile> file;
@@ -69,6 +71,8 @@ class _ProfilePageState extends State<ProfilePage> {
     // Provider.of<TeamnotifyData>(context, listen: false).teamnotifyFetch();
     current_username =
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
+    _is_can_issue = Provider.of<UserData>(context, listen: false).isCanIssue;
+    _emp_level = Provider.of<UserData>(context, listen: false).emplevel.toString();
 
     // display_section_code =
     //     Provider.of<UserData>(context, listen: false).getCurrenUserSection();
@@ -850,17 +854,18 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                      _buildMenuCard(
-                        icon: Icons.inventory_2_rounded,
-                        gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
-                        title: 'เบิกของสโตร์',
-                        subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => StoreIssueCreatePage(),
+                      if (_is_can_issue == 1 || current_username == 'admin' || _emp_level == "1" || _emp_level == "2")
+                        _buildMenuCard(
+                          icon: Icons.inventory_2_rounded,
+                          gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
+                          title: 'เบิกของสโตร์',
+                          subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => StoreIssueCreatePage(),
+                            ),
                           ),
                         ),
-                      ),
 
                       _buildMenuCard(
                         icon: Icons.approval_rounded,

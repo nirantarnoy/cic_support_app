@@ -444,7 +444,7 @@ class StoreissueData extends ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _user_id = prefs.getString('emp_code') ?? "";
-    _dept_code = prefs.getString('department_id') ?? prefs.getString('dept_name') ?? "";
+    _dept_code = prefs.getString('department_code') ?? prefs.getString('department_id') ?? prefs.getString('dept_name') ?? "";
     final String? token = prefs.getString('token');
     final String? level_type_id = prefs.getString('level_type_id');
     

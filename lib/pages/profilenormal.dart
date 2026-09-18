@@ -53,6 +53,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
 
   int _uniform_selected = 0;
   String _emp_level = "0";
+  int _is_can_issue = 0;
 
   late Future<XFile> file;
   List<File> image2 = [];
@@ -75,6 +76,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
         Provider.of<UserData>(context, listen: false).getCurrenUserName();
     _emp_level =
         Provider.of<UserData>(context, listen: false).emplevel.toString();
+    _is_can_issue = Provider.of<UserData>(context, listen: false).isCanIssue;
 
     // display_section_code =
     //     Provider.of<UserData>(context, listen: false).getCurrenUserSection();
@@ -784,17 +786,18 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
                   child: Column(
                     children: [
-                      _buildMenuCard(
-                        icon: Icons.inventory_2_rounded,
-                        gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
-                        title: 'เบิกของสโตร์',
-                        subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => StoreIssueCreatePage(),
+                      if (_is_can_issue == 1 || current_username == 'admin' || _emp_level == "1" || _emp_level == "2") // Or any other admin check if needed
+                        _buildMenuCard(
+                          icon: Icons.inventory_2_rounded,
+                          gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
+                          title: 'เบิกของสโตร์',
+                          subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => StoreIssueCreatePage(),
+                            ),
                           ),
                         ),
-                      ),
 
                       if (_emp_level != "3")
                         Column(

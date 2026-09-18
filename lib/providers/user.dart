@@ -90,6 +90,9 @@ class UserData with ChangeNotifier {
   int _emp_department_id = 0;
   int get empdepartmentid => _emp_department_id;
 
+  int _is_can_issue = 0;
+  int get isCanIssue => _is_can_issue;
+
   int get userlogintype => _userlogin_type;
 
   String _emp_department_name = '';
@@ -286,6 +289,7 @@ class UserData with ChangeNotifier {
             res['data']['bigclean_current_team_id'].toString());
         prefs.setString('level_type_id', res['data']['level_type_id']?.toString() ?? '');
         prefs.setString('dept_name', res['data']['dept_name']?.toString() ?? res['data']['department_name']?.toString() ?? '');
+        prefs.setString('department_code', res['data']['department_code']?.toString() ?? '');
 
         username_display = res['data']['dns_user'].toString();
         team_display = res['data']['current_team_id'].toString();
@@ -304,6 +308,7 @@ class UserData with ChangeNotifier {
         emppositionname = res['data']['position_name'].toString();
         empgender = res['data']['emp_gender'];
         empshirtqty = res['data']['shirt_qty'];
+        _is_can_issue = res['data']['is_can_issue'] ?? 0;
 
         photo_display = res['data']['photo'].toString();
 
@@ -382,11 +387,13 @@ class UserData with ChangeNotifier {
             'team_safety_id', res['data']['current_safety_team_id'].toString());
 
         empsalarytype = res['data']['salary_type'];
-        emplevel = res['data']['level_type_id'];
-        empdepartmentid = int.parse(res['data']['department_id'].toString());
-        emppositionname = res['data']['position_name'].toString();
-        empgender = res['data']['emp_gender'];
-        empshirtqty = res['data']['shirt_qty'];
+        emplevel = res['data']['level_type_id'] ?? 0;
+        empdepartmentid = res['data']['department_id'] ?? 0;
+        emppositionname = res['data']['position_name']?.toString() ?? '';
+        empgender = res['data']['emp_gender'] ?? 0;
+        empshirtqty = res['data']['shirt_qty'] ?? 0;
+        _is_can_issue = res['data']['is_can_issue'] ?? 0;
+
         prefs.setString('level_type_id', res['data']['level_type_id']?.toString() ?? '');
         prefs.setString('dept_name', res['data']['dept_name']?.toString() ?? res['data']['department_name']?.toString() ?? '');
         print('emp photo profile is ${photo_display}');

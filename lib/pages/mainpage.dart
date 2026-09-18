@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_cic_support/pages/it_support_dashboard.dart';
 import 'package:flutter_cic_support/pages/store_issue_create_page.dart';
+import 'package:flutter_cic_support/providers/user.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = 'mainpage';
@@ -347,9 +348,10 @@ class _MainPageState extends State<MainPage>
                   height: 16,
                 ),
                 // Store Issue Standalone Button
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: GestureDetector(
+                if (Provider.of<UserData>(context).isCanIssue == 1 || Provider.of<UserData>(context).getCurrenUserName() == 'admin' || Provider.of<UserData>(context).emplevel == 1 || Provider.of<UserData>(context).emplevel == 2)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,

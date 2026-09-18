@@ -34,6 +34,7 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -53,6 +54,16 @@ String? _getRouteFromMessage(RemoteMessage message) {
     return 'storeissueapprove';
   }
   return null;
+}
+
+Future<void> _handleNavigation(String route) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  if (token != null && token.isNotEmpty) {
+    navigatorKey.currentState?.pushNamed(route);
+  } else {
+    await prefs.setString('pending_route', route);
+  }
 }
 
 void main() async {
@@ -76,7 +87,7 @@ void main() async {
         print("have data from firebase");
         String? route = _getRouteFromMessage(message);
         if (route != null) {
-          navigatorKey.currentState!.pushNamed(route);
+          _handleNavigation(route);
         }
       }
     });
@@ -86,7 +97,7 @@ void main() async {
         Future.delayed(const Duration(seconds: 2), () {
           String? route = _getRouteFromMessage(message);
           if (route != null) {
-            navigatorKey.currentState?.pushNamed(route);
+            _handleNavigation(route);
           }
         });
       }

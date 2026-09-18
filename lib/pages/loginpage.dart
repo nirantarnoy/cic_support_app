@@ -11,6 +11,7 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_cic_support/widgets/version_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = "loginpage";
@@ -135,7 +136,13 @@ class _LoginPageState extends State<LoginPage> {
       }
       
       final String teamId = Provider.of<UserData>(context, listen: false).team_display;
-      if (teamId != '' && teamId != '0' && teamId != 'null') {
+      final prefs = await SharedPreferences.getInstance();
+      final pendingRoute = prefs.getString('pending_route');
+
+      if (pendingRoute != null && pendingRoute.isNotEmpty) {
+        await prefs.remove('pending_route');
+        Navigator.pushReplacementNamed(context, pendingRoute);
+      } else if (teamId != '' && teamId != '0' && teamId != 'null') {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => MainPage()));
       } else {

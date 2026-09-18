@@ -15,6 +15,7 @@ import 'package:flutter_cic_support/pages/securitypoint.dart';
 import 'package:flutter_cic_support/pages/shirtorderpage.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/pages/test2fa.dart';
+import 'package:flutter_cic_support/pages/purchase_approve_list.dart';
 import 'package:flutter_cic_support/providers/car.dart';
 import 'package:flutter_cic_support/providers/person.dart';
 import 'package:flutter_cic_support/providers/plan.dart';
@@ -217,6 +218,7 @@ class MyApp extends StatelessWidget {
                 ProfileNormalPage.routeName: (ctx) => ProfileNormalPage(),
                 StoreissueApprovePage.routeName: (ctx) =>
                     StoreissueApprovePage(team_id: ''),
+                'purchase_approve': (ctx) => const PurchaseApproveListPage(),
                 MainPage.routeName: (ctx) => MainPage(),
                 ShirtorderPage.routeName: (ctx) => ShirtorderPage(),
               },

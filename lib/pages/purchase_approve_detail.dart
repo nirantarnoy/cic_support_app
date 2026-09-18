@@ -579,6 +579,71 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                       ),
                     )).toList(),
                   ],
+
+                  // History / Timeline Section
+                  if (detail['history'] != null && (detail['history'] as List).isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    const Text(
+                      'ประวัติการดำเนินการ',
+                      style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 12),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: (detail['history'] as List).length,
+                      itemBuilder: (context, index) {
+                        final h = detail['history'][index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: Colors.indigo.shade400,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  if (index != (detail['history'] as List).length - 1)
+                                    Container(
+                                      width: 2,
+                                      height: 40,
+                                      color: Colors.indigo.shade100,
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${h['action_type']} โดย ${h['action_by']}',
+                                      style: const TextStyle(fontFamily: 'Prompt', fontSize: 13, fontWeight: FontWeight.bold),
+                                    ),
+                                    if (h['remark'] != null && h['remark'].toString().isNotEmpty)
+                                      Text(
+                                        h['remark'],
+                                        style: const TextStyle(fontFamily: 'Prompt', fontSize: 12, color: Colors.black54),
+                                      ),
+                                    Text(
+                                      h['action_date'] ?? '',
+                                      style: const TextStyle(fontFamily: 'Prompt', fontSize: 11, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                   
                   const SizedBox(height: 40),
                 ],

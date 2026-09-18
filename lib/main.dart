@@ -65,6 +65,14 @@ void main() async {
         navigatorKey.currentState!.pushNamed("storeissueapprove");
       }
     });
+
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null && message.notification != null) {
+        Future.delayed(const Duration(seconds: 2), () {
+          navigatorKey.currentState?.pushNamed("storeissueapprove");
+        });
+      }
+    });
     //FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     // NotificationSettings settings = await messaging.requestPermission(
@@ -166,6 +174,7 @@ class MyApp extends StatelessWidget {
           builder: (context, _users, _) {
             _users.autoAuthenticate();
             return MaterialApp(
+              navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
               title: 'CIC Support',
               theme: ThemeData(

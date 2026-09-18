@@ -24,8 +24,7 @@ class LocalNoti {
     //     onDidReceiveNotificationResponse:
     //         (NotificationResponse notificationReasponse) async {});
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse notificationReasponse) async {},
+        onDidReceiveNotificationResponse: onNotificationTap,
         onDidReceiveBackgroundNotificationResponse: onNotificationTap);
   }
 

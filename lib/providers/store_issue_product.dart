@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductData with ChangeNotifier {
-  final String url_to_product_list = "http://172.16.0.231:3000/api/finditem";
-  final String url_to_product_list_main = "http://172.16.0.231:3000/api/finditemmain";
-  final String url_to_product_search_list = "http://172.16.0.231:3000/api/finditemsearch";
-  final String url_to_product_search_list_main = "http://172.16.0.231:3000/api/finditemsearchmain";
+  final String url_to_product_list = "https://api.cicsupports.com/api/finditem";
+  final String url_to_product_list_main = "https://api.cicsupports.com/api/finditemmain";
+  final String url_to_product_search_list = "https://api.cicsupports.com/api/finditemsearch";
+  final String url_to_product_search_list_main = "https://api.cicsupports.com/api/finditemsearchmain";
 
   List<Products>? _product;
   List<Products> get listproduct => _product ?? [];

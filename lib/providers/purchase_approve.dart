@@ -22,7 +22,7 @@ class PurchaseApproveProvider with ChangeNotifier {
 
   final List<String> baseUrls = [
     'http://api.cicsupports.com:1223/api/pr-approve',
-    'http://172.16.0.231:3000/api/pr-approve',
+    'https://api.cicsupports.com/api/pr-approve',
     'http://192.168.60.195:3000/api/pr-approve'
   ];
 

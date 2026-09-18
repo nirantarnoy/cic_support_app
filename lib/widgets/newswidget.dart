@@ -16,7 +16,7 @@ class _newswidgetState extends State<newswidget> {
   int _current = 0;
 
   // URL from user request
-  final String apiUrl = "http://172.16.0.231:3000/api/qa-news";
+  final String apiUrl = "https://api.cicsupports.com/api/qa-news";
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _newswidgetState extends State<newswidget> {
   Future<void> fetchNews() async {
     final List<String> baseUrls = [
       'https://api.cicsupports.com/api/qa-news',
-      'http://172.16.0.231:3000/api/qa-news'
+      'https://api.cicsupports.com/api/qa-news'
     ];
 
     try {

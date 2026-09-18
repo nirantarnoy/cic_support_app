@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductgroupData with ChangeNotifier {
-  final String url_to_productgroup_list = "http://172.16.0.231:3000/api/findcategory";
-  final String url_to_productgroup_list_main = "http://172.16.0.231:3000/api/findcategorymain";
+  final String url_to_productgroup_list = "https://api.cicsupports.com/api/findcategory";
+  final String url_to_productgroup_list_main = "https://api.cicsupports.com/api/findcategorymain";
 
   List<ProductGroupMenu>? _productgroup;
   List<ProductGroupMenu> get listproductgroup => _productgroup ?? [];

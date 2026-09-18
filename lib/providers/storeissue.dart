@@ -43,8 +43,8 @@ class StoreissueData extends ChangeNotifier {
 
     List<String> listUrls = [
       url_issue_list + "/" + targetEmp,
-      "http://172.16.0.231:3000/api/findjournalbyemp",
-      "http://172.16.0.231/ptbmprod/api_get_pending_approvals.php",
+      "https://api.cicsupports.com/api/findjournalbyemp",
+      "https://api.cicsupports.com/ptbmprod/api_get_pending_approvals.php",
     ];
 
     Set<String> seenKeys = {};
@@ -153,8 +153,8 @@ class StoreissueData extends ChangeNotifier {
 
     List<String> detailUrls = [
       url_issue_list_detail + "/" + _issueid,
-      "http://172.16.0.231:3000/api/findjournaldetail",
-      "http://172.16.0.231/ptbmprod/api_find_journal_detail.php",
+      "https://api.cicsupports.com/api/findjournaldetail",
+      "https://api.cicsupports.com/ptbmprod/api_find_journal_detail.php",
     ];
 
     for (String url in detailUrls) {
@@ -249,9 +249,9 @@ class StoreissueData extends ChangeNotifier {
 
     List<String> approveUrls = [
       url_issue_approve,
-      "http://172.16.0.231:3000/api/approve_issue",
-      "http://172.16.0.231:3000/api/force_approve_issue",
-      "http://172.16.0.231/ptbmprod/api_approve_journal.php",
+      "https://api.cicsupports.com/api/approve_issue",
+      "https://api.cicsupports.com/api/force_approve_issue",
+      "https://api.cicsupports.com/ptbmprod/api_approve_journal.php",
     ];
 
     for (String url in approveUrls) {
@@ -300,7 +300,7 @@ class StoreissueData extends ChangeNotifier {
     };
 
     List<String> phpEndpoints = [
-      "http://172.16.0.231/ptbmprod/api_check_work_order.php",
+      "https://api.cicsupports.com/ptbmprod/api_check_work_order.php",
       "http://192.168.60.231/ptbmprod/api_check_work_order.php",
     ];
 
@@ -333,7 +333,7 @@ class StoreissueData extends ChangeNotifier {
 
     try {
       http.Response response = await http.post(
-        Uri.parse("http://172.16.0.231:3000/api/checkworkorder"),
+        Uri.parse("https://api.cicsupports.com/api/checkworkorder"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${token ?? ''}'
@@ -376,7 +376,7 @@ class StoreissueData extends ChangeNotifier {
     };
     try {
       http.Response response = await http.post(
-        Uri.parse("http://172.16.0.231:3000/api/checkjobcount"),
+        Uri.parse("https://api.cicsupports.com/api/checkjobcount"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${token ?? ''}'
@@ -403,7 +403,7 @@ class StoreissueData extends ChangeNotifier {
 
   Future<Map<String, dynamic>> checkDuplicateIssueAlert(String jobNo, String itemId, String itemName, String empCode) async {
     List<String> checkUrls = [
-      'http://172.16.0.231/ptbmprod/api_check_duplicate_issue_alert.php',
+      'https://api.cicsupports.com/ptbmprod/api_check_duplicate_issue_alert.php',
       'http://192.168.60.231/ptbmprod/api_check_duplicate_issue_alert.php'
     ];
 
@@ -477,7 +477,7 @@ class StoreissueData extends ChangeNotifier {
       if (approverName != null && approverName.isNotEmpty) 'approver_name': approverName,
       if (idempotencyKey != null && idempotencyKey.isNotEmpty) 'idempotency_key': idempotencyKey,
     };
-    print('data will save journal to http://172.16.0.231:3000/api/addjournal: ${orderData}');
+    print('data will save journal to https://api.cicsupports.com/api/addjournal: ${orderData}');
 
     List<String> addJournalUrls = [
       "https://api.cicsupports.com/api/addjournal",

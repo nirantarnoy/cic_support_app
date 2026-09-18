@@ -22,6 +22,7 @@ import 'package:flutter_cic_support/pages/purchase_approve_list.dart';
 import 'package:flutter_cic_support/pages/securitycheckarea.dart';
 import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
+import 'package:flutter_cic_support/pages/store_issue_create_page.dart';
 import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
@@ -31,6 +32,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:flutter_cic_support/pages/store_issue_history_page.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = "profile";
@@ -482,7 +485,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserData>(context);
     display_photo = user.getCurrenUserPhoto();
-    display_photo = display_url + display_photo;
+    if (display_photo.isNotEmpty && display_photo != "null") {
+      display_photo = display_url + display_photo;
+    } else {
+      display_photo = "https://ui-avatars.com/api/?name=${user.empfullname.isNotEmpty ? user.empfullname : current_username}&background=random";
+    }
 
     display_section_code = user.getCurrenUserSection();
 
@@ -843,6 +850,18 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
+                      _buildMenuCard(
+                        icon: Icons.inventory_2_rounded,
+                        gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
+                        title: 'เบิกของสโตร์',
+                        subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => StoreIssueCreatePage(),
+                          ),
+                        ),
+                      ),
+
                       _buildMenuCard(
                         icon: Icons.approval_rounded,
                         gradientColors: [const Color(0xFF00897B), const Color(0xFF4DB6AC)],

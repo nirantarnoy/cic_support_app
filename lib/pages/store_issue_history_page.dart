@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cic_support/models/storeissue.dart';
-import 'package:flutter_cic_support/models/teammerber.dart';
-import 'package:flutter_cic_support/pages/profilenormal.dart';
 import 'package:flutter_cic_support/pages/storeissuedetailpage.dart';
 import 'package:flutter_cic_support/providers/storeissue.dart';
 import 'package:flutter_cic_support/providers/user.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
 
-class StoreissueApprovePage extends StatefulWidget {
-  static final routeName = 'storeissueapprove';
-  final String team_id;
+class StoreissueHistoryPage extends StatefulWidget {
+  static final routeName = 'storeissuehistory';
 
-  const StoreissueApprovePage({Key? key, required this.team_id})
-      : super(key: key);
+  const StoreissueHistoryPage({Key? key}) : super(key: key);
   @override
-  State<StoreissueApprovePage> createState() => _StoreissueApprovePageState();
+  State<StoreissueHistoryPage> createState() => _StoreissueHistoryPageState();
 }
 
-class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
-  // Future _obtainMemeberTeam() async {
-  //   await Provider.of<UserData>(context, listen: false).findTeamMember();
-  // }
+class _StoreissueHistoryPageState extends State<StoreissueHistoryPage> {
 
   @override
   void initState() {
@@ -41,22 +33,39 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
 
   Widget _buildlist(List<Storeissue> _listcheck) {
     DateFormat dateformatter = DateFormat('dd-MM-yyyy HH:mm');
-    if (_listcheck.isNotEmpty) {
+    final String currentEmpName = Provider.of<UserData>(context, listen: false).empfullname;
+    
+    // Filter to only show user's issues
+    List<Storeissue> userIssues = _listcheck.where((element) => element.created_name == currentEmpName || element.emp_full_name == currentEmpName).toList();
+
+    if (userIssues.isNotEmpty) {
       return RefreshIndicator(
         onRefresh: _getNewdata,
         color: const Color(0xFF0F9B73),
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          itemCount: _listcheck.length,
+          itemCount: userIssues.length,
           itemBuilder: (BuildContext context, int index) {
-            final item = _listcheck[index];
+            final item = userIssues[index];
+            
+            String statusText = 'รออนุมัติ';
+            Color statusColor = const Color(0xFFFF7E36);
+            if (item.status == '1') {
+              statusText = 'อนุมัติแล้ว';
+              statusColor = const Color(0xFF0F9B73);
+            } else if (item.status == '3') {
+              statusText = 'ไม่อนุมัติ';
+              statusColor = Colors.red;
+            }
+
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => StoreissuedetailPage(
                     issue_id: item.id,
-                    team_id: widget.team_id,
+                    team_id: "",
+                    isHistoryMode: true,
                   ),
                 ),
               ),
@@ -110,17 +119,16 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFFF7E36)
-                                        .withOpacity(0.1),
+                                    color: statusColor.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: const Text(
-                                    'รออนุมัติ',
+                                  child: Text(
+                                    statusText,
                                     style: TextStyle(
                                       fontFamily: 'Prompt',
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFFFF7E36),
+                                      color: statusColor,
                                     ),
                                   ),
                                 ),
@@ -180,12 +188,12 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
                 color: Colors.grey.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.inventory_2_outlined,
+              child: const Icon(Icons.history_rounded,
                   size: 48, color: Colors.grey),
             ),
             const SizedBox(height: 16),
             const Text(
-              "ไม่พบรายการรออนุมัติ",
+              "ยังไม่มีประวัติการเบิกสินค้า",
               style: TextStyle(
                 fontFamily: 'Prompt',
                 fontSize: 16,
@@ -209,14 +217,11 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
               color: Colors.black87, size: 20),
           onPressed: () {
-            widget.team_id == ""
-                ? Navigator.of(context).pushNamedAndRemoveUntil(
-                    "profilenormal", (Route<dynamic> route) => false)
-                : Navigator.of(context).pushNamed("profile");
+            Navigator.of(context).pop();
           },
         ),
         title: const Text(
-          "อนุมัติใบเบิกสโตร์",
+          "ประวัติการเบิกของสโตร์",
           style: TextStyle(
             fontFamily: 'Prompt',
             fontSize: 18,
@@ -228,7 +233,7 @@ class _StoreissueApprovePageState extends State<StoreissueApprovePage> {
       ),
       body: Consumer<StoreissueData>(
         builder: ((context, storeData, child) =>
-            _buildlist(storeData.listIssue.where((item) => item.status == '0').toList())),
+            _buildlist(storeData.listIssue)),
       ),
     );
   }

@@ -32,6 +32,7 @@ class UserData with ChangeNotifier {
 
   final String url_to_add_device_token =
       "http://api.cicsupports.com/api/user/adddevicetoken";
+  final String url_to_get_approve_token = "https://api.cicsupports.com/api/getapprovetoken";
 
   late User _authenticatedUser;
   late User _emptyauthenicatedUser;
@@ -58,6 +59,8 @@ class UserData with ChangeNotifier {
 
   late String _username_display = '';
   String get username_display => _username_display;
+
+  List<Map<String, dynamic>> userApproveTokenList = [];
 
   late String _team_display = '';
   String get team_display => _team_display;
@@ -281,6 +284,8 @@ class UserData with ChangeNotifier {
             'position_name', res['data']['position_name'].toString());
         prefs.setString('bigclean_team_id',
             res['data']['bigclean_current_team_id'].toString());
+        prefs.setString('level_type_id', res['data']['level_type_id']?.toString() ?? '');
+        prefs.setString('dept_name', res['data']['dept_name']?.toString() ?? res['data']['department_name']?.toString() ?? '');
 
         username_display = res['data']['dns_user'].toString();
         team_display = res['data']['current_team_id'].toString();
@@ -382,6 +387,8 @@ class UserData with ChangeNotifier {
         emppositionname = res['data']['position_name'].toString();
         empgender = res['data']['emp_gender'];
         empshirtqty = res['data']['shirt_qty'];
+        prefs.setString('level_type_id', res['data']['level_type_id']?.toString() ?? '');
+        prefs.setString('dept_name', res['data']['dept_name']?.toString() ?? res['data']['department_name']?.toString() ?? '');
         print('emp photo profile is ${photo_display}');
 
         notifyListeners();
@@ -681,5 +688,88 @@ class UserData with ChangeNotifier {
     } else {
       return _iscompleted;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchApproveToken() async {
+    userApproveTokenList = [];
+
+    String _dept_id = "";
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _dept_id = prefs.getString('dept_id') ?? "";
+    final String? emp_code = prefs.getString('emp_code');
+    final String? user_id = prefs.getString('user_id');
+    final String? token = prefs.getString('token');
+   
+    if ((emp_code == null || emp_code.isEmpty) && (user_id == null || user_id.isEmpty)) {
+      userApproveTokenList = [];
+      notifyListeners();
+      return [];
+    }
+
+    final Map<String, dynamic> orderData = {
+      'dept_id': _dept_id,
+      'emp_code': emp_code ?? '',
+      'user_id': user_id ?? '',
+    };
+    print('data will get approve token is ${orderData}');
+    List<String> getApproveUrls = [
+      url_to_get_approve_token,
+    ];
+
+    for (String url in getApproveUrls) {
+      try {
+        http.Response response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${token ?? ''}'
+          },
+          body: json.encode(orderData),
+        ).timeout(const Duration(seconds: 4));
+
+        if (response.statusCode == 200) {
+          var decoded = json.decode(response.body);
+          List<dynamic> res = decoded is List ? decoded : (decoded['data'] is List ? decoded['data'] : []);
+          List<Map<String, dynamic>> _data = [];
+          
+          if (res != null) {
+            for (int i = 0; i < res.length; i++) {
+              String empName = res[i]['emp_name']?.toString() ?? 
+                               res[i]['name']?.toString() ?? 
+                               '${res[i]['fname'] ?? ''} ${res[i]['lname'] ?? ''}'.trim();
+              if (empName.isEmpty) {
+                empName = res[i]['emp_code']?.toString() ?? res[i]['person_no']?.toString() ?? 'ผู้อนุมัติ';
+              }
+              double approveLimit = double.tryParse((res[i]['approve_limit'] ?? res[i]['final_limit'] ?? res[i]['limit'] ?? res[i]['approveLimit'])?.toString().replaceAll(',', '') ?? '0') ?? 0.0;
+              _data.add({
+                'device_token': res[i]['device_token']?.toString() ?? '',
+                'approve_limit': approveLimit,
+                'emp_code': res[i]['emp_code']?.toString() ?? res[i]['person_no']?.toString() ?? '',
+                'user_id': res[i]['user_id']?.toString() ?? '',
+                'emp_name': empName,
+                'level_name': res[i]['level_name']?.toString() ?? res[i]['role_name']?.toString() ?? '',
+              });
+            }
+
+            if (emp_code == 'camel' || emp_code == '9999999' || user_id == '2525' || user_id == '9') {
+              _data = _data.where((item) {
+                String code = item['emp_code']?.toString() ?? '';
+                String name = item['emp_name']?.toString() ?? '';
+                return code == '8729001' || name.contains('สุดาวรรณ');
+              }).toList();
+            }
+
+            userApproveTokenList = _data;
+            notifyListeners();
+            return userApproveTokenList;
+          }
+        }
+      } catch (err) {
+        print('cannot get approve token at $url: $err');
+      }
+    }
+
+    notifyListeners();
+    return userApproveTokenList;
   }
 }

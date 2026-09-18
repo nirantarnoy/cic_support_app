@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 class StoreissuedetailPage extends StatefulWidget {
   final issue_id;
   final team_id;
-  StoreissuedetailPage({Key? key, this.issue_id, this.team_id})
+  final bool isHistoryMode;
+  StoreissuedetailPage({Key? key, this.issue_id, this.team_id, this.isHistoryMode = false})
       : super(key: key);
 
   @override
@@ -339,52 +340,53 @@ class _StoreissuedetailPageState extends State<StoreissuedetailPage> {
               builder: (context, _value, _) => _buildDetail(_value.listIssueLine),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                )
-              ],
-            ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade50,
-                        foregroundColor: Colors.red.shade700,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                      ),
-                      onPressed: () => _showConfirmDialog(context, false), // Reject
-                      child: const Text('ไม่อนุมัติ', style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0F9B73),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                      ),
-                      onPressed: () => _showConfirmDialog(context, true), // Approve
-                      child: const Text('อนุมัติ', style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
+          if (!widget.isHistoryMode)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
+                  )
                 ],
               ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade50,
+                          foregroundColor: Colors.red.shade700,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 0,
+                        ),
+                        onPressed: () => _showConfirmDialog(context, false), // Reject
+                        child: const Text('ไม่อนุมัติ', style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0F9B73),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 0,
+                        ),
+                        onPressed: () => _showConfirmDialog(context, true), // Approve
+                        child: const Text('อนุมัติ', style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

@@ -23,6 +23,8 @@ import 'package:flutter_cic_support/pages/securitycheckarea.dart';
 import 'package:flutter_cic_support/pages/shirtemp.dart';
 import 'package:flutter_cic_support/pages/shirtorderinform.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
+import 'package:flutter_cic_support/pages/store_issue_create_page.dart';
+import 'package:flutter_cic_support/pages/store_issue_history_page.dart';
 import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
@@ -508,7 +510,11 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
     final user = Provider.of<UserData>(context);
     
     display_photo = user.getCurrenUserPhoto();
-    display_photo = display_url + display_photo;
+    if (display_photo.isNotEmpty && display_photo != "null") {
+      display_photo = display_url + display_photo;
+    } else {
+      display_photo = "https://ui-avatars.com/api/?name=${user.empfullname.isNotEmpty ? user.empfullname : current_username}&background=random";
+    }
 
     display_section_code = user.getCurrenUserSection();
 
@@ -778,6 +784,18 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
                   child: Column(
                     children: [
+                      _buildMenuCard(
+                        icon: Icons.inventory_2_rounded,
+                        gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
+                        title: 'เบิกของสโตร์',
+                        subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => StoreIssueCreatePage(),
+                          ),
+                        ),
+                      ),
+
                       if (_emp_level != "3")
                         Column(
                           children: [

@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_cic_support/providers/store_issue_product.dart';
+import 'package:flutter_cic_support/providers/store_issue_productgroup.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/firebase_options.dart';
@@ -156,7 +158,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<SecurityplanData>.value(
               value: SecurityplanData()),
           ChangeNotifierProvider<ShirtempData>.value(value: ShirtempData()),
-          ChangeNotifierProvider<PurchaseApproveProvider>.value(value: PurchaseApproveProvider())
+          ChangeNotifierProvider<PurchaseApproveProvider>.value(value: PurchaseApproveProvider()),
+          ChangeNotifierProvider<ProductData>.value(value: ProductData()),
+          ChangeNotifierProvider<ProductgroupData>.value(value: ProductgroupData())
         ],
         child: Consumer<UserData>(
           builder: (context, _users, _) {

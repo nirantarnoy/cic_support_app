@@ -14,7 +14,7 @@ class StoreissueData extends ChangeNotifier {
   final String url_issue_list_detail =
       "https://api.cicsupports.com/api/storeissue/fetchissuedetail";
   final String url_issue_approve =
-      "http://172.16.0.231:3000/api/storeissue/approveissue";
+      "https://api.cicsupports.com/api/storeissue/approveissue";
 
   late List<Storeissue> _issue = [];
   List<Storeissue> get listIssue => _issue;
@@ -45,7 +45,6 @@ class StoreissueData extends ChangeNotifier {
       url_issue_list + "/" + targetEmp,
       "http://172.16.0.231:3000/api/findjournalbyemp",
       "http://172.16.0.231/ptbmprod/api_get_pending_approvals.php",
-      "http://192.168.60.195/ptbmprod/api_get_pending_approvals.php",
     ];
 
     Set<String> seenKeys = {};
@@ -91,7 +90,32 @@ class StoreissueData extends ChangeNotifier {
               String sId = (r['ID'] ?? r['id'] ?? r['journal_no'] ?? r['JOURNAL_NO'] ?? '').toString();
               String sNo = (r['JOURNAL_NO'] ?? r['journal_no'] ?? '').toString();
               String key = sId + '_' + sNo;
-              if (seenKeys.contains(key)) continue;
+              
+              String parsedStatus = (r['STATUS'] ?? r['status'] ?? r['approve_status'] ?? r['status_id'] ?? '0').toString();
+              if (parsedStatus.isEmpty || parsedStatus == 'null') {
+                parsedStatus = '0';
+              }
+              
+              if (seenKeys.contains(key)) {
+                // If we already saw this item, but the new one has a non-zero status (like '1' or '3'),
+                // we should update it so that 'listbyemp' returning '0' doesn't override actual status.
+                if (parsedStatus != '0') {
+                  int idx = data.indexWhere((element) => element.id == sId);
+                  if (idx >= 0 && data[idx].status == '0') {
+                    Storeissue old = data[idx];
+                    data[idx] = Storeissue(
+                      id: old.id,
+                      journal_no: old.journal_no,
+                      trans_date: old.trans_date,
+                      created_by: old.created_by,
+                      created_name: old.created_name,
+                      status: parsedStatus,
+                      emp_full_name: old.emp_full_name,
+                    );
+                  }
+                }
+                continue;
+              }
               seenKeys.add(key);
 
               String reqName = (r['EMP_FULL_NAME'] ?? r['created_name'] ?? r['REQUEST_BY'] ?? r['created_by'] ?? '').toString();
@@ -103,7 +127,7 @@ class StoreissueData extends ChangeNotifier {
                 trans_date: (r['TRANS_DATE'] ?? r['trans_date'] ?? '').toString(),
                 created_by: (r['REQUEST_BY'] ?? r['created_by'] ?? '').toString(),
                 created_name: reqName,
-                status: (r['STATUS'] ?? r['status'] ?? '0').toString(),
+                status: parsedStatus,
                 emp_full_name: reqName,
               );
               data.add(personRes);
@@ -260,5 +284,257 @@ class StoreissueData extends ChangeNotifier {
       }
     }
     return false;
+  }
+
+  Future<bool> checkWorkOrderExist(String jobNo) async {
+    final pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+    final String cleanJobNo = jobNo.trim();
+
+    if (cleanJobNo.isEmpty) return false;
+
+    final Map<String, dynamic> filterData = {
+      'wo_number': cleanJobNo,
+      'job_no': cleanJobNo,
+      'job_ref_no': cleanJobNo
+    };
+
+    List<String> phpEndpoints = [
+      "http://172.16.0.231/ptbmprod/api_check_work_order.php",
+      "http://192.168.60.231/ptbmprod/api_check_work_order.php",
+    ];
+
+    for (String endpoint in phpEndpoints) {
+      try {
+        http.Response response = await http.post(
+          Uri.parse(endpoint),
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token'
+          },
+          body: json.encode(filterData),
+        ).timeout(const Duration(seconds: 4));
+
+        if (response.statusCode == 200) {
+          var res = json.decode(response.body);
+          if (res != null && res is Map) {
+            if (res.containsKey('exists')) {
+              bool isExist = (res['exists'] == true || res['exists'] == 1 || res['exists'].toString() == 'true');
+              if (isExist) return true;
+            }
+            int cnt = int.tryParse(res['count']?.toString() ?? '0') ?? 0;
+            if (cnt > 0) return true;
+          }
+        }
+      } catch (e) {
+        print('error checkWorkOrderExist PHP API ($endpoint): $e');
+      }
+    }
+
+    try {
+      http.Response response = await http.post(
+        Uri.parse("http://172.16.0.231:3000/api/checkworkorder"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${token ?? ''}'
+        },
+        body: json.encode(filterData),
+      );
+
+      if (response.statusCode == 200) {
+        var res = json.decode(response.body);
+        if (res != null) {
+          if (res is Map) {
+            if (res.containsKey('exists')) {
+              return (res['exists'] == true || res['exists'] == 1 || res['exists'].toString() == 'true');
+            } else if (res.containsKey('count')) {
+              int cnt = int.tryParse(res['count'].toString()) ?? 0;
+              if (cnt > 0) return true;
+            }
+          } else if (res is List && res.isNotEmpty) {
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      print('error checkWorkOrderExist Node API: $e');
+    }
+
+    return false;
+  }
+
+  Future<int> checkJobNoCount(String jobNo) async {
+    final pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+    final String cleanJobNo = jobNo.trim();
+
+    if (cleanJobNo.isEmpty) return 0;
+
+    final Map<String, dynamic> filterData = {
+      'job_no': cleanJobNo,
+      'job_ref_no': cleanJobNo
+    };
+    try {
+      http.Response response = await http.post(
+        Uri.parse("http://172.16.0.231:3000/api/checkjobcount"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${token ?? ''}'
+        },
+        body: json.encode(filterData),
+      );
+
+      if (response.statusCode == 200) {
+        var res = json.decode(response.body);
+        if (res != null) {
+          if (res is Map && res.containsKey('count')) {
+            return int.tryParse(res['count'].toString()) ?? 0;
+          } else if (res is List) {
+            return res.length;
+          }
+        }
+      }
+    } catch (e) {
+      print('error checkJobNoCount API: $e');
+    }
+
+    return 0;
+  }
+
+  Future<Map<String, dynamic>> checkDuplicateIssueAlert(String jobNo, String itemId, String itemName, String empCode) async {
+    List<String> checkUrls = [
+      'http://172.16.0.231/ptbmprod/api_check_duplicate_issue_alert.php',
+      'http://192.168.60.231/ptbmprod/api_check_duplicate_issue_alert.php'
+    ];
+
+    Map<String, dynamic> reqData = {
+      'job_ref_no': jobNo,
+      'item_id': itemId,
+      'item_name': itemName,
+      'emp_code': empCode,
+      'trigger_notify': 1
+    };
+
+    for (String url in checkUrls) {
+      try {
+        final http.Response res = await http.post(
+          Uri.parse(url),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(reqData),
+        ).timeout(const Duration(seconds: 4));
+
+        if (res.statusCode == 200) {
+          var body = json.decode(res.body);
+          if (body != null) {
+            return body; 
+          }
+        }
+      } catch (e) {
+        print('Error checkDuplicateIssueAlert at $url: $e');
+      }
+    }
+    return {};
+  }
+
+  Future<bool> addJournal(List<dynamic> listdata, String job_no, {bool forcePending = false, String? approverEmpCode, String? approverName, String? idempotencyKey}) async {
+    String _user_id = "";
+    String _dept_code = "";
+
+    bool _iscomplated = false;
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _user_id = prefs.getString('emp_code') ?? "";
+    _dept_code = prefs.getString('department_id') ?? prefs.getString('dept_name') ?? "";
+    final String? token = prefs.getString('token');
+    final String? level_type_id = prefs.getString('level_type_id');
+    
+    var jsonx = listdata
+        .map((e) {
+          int parsedQty = (double.tryParse(e.qty.toString().replaceAll(',', '')) ?? 1).round();
+          if (parsedQty <= 0) parsedQty = 1;
+          return {
+            'itemid': e.id?.toString() ?? '',
+            'itemname': e.name?.toString() ?? '',
+            'qty': parsedQty,
+            'unit_name': e.unit_name?.toString() ?? '',
+            'remark': e.remark,
+          };
+        })
+        .toList();
+
+    String? final_level_type_id = level_type_id;
+    if (forcePending) {
+      final_level_type_id = '1';
+    }
+
+    final Map<String, dynamic> orderData = {
+      'user_id': _user_id,
+      'job_no': job_no.trim(),
+      'data': jsonx,
+      'level_type_id': final_level_type_id,
+      'dept_code': _dept_code,
+      if (approverEmpCode != null && approverEmpCode.isNotEmpty) 'approver_emp_code': approverEmpCode,
+      if (approverName != null && approverName.isNotEmpty) 'approver_name': approverName,
+      if (idempotencyKey != null && idempotencyKey.isNotEmpty) 'idempotency_key': idempotencyKey,
+    };
+    print('data will save journal to http://172.16.0.231:3000/api/addjournal: ${orderData}');
+
+    List<String> addJournalUrls = [
+      "https://api.cicsupports.com/api/addjournal",
+    ];
+
+    for (String url in addJournalUrls) {
+      try {
+        http.Response response;
+        if (url.contains('.php')) {
+          response = await http.post(
+            Uri.parse(url),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: {
+              'user_id': _user_id,
+              'job_no': job_no,
+              'data': json.encode(jsonx),
+              'items': json.encode(jsonx),
+              'lines': json.encode(jsonx),
+              if (idempotencyKey != null && idempotencyKey.isNotEmpty) 'idempotency_key': idempotencyKey,
+            },
+          ).timeout(const Duration(seconds: 90));
+
+          if (response.statusCode != 200) {
+            response = await http.post(
+              Uri.parse(url),
+              headers: {
+                'Content-Type': 'application/json',
+                if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token'
+              },
+              body: json.encode(orderData),
+            ).timeout(const Duration(seconds: 90));
+          }
+        } else {
+          response = await http.post(
+            Uri.parse(url),
+            headers: {
+              'Content-Type': 'application/json',
+              if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token'
+            },
+            body: json.encode(orderData),
+          ).timeout(const Duration(seconds: 90));
+        }
+
+        if (response.statusCode == 200) {
+          print('data added journal response from $url: ${response.body}');
+          _iscomplated = true;
+          return _iscomplated;
+        } else {
+          print('Failed to add journal at $url, status: ${response.statusCode}, body: ${response.body}');
+        }
+      } catch (err) {
+        print('cannot create journal at $url: $err');
+      }
+    }
+
+    return _iscomplated;
   }
 }

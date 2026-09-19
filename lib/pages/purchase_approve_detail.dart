@@ -301,6 +301,93 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
     );
   }
 
+  void _showHistoryModal(BuildContext context, List history) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog.fullscreen(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.close_rounded, color: Colors.black87),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              'ประวัติการดำเนินการ',
+              style: TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Prompt',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
+          body: ListView.builder(
+            padding: const EdgeInsets.all(24),
+            itemCount: history.length,
+            itemBuilder: (context, index) {
+              final h = history[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: Colors.indigo.shade400,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        if (index != history.length - 1)
+                          Container(
+                            width: 2,
+                            height: 60,
+                            color: Colors.indigo.shade100,
+                            margin: const EdgeInsets.only(top: 4),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${h['action_type']} โดย ${h['action_by']}',
+                            style: const TextStyle(fontFamily: 'Prompt', fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          if (h['remark'] != null && h['remark'].toString().isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              h['remark'],
+                              style: const TextStyle(fontFamily: 'Prompt', fontSize: 13, color: Colors.black87),
+                            ),
+                          ],
+                          const SizedBox(height: 6),
+                          Text(
+                            h['action_date'] ?? '',
+                            style: const TextStyle(fontFamily: 'Prompt', fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,##0.00');
@@ -583,65 +670,21 @@ class _PurchaseApproveDetailPageState extends State<PurchaseApproveDetailPage> {
                   // History / Timeline Section
                   if (detail['history'] != null && (detail['history'] as List).isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    const Text(
-                      'ประวัติการดำเนินการ',
-                      style: TextStyle(fontFamily: 'Prompt', fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-                    ),
-                    const SizedBox(height: 12),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: (detail['history'] as List).length,
-                      itemBuilder: (context, index) {
-                        final h = detail['history'][index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 12,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      color: Colors.indigo.shade400,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  if (index != (detail['history'] as List).length - 1)
-                                    Container(
-                                      width: 2,
-                                      height: 40,
-                                      color: Colors.indigo.shade100,
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${h['action_type']} โดย ${h['action_by']}',
-                                      style: const TextStyle(fontFamily: 'Prompt', fontSize: 13, fontWeight: FontWeight.bold),
-                                    ),
-                                    if (h['remark'] != null && h['remark'].toString().isNotEmpty)
-                                      Text(
-                                        h['remark'],
-                                        style: const TextStyle(fontFamily: 'Prompt', fontSize: 12, color: Colors.black54),
-                                      ),
-                                    Text(
-                                      h['action_date'] ?? '',
-                                      style: const TextStyle(fontFamily: 'Prompt', fontSize: 11, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          side: BorderSide(color: Colors.indigo.shade200, width: 1.5),
+                        ),
+                        icon: Icon(Icons.history_rounded, color: Colors.indigo.shade500),
+                        label: Text(
+                          'ดูประวัติการดำเนินการ',
+                          style: TextStyle(fontFamily: 'Prompt', fontSize: 14, fontWeight: FontWeight.bold, color: Colors.indigo.shade600),
+                        ),
+                        onPressed: () => _showHistoryModal(context, detail['history'] as List),
+                      ),
                     ),
                   ],
                   

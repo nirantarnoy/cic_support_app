@@ -25,6 +25,7 @@ import 'package:flutter_cic_support/pages/shirtorderinform.dart';
 import 'package:flutter_cic_support/pages/storeissueapprove.dart';
 import 'package:flutter_cic_support/pages/store_issue_create_page.dart';
 import 'package:flutter_cic_support/pages/store_issue_history_page.dart';
+import 'package:flutter_cic_support/pages/it_support_dashboard.dart';
 import 'package:flutter_cic_support/providers/shirtemp.dart';
 import 'package:flutter_cic_support/providers/teamnotify.dart';
 // import 'package:flutter_cic_support/pages/plan.dart';
@@ -833,6 +834,17 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                                   },
                                 );
                               },
+                            ),
+                            _buildMenuCard(
+                              icon: Icons.computer_rounded,
+                              gradientColors: [const Color(0xFF00C6FF), const Color(0xFF0072FF)],
+                              title: 'IT Support',
+                              subtitle: 'แจ้งซ่อมและขอรับการสนับสนุนด้านไอที',
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const ITSupportDashboardPage(),
+                                ),
+                              ),
                             ),
                             _buildMenuCard(
                               icon: Icons.fire_extinguisher_rounded,

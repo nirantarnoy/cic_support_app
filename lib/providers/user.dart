@@ -431,7 +431,12 @@ class UserData with ChangeNotifier {
         }
 
         photo_display = res['data']['photo'].toString();
+        emplevel = res['data']['level_type_id'] ?? 0;
+        _is_can_issue = res['data']['is_can_issue'] ?? 0;
+
+        prefs.setString('level_type_id', res['data']['level_type_id']?.toString() ?? '');
         print("normal photo is ${photo_display}");
+        print("normal level_type_id is ${emplevel}");
 
         notifyListeners();
         return true;

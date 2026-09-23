@@ -57,7 +57,12 @@ class StoreissueData extends ChangeNotifier {
           response = await http.post(
             Uri.parse(url),
             headers: {'Content-Type': 'application/json'},
-            body: json.encode({'emp_code': targetEmp, 'empid': targetEmp}),
+            body: json.encode({
+              'emp_code': targetEmp,
+              'empid': targetEmp,
+              'approver_emp_code': targetEmp,
+              'approver_id': targetEmp
+            }),
           ).timeout(const Duration(seconds: 4));
         } else if (url.contains('/findjournalbyemp')) {
           response = await http.post(
@@ -66,7 +71,12 @@ class StoreissueData extends ChangeNotifier {
               'Content-Type': 'application/json',
               if (token.isNotEmpty && token != 'null') 'Authorization': 'Bearer $token'
             },
-            body: json.encode({'empid': targetEmp, 'emp_code': targetEmp}),
+            body: json.encode({
+              'empid': targetEmp,
+              'emp_code': targetEmp,
+              'approver_emp_code': targetEmp,
+              'approver_id': targetEmp
+            }),
           ).timeout(const Duration(seconds: 4));
         } else {
           response = await http.get(

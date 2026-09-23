@@ -204,22 +204,29 @@ class UserData with ChangeNotifier {
         final DateTime expiryTime = now.add(Duration(seconds: 160000));
         final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        prefs.setString('token', res['data']['token'].toString());
-        prefs.setString('user_id', res['data']['id'].toString());
-        prefs.setString('user_name', res['data']['dns_user'].toString());
-        prefs.setString('team_id', res['data']['current_team_id'].toString());
+        prefs.setString('token', res['data']['token']?.toString() ?? '');
+        prefs.setString('user_id', res['data']['id']?.toString() ?? '');
+        prefs.setString('user_name', res['data']['dns_user']?.toString() ?? '');
+        prefs.setString('team_id', res['data']['current_team_id']?.toString() ?? '');
         prefs.setString('bigclean_team_id',
-            res['data']['bigclean_current_team_id'].toString());
+            res['data']['bigclean_current_team_id']?.toString() ?? '');
+        
+        prefs.setString('level_type_id', res['data']['level_type_id']?.toString() ?? '');
+        prefs.setString('emp_code', res['data']['emp_code']?.toString() ?? '');
+        prefs.setString('emp_key', res['data']['emp_key']?.toString() ?? '');
 
-        username_display = res['data']['dns_user'].toString();
-        team_display = res['data']['current_team_id'].toString();
+        username_display = res['data']['dns_user']?.toString() ?? '';
+        team_display = res['data']['current_team_id']?.toString() ?? '';
         prefs.setString('expiryTime', expiryTime.toIso8601String());
 
         userlogintype = 1; // AD User
+        emplevel = res['data']['level_type_id'] ?? 0;
+        _is_can_issue = res['data']['is_can_issue'] ?? 0;
 
         print("res data is ${res['data']}");
         print("token is ${res['data']['token']}");
-
+        
+        notifyListeners();
         return true;
       } else {
         print(response.body);

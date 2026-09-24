@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter_cic_support/models/jobplanarea.dart';
 import 'package:flutter_cic_support/models/securitycheckdata.dart';
 import 'package:flutter_cic_support/models/shirtdata.dart';
@@ -185,8 +185,8 @@ class _ShirtempPageState extends State<ShirtempPage> {
 
   Future<bool> scanQRCode() async {
     try {
-      final qrCode = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
+      var scanResult = await BarcodeScanner.scan();
+      final qrCode = scanResult.rawContent;
       if (!mounted) return false;
       setState(() {
         this.qrCode = qrCode;

@@ -8,7 +8,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_cic_support/pages/store_issue_history_page.dart' as flutter_cic_support_history;
-
+import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 class StoreIssueCreatePage extends StatefulWidget {
   @override
   _StoreIssueCreatePageState createState() => _StoreIssueCreatePageState();
@@ -157,6 +160,60 @@ class _StoreIssueCreatePageState extends State<StoreIssueCreatePage> {
     );
   }
 
+  Future<void> _scanQR() async {
+    try {
+      var result = await BarcodeScanner.scan();
+      String barcodeScanRes = result.rawContent;
+          
+      if (barcodeScanRes != '-1' && barcodeScanRes.isNotEmpty) {
+        EasyLoading.show(status: 'กำลังเชื่อมต่อตู้ Kiosk...');
+        final pref = await SharedPreferences.getInstance();
+        final String? empCode = pref.getString('emp_code');
+        final String? jwtToken = pref.getString('token');
+
+        final response = await http.post(
+          Uri.parse('https://api.cicsupports.com/api/kiosk/scan-qr'),
+          headers: {
+            'Content-Type': 'application/json',
+            if (jwtToken != null) 'Authorization': 'Bearer $jwtToken',
+          },
+          body: json.encode({
+            'token': barcodeScanRes,
+            'emp_code': empCode,
+          }),
+        ).timeout(const Duration(seconds: 10));
+
+        EasyLoading.dismiss();
+
+        if (response.statusCode == 200) {
+          final resData = json.decode(response.body);
+          if (resData['status'] == true) {
+             showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text('สำเร็จ!', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                content: Text('เชื่อมต่อตู้ Kiosk สำเร็จแล้ว กรุณาทำรายการต่อที่หน้าตู้ Kiosk'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: Text('ตกลง', style: TextStyle(fontWeight: FontWeight.bold)),
+                  )
+                ],
+              )
+            );
+          } else {
+            EasyLoading.showError('รหัสไม่ถูกต้องหรือหมดอายุ');
+          }
+        } else {
+          EasyLoading.showError('เกิดข้อผิดพลาดในการเชื่อมต่อ (HTTP ${response.statusCode})');
+        }
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      EasyLoading.showError('เกิดข้อผิดพลาด: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,6 +224,11 @@ class _StoreIssueCreatePageState extends State<StoreIssueCreatePage> {
         iconTheme: IconThemeData(color: Colors.white),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: Icon(Icons.qr_code_scanner, color: Colors.white),
+            onPressed: _scanQR,
+            tooltip: 'สแกนคิวอาร์โค้ดตู้ Kiosk',
+          ),
           IconButton(
             icon: Icon(Icons.history_rounded, color: Colors.white),
             onPressed: () {

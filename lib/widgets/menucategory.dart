@@ -121,14 +121,7 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
                         ? null
                         : Border.all(color: Colors.grey.shade300, width: 1),
                     gradient: isSelected
-                        ? const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Color(0xFF0F9B73),
-                              Color(0xFF2EC89F),
-                            ],
-                          )
+                        ? _getCategoryGradient(image)
                         : null,
                     color: isSelected ? null : Colors.white,
                     boxShadow: isSelected

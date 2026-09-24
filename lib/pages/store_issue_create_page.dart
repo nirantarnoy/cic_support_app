@@ -20,6 +20,35 @@ class StoreIssueCreatePage extends StatefulWidget {
 class _StoreIssueCreatePageState extends State<StoreIssueCreatePage> {
   final TextEditingController _searchController = TextEditingController();
 
+  String _translateCategory(String categoryName) {
+    Map<String, String> translations = {
+      '': 'ทั้งหมด',
+      'ALL': 'ทั้งหมด',
+      'OFFICE SUPPLY': 'อุปกรณ์สำนักงาน',
+      'OFFICE SUPPLIES': 'อุปกรณ์สำนักงาน',
+      'SAFETY': 'อุปกรณ์เซฟตี้',
+      'CLEANING': 'อุปกรณ์ทำความสะอาด',
+      'TOOLS': 'เครื่องมือช่าง',
+      'CHEMICAL': 'สารเคมี',
+      'CONSUMABLE': 'วัสดุสิ้นเปลือง',
+      'CONSUMABLES': 'วัสดุสิ้นเปลือง',
+      'ELECTRICAL': 'อุปกรณ์ไฟฟ้า',
+      'MEDICAL': 'เวชภัณฑ์',
+      'PACKAGING': 'บรรจุภัณฑ์',
+      'SPARE PARTS': 'อะไหล่',
+      'SPAREPART': 'อะไหล่',
+      'FACTORY SUPPLIES': 'ของใช้ในโรงงาน',
+      'IT': 'อุปกรณ์ไอที',
+      'HARDWARE': 'ฮาร์ดแวร์',
+      'STATIONERY': 'เครื่องเขียน',
+    };
+    String key = categoryName.trim().toUpperCase();
+    if (translations.containsKey(key)) {
+      return translations[key]!;
+    }
+    return categoryName.trim().isEmpty ? 'ทั้งหมด' : categoryName;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -309,7 +338,7 @@ class _StoreIssueCreatePageState extends State<StoreIssueCreatePage> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          menu[index].name,
+                          _translateCategory(menu[index].name),
                           style: TextStyle(
                             fontWeight: menu[index].isactive ? FontWeight.bold : FontWeight.normal,
                             color: menu[index].isactive ? Colors.blue[700] : Colors.black87,

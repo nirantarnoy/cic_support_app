@@ -384,6 +384,7 @@ class _ProfilePageState extends State<ProfilePage> {
     required String subtitle,
     required VoidCallback onTap,
     int? badgeCount,
+    Color iconColor = Colors.white,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -419,7 +420,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 22),
+                    child: Icon(icon, color: iconColor, size: 22),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -857,7 +858,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (_is_can_issue == 1 || current_username == 'admin' || _emp_level == "1" || _emp_level == "2")
                         _buildMenuCard(
                           icon: Icons.inventory_2_rounded,
-                          gradientColors: [const Color.fromARGB(255, 43, 192, 105), const Color.fromARGB(255, 14, 153, 116)],
+                          gradientColors: [const Color(0xFFFFFFFF), const Color(0xFFE0E0E0)],
+                          iconColor: Colors.black87,
                           title: 'เบิกของสโตร์',
                           subtitle: 'ค้นหาและขอเบิกสินค้าจากคลังสินค้า',
                           onTap: () => Navigator.of(context).push(

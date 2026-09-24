@@ -839,7 +839,7 @@ class _ProfileNormalPageState extends State<ProfileNormalPage> {
                             ),
                             _buildMenuCard(
                               icon: Icons.computer_rounded,
-                              gradientColors: [const Color(0xFFFFFFFF), const Color(0xFFE0E0E0)],
+                              gradientColors: [const Color(0xFFFFFFFF), const Color(0xFF64B5F6)],
                               iconColor: Colors.black87,
                               title: 'IT Support',
                               subtitle: 'แจ้งซ่อมและขอรับการสนับสนุนด้านไอที',

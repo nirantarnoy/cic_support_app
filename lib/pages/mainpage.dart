@@ -276,7 +276,7 @@ class _MainPageState extends State<MainPage>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFFFFFF), Color(0xFFE0E0E0)],
+                          colors: [Color(0xFFFFFFFF), Color(0xFF64B5F6)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),

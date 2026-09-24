@@ -21,31 +21,22 @@ class _StoreIssueCreatePageState extends State<StoreIssueCreatePage> {
   final TextEditingController _searchController = TextEditingController();
 
   String _translateCategory(String categoryName) {
-    Map<String, String> translations = {
-      '': 'ทั้งหมด',
-      'ALL': 'ทั้งหมด',
-      'OFFICE SUPPLY': 'อุปกรณ์สำนักงาน',
-      'OFFICE SUPPLIES': 'อุปกรณ์สำนักงาน',
-      'SAFETY': 'อุปกรณ์เซฟตี้',
-      'CLEANING': 'อุปกรณ์ทำความสะอาด',
-      'TOOLS': 'เครื่องมือช่าง',
-      'CHEMICAL': 'สารเคมี',
-      'CONSUMABLE': 'วัสดุสิ้นเปลือง',
-      'CONSUMABLES': 'วัสดุสิ้นเปลือง',
-      'ELECTRICAL': 'อุปกรณ์ไฟฟ้า',
-      'MEDICAL': 'เวชภัณฑ์',
-      'PACKAGING': 'บรรจุภัณฑ์',
-      'SPARE PARTS': 'อะไหล่',
-      'SPAREPART': 'อะไหล่',
-      'FACTORY SUPPLIES': 'ของใช้ในโรงงาน',
-      'IT': 'อุปกรณ์ไอที',
-      'HARDWARE': 'ฮาร์ดแวร์',
-      'STATIONERY': 'เครื่องเขียน',
-    };
     String key = categoryName.trim().toUpperCase();
-    if (translations.containsKey(key)) {
-      return translations[key]!;
-    }
+    if (key.isEmpty || key == 'ALL') return 'ทั้งหมด';
+    if (key.contains('OFFICE')) return 'อุปกรณ์สำนักงาน';
+    if (key.contains('SAFETY')) return 'อุปกรณ์เซฟตี้';
+    if (key.contains('CLEANING')) return 'อุปกรณ์ทำความสะอาด';
+    if (key.contains('TOOL')) return 'เครื่องมือช่าง';
+    if (key.contains('CHEM')) return 'สารเคมี';
+    if (key.contains('CONSUMABLE')) return 'วัสดุสิ้นเปลือง';
+    if (key.contains('ELECTRIC')) return 'อุปกรณ์ไฟฟ้า';
+    if (key.contains('MEDIC')) return 'เวชภัณฑ์';
+    if (key.contains('PACKAG')) return 'บรรจุภัณฑ์';
+    if (key.contains('SPARE')) return 'อะไหล่';
+    if (key.contains('FACTORY')) return 'ของใช้ในโรงงาน';
+    if (key.contains('IT') || key.contains('I.T')) return 'อุปกรณ์ไอที';
+    if (key.contains('HARDWARE')) return 'ฮาร์ดแวร์';
+    if (key.contains('STATIONERY')) return 'เครื่องเขียน';
     return categoryName.trim().isEmpty ? 'ทั้งหมด' : categoryName;
   }
 

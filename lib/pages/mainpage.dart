@@ -276,13 +276,13 @@ class _MainPageState extends State<MainPage>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                          colors: [Color(0xFFFFFFFF), Color(0xFFE0E0E0)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF0072FF).withOpacity(0.3),
+                            color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -293,12 +293,12 @@ class _MainPageState extends State<MainPage>
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.black12,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.computer_rounded,
-                              color: Colors.white,
+                              color: Colors.black87,
                               size: 28,
                             ),
                           ),
@@ -310,7 +310,7 @@ class _MainPageState extends State<MainPage>
                                 const Text(
                                   'IT Support',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black87,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Prompt',
@@ -320,7 +320,7 @@ class _MainPageState extends State<MainPage>
                                 Text(
                                   'ระบบแจ้งซ่อมและสนับสนุนด้านไอที',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.black54,
                                     fontSize: 12,
                                     fontFamily: 'Prompt',
                                   ),
@@ -331,12 +331,12 @@ class _MainPageState extends State<MainPage>
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
-                              color: Colors.white,
+                              color: Colors.black87,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.arrow_forward_ios_rounded,
-                              color: Color(0xFF0072FF),
+                              color: Colors.white,
                               size: 14,
                             ),
                           ),

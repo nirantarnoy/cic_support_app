@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cic_support/pages/fivedetailpage.dart';
 import 'package:flutter_cic_support/pages/fivespage.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class MenuCategoryWidget extends StatefulWidget {
   @override
@@ -238,12 +239,16 @@ class _MenuCategoryWidgetState extends State<MenuCategoryWidget> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FiveDetailPage(),
-                                  ),
-                                );
+                                if (e == '5ส') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FiveDetailPage(),
+                                    ),
+                                  );
+                                } else {
+                                  EasyLoading.showInfo('ระบบกำลังพัฒนา\nจะเปิดให้ใช้งานเร็วๆ นี้');
+                                }
                               },
                               child: Container(
                                 alignment: Alignment.center,

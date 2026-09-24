@@ -96,52 +96,103 @@ class _FiveDetailPageState extends State<FiveDetailPage>
   }
 
   Widget _buildlist(List<FiveRankData> data, int score_rank) {
-    var formatter = NumberFormat('#,##,##0.00#');
-    Widget cards;
-    int nums = 0;
+    var formatter = NumberFormat('#,##,##0.##');
     if (data.isNotEmpty) {
-      cards = new ListView.builder(
+      data.sort((a, b) => b.score.compareTo(a.score));
+      return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemCount: data.length,
           itemBuilder: (BuildContext context, int index) {
-            if (data[index].rank_no != 1) {
-              nums += 1;
-            } else {
-              nums = 1;
-            }
-            return Card(
-              elevation: 0.5,
+            bool isFirst = data[index].score == data[0].score;
+            bool isPass = data[index].score >= score_rank;
+            int rank = isFirst ? 1 : index + 1;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: isFirst 
+                        ? Colors.amber.withOpacity(0.2) 
+                        : Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: isFirst 
+                    ? Border.all(color: Colors.amber.shade300, width: 2) 
+                    : Border.all(color: Colors.grey.shade100, width: 1),
+              ),
               child: ListTile(
-                leading: data[index].rank_no == 1
-                    ? Icon(
-                        Icons.emoji_events,
-                        color: Colors.amber,
-                        size: 45,
-                      )
-                    : data[index].score >= score_rank
-                        ? Chip(
-                            label: Text(
-                              '${nums}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          )
-                        : Icon(
-                            Icons.arrow_downward,
-                            color: Colors.red,
-                            size: 45,
-                          ),
-                title: Text('${data[index].deptname}'),
-                trailing: Text('${formatter.format(data[index].score)}%'),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                leading: Container(
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(
+                    color: isFirst 
+                        ? Colors.amber.shade50 
+                        : (isPass ? Colors.blue.shade50 : Colors.red.shade50),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: isFirst
+                        ? const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 28)
+                        : (isPass 
+                            ? Text(rank.toString(), style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold, fontSize: 16))
+                            : const Icon(Icons.arrow_downward_rounded, color: Colors.redAccent, size: 24)),
+                  ),
+                ),
+                title: Text(
+                  '${data[index].deptname}',
+                  style: const TextStyle(
+                    fontFamily: 'Prompt',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colors.black87,
+                  ),
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${formatter.format(data[index].score)}%',
+                      style: TextStyle(
+                        fontFamily: 'Prompt',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: isPass ? const Color(0xFF0F9B73) : Colors.redAccent,
+                      ),
+                    ),
+                    Text(
+                      isPass ? 'ผ่านเกณฑ์' : 'ต่ำกว่าเกณฑ์',
+                      style: TextStyle(
+                        fontFamily: 'Prompt',
+                        fontSize: 10,
+                        color: isPass ? Colors.grey[600] : Colors.redAccent,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           });
-
-      return cards;
     } else {
       return Center(
-        child: Text('No Data'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.insert_chart_outlined_rounded, size: 48, color: Colors.grey[300]),
+            const SizedBox(height: 12),
+            Text(
+              'ไม่มีข้อมูล',
+              style: TextStyle(fontFamily: 'Prompt', color: Colors.grey[500]),
+            ),
+          ],
+        ),
       );
     }
   }
@@ -151,121 +202,171 @@ class _FiveDetailPageState extends State<FiveDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //  resizeToAvoidBottomInset: true,
-      backgroundColor: Color.fromARGB(255, 45, 172, 123),
+      backgroundColor: const Color(0xFF0F9B73),
       appBar: AppBar(
-        title: Text('รายละเอียดกิจกรรม 5 ส.'),
-        backgroundColor: Colors.transparent,
+        title: const Text('รายละเอียดกิจกรรม 5 ส.', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18)),
+        backgroundColor: const Color(0xFF0F9B73),
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         bottom: TabBar(
-          indicatorColor: Colors.amber,
-          indicatorWeight: 5.0,
+          indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: Colors.white.withOpacity(0.2),
+          ),
+          indicatorWeight: 0,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+          labelStyle: const TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold, fontSize: 14),
+          unselectedLabelStyle: const TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.normal, fontSize: 14),
           isScrollable: true,
           controller: _tabController,
-          tabs: <Widget>[
-            Tab(
-              // icon: Icon(Icons.list_outlined),
-              text: "สำนักงานกลุ่ม A",
-            ),
-            Tab(
-              //icon: Icon(Icons.calendar_month),
-              text: "สำนักงานกลุ่ม B",
-            ),
-            Tab(
-              text: "โรงงานกลุ่ม A",
-            ),
-            Tab(
-              text: "โรงงานกลุ่ม B",
-            )
+          tabs: const <Widget>[
+            Tab(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text("สำนักงานกลุ่ม A"))),
+            Tab(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text("สำนักงานกลุ่ม B"))),
+            Tab(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text("โรงงานกลุ่ม A"))),
+            Tab(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text("โรงงานกลุ่ม B"))),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          Container(
-            child: Column(children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    // borderRadius: BorderRadius.only(
-                    //   topLeft: Radius.circular(10),
-                    //   topRight: Radius.circular(10),
-                    // ),
-                    color: Colors.white,
-                  ),
-                  child: Consumer<PlanData>(
-                    builder: (context, value, child) =>
-                        getTabcontent("1", value, 98),
-                  ),
-                ),
-              ),
-            ]),
+      body: Container(
+        margin: const EdgeInsets.only(top: 8),
+        decoration: const BoxDecoration(
+          color: Color(0xFFF5F7FB),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
-          Container(
-            child: Column(children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    // borderRadius: BorderRadius.only(
-                    //   topLeft: Radius.circular(10),
-                    //   topRight: Radius.circular(10),
-                    // ),
-                    color: Colors.white,
-                  ),
-                  child: Consumer<PlanData>(
-                    builder: (context, value, child) =>
-                        getTabcontent("2", value, 98),
-                  ),
-                ),
-              ),
-            ]),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
-          Container(
-            child: Column(children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    // borderRadius: BorderRadius.only(
-                    //   topLeft: Radius.circular(10),
-                    //   topRight: Radius.circular(10),
-                    // ),
-                    color: Colors.white,
-                  ),
-                  child: Consumer<PlanData>(
-                    builder: (context, value, child) =>
-                        getTabcontent("3", value, 95),
-                  ),
-                ),
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              Consumer<PlanData>(
+                builder: (context, value, child) => getTabcontent("1", value, 98),
               ),
-            ]),
+              Consumer<PlanData>(
+                builder: (context, value, child) => getTabcontent("2", value, 98),
+              ),
+              Consumer<PlanData>(
+                builder: (context, value, child) => getTabcontent("3", value, 95),
+              ),
+              Consumer<PlanData>(
+                builder: (context, value, child) => getTabcontent("4", value, 95),
+              ),
+            ],
           ),
-          Container(
-            child: Column(children: <Widget>[
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ]
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'ค้นหาผลคะแนน 5 ส. ประจำเดือน',
+            style: TextStyle(
+              fontFamily: 'Prompt',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
               Expanded(
-                flex: 5,
+                flex: 2,
                 child: Container(
-                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    // borderRadius: BorderRadius.only(
-                    //   topLeft: Radius.circular(10),
-                    //   topRight: Radius.circular(10),
-                    // ),
-                    color: Colors.white,
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200)
                   ),
-                  child: Consumer<PlanData>(
-                    builder: (context, value, child) =>
-                        getTabcontent("4", value, 95),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: dropdownvalue,
+                      isExpanded: true,
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54),
+                      style: const TextStyle(fontFamily: 'Prompt', color: Colors.black87, fontSize: 13),
+                      items: month_list.map((String value) {
+                        return DropdownMenuItem(value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          dropdownvalue = value.toString();
+                        });
+                      },
+                    ),
                   ),
                 ),
               ),
-            ]),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200)
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: dropdownyearvalue,
+                      isExpanded: true,
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54),
+                      style: const TextStyle(fontFamily: 'Prompt', color: Colors.black87, fontSize: 13),
+                      items: year_list.map((String value) {
+                        return DropdownMenuItem(value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          dropdownyearvalue = value.toString();
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: const Color(0xFF0F9B73),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                child: const Icon(Icons.search_rounded, color: Colors.white, size: 22),
+                onPressed: () {
+                  var _month_value = "";
+                  var indexValue = _stdmonth.indexWhere((element) => element["name"] == dropdownvalue);
+                  _month_value = _stdmonth[indexValue]['id'];
+
+                  EasyLoading.show(status: "กำลังโหลดข้อมูล");
+                  Provider.of<PlanData>(context, listen: false)
+                      .fetchFiveRank(dropdownyearvalue, _month_value);
+                  EasyLoading.dismiss();
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -273,8 +374,6 @@ class _FiveDetailPageState extends State<FiveDetailPage>
   }
 
   Widget getTabcontent(String tab_id, PlanData value, int score_rank) {
-    Widget _content;
-    print("current tab is ${_tabController}");
     if (value.listfiverankdata.isNotEmpty) {
       List<FiveRankData> _tabvaluelist = [];
       double max_score = 0;
@@ -286,7 +385,7 @@ class _FiveDetailPageState extends State<FiveDetailPage>
             max_score = element.score;
           } else {
             if (element.score > max_score) {
-              max_score = element.score; // replance max score
+              max_score = element.score; 
             }
           }
           FiveRankData _items = FiveRankData(
@@ -295,10 +394,9 @@ class _FiveDetailPageState extends State<FiveDetailPage>
             rank_no: 0,
             zone_id: tab_id,
           );
-
           _tabvaluelist.add(_items);
+          i += 1;
         }
-        i += 1;
       });
 
       _tabvaluelist.forEach((element) {
@@ -307,243 +405,79 @@ class _FiveDetailPageState extends State<FiveDetailPage>
         }
       });
 
-      _content = Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'อันดับคะแนน 5 ส. ประจำเดือน',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+      return Column(children: <Widget>[
+        _buildSearchHeader(),
+        const SizedBox(height: 12),
+        Expanded(
+          flex: 2,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))]
+            ),
+            child: SfCircularChart(
+              legend: Legend(
+                isVisible: false,
+              ),
+              tooltipBehavior: TooltipBehavior(
+                enable: true,
+                textStyle: const TextStyle(fontFamily: 'Prompt')
+              ),
+              series: <CircularSeries<FiveRankData, String>>[
+                DoughnutSeries<FiveRankData, String>(
+                  dataSource: _tabvaluelist,
+                  xValueMapper: (FiveRankData sales, _) => sales.deptname,
+                  yValueMapper: (FiveRankData sales, _) => sales.score,
+                  dataLabelSettings: const DataLabelSettings(
+                    isVisible: true,
+                    textStyle: TextStyle(fontFamily: 'Prompt', fontSize: 10, fontWeight: FontWeight.bold)
+                  ),
+                )
+              ],
             ),
           ),
         ),
-        SizedBox(
-          height: 5,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton(
-                  value: dropdownvalue,
-                  alignment: AlignmentDirectional.centerEnd,
-                  items:
-                      month_list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      dropdownvalue = value.toString();
-                    });
-                  },
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 4),
+          child: Row(
+            children: const [
+              Icon(Icons.leaderboard_rounded, color: Color(0xFF0F9B73), size: 20),
+              SizedBox(width: 8),
+              Text(
+                'อันดับเรียงตามคะแนน',
+                style: TextStyle(
+                  fontFamily: 'Prompt',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton(
-                  value: dropdownyearvalue,
-                  alignment: AlignmentDirectional.centerEnd,
-                  items:
-                      year_list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      dropdownyearvalue = value.toString();
-                    });
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 45, 172, 123)),
-                  child: Text('ค้นหา'),
-                  onPressed: () {
-                    setState(() {
-                      var _month_value = "";
-                      var indexValue = _stdmonth.indexWhere(
-                          (element) => element["name"] == dropdownvalue);
-                      _month_value = _stdmonth[indexValue]['id'];
-
-                      EasyLoading.show(status: "กำลังโหลดข้อมูล");
-                      Provider.of<PlanData>(context, listen: false)
-                          .fetchFiveRank(dropdownyearvalue, _month_value);
-                      EasyLoading.dismiss();
-                    });
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        Expanded(
-          flex: 2,
-          child: SfCircularChart(
-            // primaryXAxis: CategoryAxis(),
-            // Chart title
-            // title: ChartTitle(text: 'CAR'),
-            // Enable legend
-            legend: Legend(
-              isVisible: false,
-              overflowMode: LegendItemOverflowMode.wrap,
-              position: LegendPosition.bottom,
-            ),
-            // Enable tooltip
-            tooltipBehavior: TooltipBehavior(enable: true),
-            series: <CircularSeries<FiveRankData, String>>[
-              DoughnutSeries<FiveRankData, String>(
-                dataSource: _tabvaluelist,
-                xValueMapper: (FiveRankData sales, _) => sales.deptname,
-                yValueMapper: (FiveRankData sales, _) => sales.score,
-                // name: 'Sales',
-                // Enable data label
-                dataLabelSettings: DataLabelSettings(isVisible: true),
-              )
             ],
           ),
         ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'อันดับเรียงตามคะแนน',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
         Expanded(
           flex: 4,
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: _buildlist(_tabvaluelist, score_rank),
-          ),
+          child: _buildlist(_tabvaluelist, score_rank),
         )
       ]);
     } else {
-      _content = Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'อันดับคะแนน 5 ส. ประจำเดือน',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton(
-                  value: dropdownvalue,
-                  alignment: AlignmentDirectional.centerEnd,
-                  items:
-                      month_list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      dropdownvalue = value.toString();
-                    });
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton(
-                  value: dropdownyearvalue,
-                  alignment: AlignmentDirectional.centerEnd,
-                  items:
-                      year_list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      dropdownyearvalue = value.toString();
-                    });
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 45, 172, 123)),
-                  child: Text('ค้นหา'),
-                  onPressed: () {
-                    setState(() {
-                      var _month_value = "";
-                      var indexValue = _stdmonth.indexWhere(
-                          (element) => element["name"] == dropdownvalue);
-                      _month_value = _stdmonth[indexValue]['id'];
-
-                      EasyLoading.show(status: "กำลังโหลดข้อมูล");
-                      Provider.of<PlanData>(context, listen: false)
-                          .fetchFiveRank(dropdownyearvalue, _month_value);
-                      EasyLoading.dismiss();
-                    });
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
+      return Column(children: <Widget>[
+        _buildSearchHeader(),
         Expanded(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Icon(Icons.hourglass_empty),
-                // SizedBox(
-                //   height: 5,
-                // ),
+                Icon(Icons.inbox_rounded, size: 64, color: Colors.grey[300]),
+                const SizedBox(height: 16),
                 Text(
-                  'ไม่พบข้อมูล กรูณาเลือกข้อมูลใหม่',
+                  'ไม่พบข้อมูลคะแนนในเดือนนี้',
                   style: TextStyle(
-                    color: Colors.red,
+                    fontFamily: 'Prompt',
+                    color: Colors.grey[500],
                     fontSize: 16,
                   ),
                 ),
@@ -553,8 +487,6 @@ class _FiveDetailPageState extends State<FiveDetailPage>
         )
       ]);
     }
-
-    return _content;
   }
 }
 

@@ -72,7 +72,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
         _isOffline = result == ConnectivityResult.none;
       });
       if (!_isOffline) {
-        Provider.of<PlanData>(context, listen: false).syncOfflineData();
+        // Provider.of<PlanData>(context, listen: false).syncOfflineData();
       }
     });
 
@@ -81,7 +81,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
         _isOffline = result == ConnectivityResult.none;
       });
       if (!_isOffline) {
-        Provider.of<PlanData>(context, listen: false).syncOfflineData();
+        // Provider.of<PlanData>(context, listen: false).syncOfflineData();
       }
     });
 
@@ -440,13 +440,10 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           physics: const BouncingScrollPhysics(),
           itemBuilder: (BuildContext contex, int index) {
-            return FutureBuilder<int>(
-              future: getAreacheckCount(listcheck[index].plan_area_id),
-              builder: (contex, snapshot) {
-                int total_topic = Provider.of<PlanData>(contex, listen: false)
-                    .countTopicitem(listcheck[index].plan_area_id);
-                int total_topic_counted = snapshot.data ?? Provider.of<PlanData>(contex, listen: false)
-                    .countCheckedTopicitem(listcheck[index].plan_area_id);
+            int total_topic = Provider.of<PlanData>(contex, listen: false)
+                .countTopicitem(listcheck[index].plan_area_id);
+            int total_topic_counted = Provider.of<PlanData>(contex, listen: false)
+                .countCheckedTopicitem(listcheck[index].plan_area_id);
 
                 Color _bgcolor = Colors.white;
                 Color _line_color = Colors.black87;
@@ -628,8 +625,6 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                   ),
                 ),
               ),
-            );
-              },
             );
           });
       return cardlist;

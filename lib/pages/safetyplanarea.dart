@@ -50,7 +50,7 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
         _isOffline = result == ConnectivityResult.none;
       });
       if (!_isOffline) {
-        Provider.of<PlanData>(context, listen: false).syncOfflineData();
+        // Provider.of<PlanData>(context, listen: false).syncOfflineData();
       }
     });
 
@@ -60,7 +60,7 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
         _isOffline = result == ConnectivityResult.none;
       });
       if (!_isOffline) {
-        Provider.of<PlanData>(context, listen: false).syncOfflineData();
+        // Provider.of<PlanData>(context, listen: false).syncOfflineData();
       }
     });
 

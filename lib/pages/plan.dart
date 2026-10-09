@@ -52,10 +52,23 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
         Provider.of<PlanData>(context, listen: false).listpersoncurrentplan;
     if (listx.isNotEmpty) {
       listx.forEach((element) {
-        print('plan no is ${element.plan_no}');
+        print('plan no is ${element.plan_no} target date is ${element.plan_date}');
+        DateTime targetDate = DateTime.tryParse(element.plan_date) ?? DateTime.now();
+        String activityName = "กิจกรรมตรวจ";
+        Color bgColor = Colors.blue;
+        
+        if (element.plan_type == "1") {
+          activityName = "ตรวจ 5ส";
+          bgColor = const Color(0xFF42A5F5); // Blue
+        } else if (element.plan_type == "2") {
+          activityName = "ตรวจ Safety";
+          bgColor = const Color(0xFFE99A24); // Orange
+        }
+
         final CalendarEvent _items = CalendarEvent(
-          eventName: "${element.plan_no}",
-          eventDate: DateTime.now(),
+          eventName: "$activityName (${element.plan_no})",
+          eventDate: targetDate,
+          eventBackgroundColor: bgColor,
         );
 
         _addlistitem.add(_items);

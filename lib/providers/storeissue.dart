@@ -16,6 +16,8 @@ class StoreissueData extends ChangeNotifier {
   final String url_issue_approve =
       "https://api.cicsupports.com/api/storeissue/approveissue";
 
+  String? addJournalError;
+
   late List<Storeissue> _issue = [];
   List<Storeissue> get listIssue => _issue;
 
@@ -447,6 +449,7 @@ class StoreissueData extends ChangeNotifier {
   }
 
   Future<bool> addJournal(List<dynamic> listdata, String job_no, {bool forcePending = false, String? approverEmpCode, String? approverName, String? idempotencyKey}) async {
+    addJournalError = null;
     String _user_id = "";
     String _dept_code = "";
 
@@ -539,6 +542,12 @@ class StoreissueData extends ChangeNotifier {
           return _iscomplated;
         } else {
           print('Failed to add journal at $url, status: ${response.statusCode}, body: ${response.body}');
+          try {
+            var decoded = json.decode(response.body);
+            if (decoded != null && decoded['error'] != null) {
+              addJournalError = decoded['error'].toString();
+            }
+          } catch (_) {}
         }
       } catch (err) {
         print('cannot create journal at $url: $err');

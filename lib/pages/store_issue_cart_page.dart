@@ -673,8 +673,15 @@ class _StoreIssueCartPageState extends State<StoreIssueCartPage> {
                                         setState(() {
                                           isSubmitting = false;
                                         });
+                                        String errMsg = Provider.of<StoreissueData>(context, listen: false).addJournalError ?? "เกิดข้อผิดพลาด ไม่สามารถส่งคำขอได้";
                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          content: Row(children: [Icon(Icons.error, color: Colors.white), SizedBox(width: 10), Text("เกิดข้อผิดพลาด ไม่สามารถส่งคำขอได้")]),
+                                          content: Row(
+                                            children: [
+                                              Icon(Icons.error, color: Colors.white), 
+                                              SizedBox(width: 10), 
+                                              Expanded(child: Text(errMsg))
+                                            ]
+                                          ),
                                           backgroundColor: Colors.red,
                                         ));
                                       }

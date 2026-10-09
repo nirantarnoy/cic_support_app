@@ -828,8 +828,6 @@ class PlanData extends ChangeNotifier {
             element.score = data.score.toString(); // update score if exist
             print("have data to update trans");
             has_update = 1;
-          } else {
-            has_update = 0; // if duplicate score please commit this line
           }
         });
         if (has_update == 0) {
@@ -1594,7 +1592,7 @@ class PlanData extends ChangeNotifier {
       var addData = listInspectiontrans
           .map((e) => {
                 'module_type_id': int.tryParse(e.module_type_id ?? '') ?? 0,
-                'plan_id': int.tryParse(e.plan_id ?? '') ?? 0,
+                'plan_id': int.tryParse(e.plan_num ?? '') ?? 0,
                 'trans_date': e.trans_date ?? '',
                 'emp_id': parsedUserId,
                 'area_group_id': int.tryParse(e.area_group_id ?? '') ?? 0,

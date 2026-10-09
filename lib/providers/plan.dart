@@ -1612,7 +1612,17 @@ class PlanData extends ChangeNotifier {
           .toList();
 
       final String payloadJson = json.encode(addData);
+      
+      // === TEST MODE: Print payload and return early ===
+      print("========== TEST MODE PAYLOAD ==========");
+      print(payloadJson);
+      print("=======================================");
+      
+      EasyLoading.showInfo('โหมดทดสอบ: ดู log ข้อมูลที่จะส่งได้ใน Console');
+      return true;
+      // ===============================================
 
+      /*
       try {
         final file = File('/Users/itcamel/flutter_apps/flutter_cic_support/payload_debug.json');
         await file.writeAsString(payloadJson);
@@ -1674,6 +1684,7 @@ class PlanData extends ChangeNotifier {
       EasyLoading.showInfo('บันทึกข้อมูลออฟไลน์เรียบร้อย');
       return true;
     }
+    */
   }
 
   Future<bool> submitBigcleanInspection() async {

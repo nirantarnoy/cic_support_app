@@ -1018,6 +1018,18 @@ class PlanData extends ChangeNotifier {
     if (_inspectionsafetytrans.isNotEmpty) {
       _inspectionsafetytrans.clear();
     }
+    if (listSafetyJobplanArea.isNotEmpty) {
+      listSafetyJobplanArea.clear();
+    }
+    if (listBigplanArea.isNotEmpty) {
+      listBigplanArea.clear();
+    }
+    if (listJobplanAreaRepeat.isNotEmpty) {
+      listJobplanAreaRepeat.clear();
+    }
+    finishedcheck = 1;
+    finishedsafetycheck = 1;
+    notifyListeners();
   }
 
   int countTopicitemRepeat(String area_id) {

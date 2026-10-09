@@ -298,12 +298,12 @@ class StoreissueData extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> checkWorkOrderExist(String jobNo) async {
+  Future<Map<String, dynamic>> checkWorkOrderExist(String jobNo) async {
     final pref = await SharedPreferences.getInstance();
     final String? token = pref.getString('token');
     final String cleanJobNo = jobNo.trim();
 
-    if (cleanJobNo.isEmpty) return false;
+    if (cleanJobNo.isEmpty) return {'exists': false, 'isClosed': false};
 
     final Map<String, dynamic> filterData = {
       'wo_number': cleanJobNo,
@@ -330,12 +330,13 @@ class StoreissueData extends ChangeNotifier {
         if (response.statusCode == 200) {
           var res = json.decode(response.body);
           if (res != null && res is Map) {
+            bool isClosed = (res['isClosed'] == true || res['isClosed'] == 1 || res['isClosed'].toString() == 'true');
             if (res.containsKey('exists')) {
               bool isExist = (res['exists'] == true || res['exists'] == 1 || res['exists'].toString() == 'true');
-              if (isExist) return true;
+              if (isExist || isClosed) return {'exists': isExist, 'isClosed': isClosed};
             }
             int cnt = int.tryParse(res['count']?.toString() ?? '0') ?? 0;
-            if (cnt > 0) return true;
+            if (cnt > 0 || isClosed) return {'exists': cnt > 0, 'isClosed': isClosed};
           }
         }
       } catch (e) {
@@ -357,14 +358,14 @@ class StoreissueData extends ChangeNotifier {
         var res = json.decode(response.body);
         if (res != null) {
           if (res is Map) {
+            bool isClosed = (res['isClosed'] == true || res['isClosed'] == 1 || res['isClosed'].toString() == 'true');
             if (res.containsKey('exists')) {
-              return (res['exists'] == true || res['exists'] == 1 || res['exists'].toString() == 'true');
+              bool isExist = (res['exists'] == true || res['exists'] == 1 || res['exists'].toString() == 'true');
+              return {'exists': isExist, 'isClosed': isClosed};
             } else if (res.containsKey('count')) {
               int cnt = int.tryParse(res['count'].toString()) ?? 0;
-              if (cnt > 0) return true;
+              return {'exists': cnt > 0, 'isClosed': isClosed};
             }
-          } else if (res is List && res.isNotEmpty) {
-            return true;
           }
         }
       }
@@ -372,7 +373,7 @@ class StoreissueData extends ChangeNotifier {
       print('error checkWorkOrderExist Node API: $e');
     }
 
-    return false;
+    return {'exists': false, 'isClosed': false};
   }
 
   Future<int> checkJobNoCount(String jobNo) async {

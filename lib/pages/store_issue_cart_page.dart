@@ -227,12 +227,18 @@ class _StoreIssueCartPageState extends State<StoreIssueCartPage> {
                     String targetJobNo = jobPrefix + inputText;
                     EasyLoading.show(status: 'กำลังตรวจสอบเลข JOB...');
                     
-                    bool exists = await Provider.of<StoreissueData>(context, listen: false).checkWorkOrderExist(targetJobNo);
-
+                    var existsMap = await Provider.of<StoreissueData>(context, listen: false).checkWorkOrderExist(targetJobNo);
+                    bool exists = existsMap['exists'] ?? false;
+                    bool isClosed = existsMap['isClosed'] ?? false;
+                    
                     if (!exists) {
                       EasyLoading.dismiss();
                       isValid = false;
-                      errorMsg = "ไม่พบเลขที่ WO หรือ PM";
+                      if (isClosed) {
+                        errorMsg = "ใบงาน (WO/PM) ถูกปิดไปแล้ว ไม่สามารถใช้งานได้";
+                      } else {
+                        errorMsg = "ไม่พบเลขที่ WO หรือ PM";
+                      }
                     } else {
                       int jobCount = await Provider.of<StoreissueData>(context, listen: false).checkJobNoCount(targetJobNo);
                       EasyLoading.dismiss();
@@ -388,11 +394,13 @@ class _StoreIssueCartPageState extends State<StoreIssueCartPage> {
 
     if (issue_job_no.isNotEmpty) {
       EasyLoading.show(status: 'ตรวจสอบเลขที่ใบ JOB...');
-      bool exists = await Provider.of<StoreissueData>(context, listen: false).checkWorkOrderExist(issue_job_no);
+      var existsMap = await Provider.of<StoreissueData>(context, listen: false).checkWorkOrderExist(issue_job_no);
+      bool exists = existsMap['exists'] ?? false;
+      bool isClosed = existsMap['isClosed'] ?? false;
       EasyLoading.dismiss();
       if (!exists) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("ไม่พบเลขที่ WO หรือ PM ในระบบหลังบ้าน"),
+          content: Text(isClosed ? "ใบงาน (WO/PM) ถูกปิดไปแล้ว ไม่สามารถใช้งานได้" : "ไม่พบเลขที่ WO หรือ PM ในระบบหลังบ้าน"),
           backgroundColor: Colors.red,
         ));
         return;

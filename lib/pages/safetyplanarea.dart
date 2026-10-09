@@ -249,6 +249,20 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
         elevation: 1,
         iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
+          Consumer<PlanData>(
+            builder: (context, planData, _) {
+              if (planData.totalOfflineCount > 0 && !_isOffline) {
+                return IconButton(
+                  icon: Icon(Icons.cloud_upload_outlined, color: Colors.amber.shade800),
+                  onPressed: () {
+                    EasyLoading.show(status: "กำลังส่งข้อมูล...");
+                    planData.syncOfflineData();
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           IconButton(
             onPressed: () => Navigator.push(
                 context,
@@ -307,30 +321,6 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      if (!_isOffline)
-                        GestureDetector(
-                          onTap: () {
-                            EasyLoading.show(status: "กำลังส่งข้อมูล...");
-                            planData.syncOfflineData();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.shade800,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              "กดซิงค์",
-                              style: TextStyle(
-                                fontFamily: 'Prompt',
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 );

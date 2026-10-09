@@ -260,7 +260,6 @@ class SecurityplanData extends ChangeNotifier {
         new_plan_id = int.parse(_plan_id);
       }
       new_plan_id += 1;
-
       var addData = listSecuritychecked
           .map((e) => {
                 'asset_id': int.parse(e.asset_id),

@@ -194,15 +194,10 @@ class PlanData extends ChangeNotifier {
 
   List<JobplanArea> getAreaTitle() {
     List<JobplanArea> _newgroup = [];
-    listJobplanArea.forEach((element) {
-      int has_ = 0;
-      _newgroup.forEach((item_check) {
-        if (item_check.plan_area_id == element.plan_area_id) {
-          has_ += 1;
-        }
-      });
-      if (has_ > 0) {
-      } else {
+    Set<String> seen = {};
+    for (var element in listJobplanArea) {
+      if (!seen.contains(element.plan_area_id)) {
+        seen.add(element.plan_area_id);
         JobplanArea _group = JobplanArea(
           plan_id: element.plan_id,
           plan_num: element.plan_num,
@@ -226,24 +221,19 @@ class PlanData extends ChangeNotifier {
         );
         _newgroup.add(_group);
       }
-    });
+    }
     _newgroup.sort(
       (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
     );
-    return _newgroup.toSet().toList();
+    return _newgroup;
   }
 
   List<BigplanArea> getBigAreaTitle() {
     List<BigplanArea> _newgroup = [];
-    listBigplanArea.forEach((element) {
-      int has_ = 0;
-      _newgroup.forEach((item_check) {
-        if (item_check.plan_area_id == element.plan_area_id) {
-          has_ += 1;
-        }
-      });
-      if (has_ > 0) {
-      } else {
+    Set<String> seen = {};
+    for (var element in listBigplanArea) {
+      if (!seen.contains(element.plan_area_id)) {
+        seen.add(element.plan_area_id);
         BigplanArea _group = BigplanArea(
           plan_id: element.plan_id,
           plan_date: "",
@@ -260,24 +250,19 @@ class PlanData extends ChangeNotifier {
         );
         _newgroup.add(_group);
       }
-    });
+    }
     _newgroup.sort(
       (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
     );
-    return _newgroup.toSet().toList();
+    return _newgroup;
   }
 
   List<JobplanAreaRepeat> getAreaRepeatTitle() {
     List<JobplanAreaRepeat> _newgroup = [];
-    listJobplanAreaRepeat.forEach((element) {
-      int has_ = 0;
-      _newgroup.forEach((item_check) {
-        if (item_check.plan_area_id == element.plan_area_id) {
-          has_ += 1;
-        }
-      });
-      if (has_ > 0) {
-      } else {
+    Set<String> seen = {};
+    for (var element in listJobplanAreaRepeat) {
+      if (!seen.contains(element.plan_area_id)) {
+        seen.add(element.plan_area_id);
         JobplanAreaRepeat _group = JobplanAreaRepeat(
           plan_id: element.plan_id,
           plan_num: element.plan_num,
@@ -301,24 +286,19 @@ class PlanData extends ChangeNotifier {
         );
         _newgroup.add(_group);
       }
-    });
+    }
     _newgroup.sort(
       (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
     );
-    return _newgroup.toSet().toList();
+    return _newgroup;
   }
 
   List<JobSafetyplanArea> getSafetyAreaTitle() {
     List<JobSafetyplanArea> _newgroup = [];
-    listSafetyJobplanArea.forEach((element) {
-      int has_ = 0;
-      _newgroup.forEach((item_check) {
-        if (item_check.plan_area_id == element.plan_area_id) {
-          has_ += 1;
-        }
-      });
-      if (has_ > 0) {
-      } else {
+    Set<String> seen = {};
+    for (var element in listSafetyJobplanArea) {
+      if (!seen.contains(element.plan_area_id)) {
+        seen.add(element.plan_area_id);
         JobSafetyplanArea _group = JobSafetyplanArea(
           plan_id: element.plan_id,
           plan_num: element.plan_num,
@@ -335,29 +315,22 @@ class PlanData extends ChangeNotifier {
         );
         _newgroup.add(_group);
       }
-    });
+    }
     _newgroup.sort(
       (a, b) => int.parse(a.plan_area_id).compareTo(int.parse(b.plan_area_id)),
     );
-    return _newgroup.toSet().toList();
+    return _newgroup;
   }
 
   List<JobplanArea> getTopic(String plan_area_id, String plan_id) {
     List<JobplanArea> _newgroup = [];
-    listJobplanArea.forEach((element) {
-      int has_ = 0;
-      _newgroup.forEach((item_check) {
-        if (item_check.topic_id == element.topic_id &&
-            element.is_enable == "1") {
-          print("Has topic naja");
-          has_ += 1;
-        }
-      });
-      if (has_ > 0) {
-      } else {
-        if (element.plan_area_id == plan_area_id &&
-            element.plan_id == plan_id &&
-            element.is_enable == "1") {
+    Set<String> seen = {};
+    for (var element in listJobplanArea) {
+      if (element.plan_area_id == plan_area_id &&
+          element.plan_id == plan_id &&
+          element.is_enable == "1") {
+        if (!seen.contains(element.topic_id)) {
+          seen.add(element.topic_id);
           JobplanArea _group = JobplanArea(
             plan_id: element.plan_id,
             plan_num: element.plan_num,
@@ -382,8 +355,8 @@ class PlanData extends ChangeNotifier {
           _newgroup.add(_group);
         }
       }
-    });
-    return _newgroup.toSet().toList();
+    }
+    return _newgroup;
   }
 
   List<JobCheckDetail> getTopicitem(String topic_id, String area_id) {
@@ -671,6 +644,14 @@ class PlanData extends ChangeNotifier {
 
   int getAllCheckedSafetyArea() {
     int cnt = 0;
+    // count unique areas in listInspectionSafetytrans
+    Set<String> checkedAreas = {};
+    listInspectionSafetytrans.forEach((element) {
+      if (element.score != "0" && element.area_id != null) {
+        checkedAreas.add(element.area_id!);
+      }
+    });
+    cnt = checkedAreas.length;
     return cnt;
   }
 
@@ -704,8 +685,6 @@ class PlanData extends ChangeNotifier {
             element.score = data.score.toString(); // update score if exist
             print("have data to update trans");
             has_update = 1;
-          } else {
-            has_update = 0; // if duplicate score please commit this line
           }
         });
         if (has_update == 0) {
@@ -951,8 +930,6 @@ class PlanData extends ChangeNotifier {
             element.score = data.score.toString(); // update score if exist
             print("have data to update trans");
             has_update = 1;
-          } else {
-            has_update = 0; // if duplicate score please commit this line
           }
         });
         if (has_update == 0) {

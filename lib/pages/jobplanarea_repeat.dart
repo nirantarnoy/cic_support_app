@@ -208,7 +208,9 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                                 plan_num: listcheck[index].plan_num,
                               ),
                             ),
-                          );
+                          ).then((value) {
+                            Provider.of<PlanData>(context, listen: false).fetchJobplan();
+                          });
                         },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

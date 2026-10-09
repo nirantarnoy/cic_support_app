@@ -536,7 +536,9 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                       plan_num: listcheck[index].plan_num,
                                     ),
                                   ),
-                                );
+                                ).then((value) {
+                                  Provider.of<PlanData>(context, listen: false).fetchJobplan();
+                                });
                               },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),

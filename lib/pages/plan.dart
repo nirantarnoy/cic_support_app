@@ -140,7 +140,9 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const JobplanAreaPage())),
+                      builder: (context) => const JobplanAreaPage())).then((_) {
+                Provider.of<PlanData>(context, listen: false).fetchJobplan();
+              }),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -286,7 +288,9 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
                   ? Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const JobplanAreaRepeatPage()))
+                          builder: (context) => const JobplanAreaRepeatPage())).then((_) {
+                      Provider.of<PlanData>(context, listen: false).fetchJobplan();
+                    })
                   : null,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

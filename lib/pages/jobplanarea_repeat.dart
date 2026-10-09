@@ -209,6 +209,7 @@ class _JobplanAreaRepeatPageState extends State<JobplanAreaRepeatPage> {
                               ),
                             ),
                           ).then((value) {
+                            setState(() {});
                             Provider.of<PlanData>(context, listen: false).fetchJobplan();
                           });
                         },

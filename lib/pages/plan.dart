@@ -141,6 +141,7 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const JobplanAreaPage())).then((_) {
+                setState(() {});
                 Provider.of<PlanData>(context, listen: false).fetchJobplan();
               }),
               child: Padding(
@@ -289,6 +290,7 @@ class _PlanPageState extends State<PlanPage> with TickerProviderStateMixin {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const JobplanAreaRepeatPage())).then((_) {
+                      setState(() {});
                       Provider.of<PlanData>(context, listen: false).fetchJobplan();
                     })
                   : null,

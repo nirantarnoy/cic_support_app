@@ -537,6 +537,7 @@ class _JobplanAreaPageState extends State<JobplanAreaPage> {
                                     ),
                                   ),
                                 ).then((value) {
+                                  setState(() {});
                                   Provider.of<PlanData>(context, listen: false).fetchJobplan();
                                 });
                               },

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_cic_support/app_config.dart';
 import 'package:flutter_cic_support/appcache/appcache.dart';
 import 'package:flutter_cic_support/pages/mainpage.dart';
 import 'package:flutter_cic_support/pages/profilenormal.dart';
@@ -40,7 +46,106 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     _checkInternet();
     createBox();
+    checkAppVersion();
+    recordAppVersionIfChanged();
     super.initState();
+  }
+
+  Future<void> recordAppVersionIfChanged() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final currentVersion = AppConfig.buildVersion;
+      final lastRecordedVersion = prefs.getString('last_recorded_version');
+      
+      if (lastRecordedVersion != currentVersion) {
+        // Try to get username from Hive (in case of auto login)
+        var box = await Hive.openBox('logindata');
+        String username = box.get('username') ?? '';
+        
+        if (username.isNotEmpty) {
+          final response = await http.post(
+            Uri.parse('https://api.cicsupports.com/ptbmprod/api_record_app_version.php'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'username': username,
+              'app_version': currentVersion,
+              'device_info': Platform.operatingSystem,
+            })
+          );
+          
+          if (response.statusCode == 200) {
+            final jsonResp = json.decode(response.body);
+            if (jsonResp['success'] == true) {
+              await prefs.setString('last_recorded_version', currentVersion);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print('Error recording version: $e');
+    }
+  }
+
+  Future<void> checkAppVersion() async {
+    if (!Platform.isAndroid) return;
+
+    try {
+      final response = await http.get(Uri.parse('https://api.cicsupports.com/ptbmprod/api_app_version.php'));
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse['success'] == true) {
+          final apiVersionName = jsonResponse['data']['version_name'].toString();
+          final appDetails = jsonResponse['data']['app_details'].toString();
+          final downloadLink = jsonResponse['data']['download_link'].toString();
+
+          String currentVersion = AppConfig.buildVersion;
+
+          if (apiVersionName.trim() != currentVersion.trim()) {
+            showUpdateDialog(apiVersionName, appDetails, downloadLink);
+          }
+        }
+      }
+    } catch (e) {
+      print("Error checking version: $e");
+    }
+  }
+
+  void showUpdateDialog(String newVersion, String details, String url) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('มีเวอร์ชันใหม่รอให้อัปเดต ($newVersion)', style: const TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
+          content: SingleChildScrollView(
+            child: Text(details, style: const TextStyle(fontFamily: 'Prompt')),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('ภายหลัง', style: TextStyle(fontFamily: 'Prompt')),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0F9B73),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('อัปเดตเลย', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
+              onPressed: () async {
+                if (url.isNotEmpty) {
+                  final uri = Uri.parse(url);
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } catch (e) {
+                    print('Could not launch $url');
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _checkInternet() async {
@@ -126,6 +231,10 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (loginSuccess) {
+      // Because _submitForm means manual login, we also try to record version here
+      // just in case it wasn't recorded on startup.
+      recordAppVersionIfChanged();
+
       // Fetch latest profile details from backend to ensure correct team IDs are loaded
       await Provider.of<UserData>(context, listen: false).fetchProfile();
 

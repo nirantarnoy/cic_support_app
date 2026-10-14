@@ -231,6 +231,63 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (loginSuccess) {
+      // Check for consent
+      final prefs = await SharedPreferences.getInstance();
+      final hasConsent = prefs.getBool('has_given_consent') ?? false;
+
+      if (!hasConsent) {
+        bool consentGiven = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('เงื่อนไขการใช้งานระบบ', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
+              content: const Text(
+                'ระบบจะมีการเก็บข้อมูลส่วนบุคคลของคุณ ได้แก่ ชื่อผู้ใช้งาน ข้อมูลอุปกรณ์ และระบบปฏิบัติการ เพื่อนำไปใช้ในการทำงานและวิเคราะห์ข้อมูลภายในระบบเท่านั้น\n\nคุณรับทราบและยินยอมให้ระบบจัดเก็บข้อมูลดังกล่าวหรือไม่?',
+                style: TextStyle(fontFamily: 'Prompt'),
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('ไม่ยินยอม', style: TextStyle(fontFamily: 'Prompt', color: Colors.grey)),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F9B73),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('รับทราบและยอมรับ', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ?? false;
+
+        if (consentGiven) {
+          // Record to backend
+          try {
+            await http.post(
+              Uri.parse('https://api.cicsupports.com/ptbmprod/api_record_consent.php'),
+              headers: {'Content-Type': 'application/json'},
+              body: json.encode({
+                'username': _formData['username'] ?? '',
+                'device_info': Platform.localHostname,
+                'os': Platform.operatingSystem,
+                'status': 'accepted'
+              })
+            );
+            await prefs.setBool('has_given_consent', true);
+          } catch (e) {
+            print('Error recording consent: $e');
+          }
+        } else {
+          // Consent denied, cancel login process
+          EasyLoading.showError("กรุณายอมรับเงื่อนไขเพื่อเข้าใช้งาน");
+          return;
+        }
+      }
+
       // Because _submitForm means manual login, we also try to record version here
       // just in case it wasn't recorded on startup.
       recordAppVersionIfChanged();
@@ -245,7 +302,6 @@ class _LoginPageState extends State<LoginPage> {
       }
       
       final String teamId = Provider.of<UserData>(context, listen: false).team_display;
-      final prefs = await SharedPreferences.getInstance();
       final pendingRoute = prefs.getString('pending_route');
 
       if (pendingRoute != null && pendingRoute.isNotEmpty) {

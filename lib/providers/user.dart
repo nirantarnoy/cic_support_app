@@ -592,7 +592,7 @@ class UserData with ChangeNotifier {
     _isauthenuser = false;
     _authTimer.cancel();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    // Do not use prefs.clear() because it removes app settings like has_given_consent
     prefs.remove('token');
     prefs.remove('emp_id');
     prefs.remove('emp_code');

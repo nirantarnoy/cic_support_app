@@ -242,9 +242,53 @@ class _LoginPageState extends State<LoginPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('เงื่อนไขการใช้งานระบบ', style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold)),
-              content: const Text(
-                'ระบบจะมีการเก็บข้อมูลส่วนบุคคลของคุณ ได้แก่ ชื่อผู้ใช้งาน ข้อมูลอุปกรณ์ และระบบปฏิบัติการ เพื่อนำไปใช้ในการทำงานและวิเคราะห์ข้อมูลภายในระบบเท่านั้น\n\nคุณรับทราบและยินยอมให้ระบบจัดเก็บข้อมูลดังกล่าวหรือไม่?',
-                style: TextStyle(fontFamily: 'Prompt'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF4E5),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFFFA726)),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.business, color: Color(0xFFE65100), size: 20),
+                              SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  'สำหรับใช้งานภายในบริษัทเท่านั้น',
+                                  style: TextStyle(fontFamily: 'Prompt', fontWeight: FontWeight.bold, color: Color(0xFFE65100)),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'ระบบนี้พัฒนาขึ้นเพื่อใช้งานภายในบริษัท โดยมีวัตถุประสงค์เพื่อเพิ่มประสิทธิภาพของการทำงานเท่านั้น '
+                            'ไม่ใช่แอปพลิเคชันสำหรับบุคคลภายนอกหรือสาธารณะ และไม่มีวัตถุประสงค์เชิงพาณิชย์\n\n'
+                            'ผู้ใช้งานต้องเป็นพนักงานหรือผู้ที่ได้รับอนุญาตจากบริษัทเท่านั้น '
+                            'ห้ามนำบัญชีผู้ใช้งานหรือข้อมูลในระบบไปเผยแพร่หรือใช้งานนอกเหนือจากงานของบริษัท',
+                            style: TextStyle(fontFamily: 'Prompt', fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'ระบบจะมีการเก็บข้อมูลส่วนบุคคลของคุณ ได้แก่ ชื่อผู้ใช้งาน ข้อมูลอุปกรณ์ และระบบปฏิบัติการ เพื่อนำไปใช้ในการทำงานและวิเคราะห์ข้อมูลภายในระบบเท่านั้น\n\n'
+                      'การกด "รับทราบและยอมรับ" ถือว่าคุณได้อ่านและเข้าใจตรงกันว่าระบบนี้เป็นระบบสำหรับใช้งานภายในบริษัทเพื่อเพิ่มประสิทธิภาพการทำงาน และยินยอมให้ระบบจัดเก็บข้อมูลดังกล่าว',
+                      style: TextStyle(fontFamily: 'Prompt'),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(

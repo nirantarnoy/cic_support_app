@@ -1756,7 +1756,7 @@ class PlanData extends ChangeNotifier {
       var addData = listInspectionSafetytrans
           .map((e) => {
                 'module_type_id': int.tryParse(e.module_type_id) ?? 2,
-                'plan_id': int.tryParse(e.plan_id) ?? 0,
+                'plan_id': int.tryParse(e.plan_num) ?? 0,
                 'trans_date': e.trans_date,
                 'emp_id': int.tryParse(user_id) ?? 0,
                 'area_group_id': int.tryParse(e.area_group_id) ?? 0,

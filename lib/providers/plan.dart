@@ -1610,13 +1610,6 @@ class PlanData extends ChangeNotifier {
           .toList();
 
       final String payloadJson = json.encode(addData);
-      
-      try {
-        final file = File('/Users/itcamel/flutter_apps/flutter_cic_support/payload_debug.json');
-        await file.writeAsString(payloadJson);
-      } catch(e) {
-        print("Write error: $e");
-      }
 
       // Save to offline queue list first
       List<String> offlineQueue = prefs.getStringList("offline_5s_inspections") ?? [];

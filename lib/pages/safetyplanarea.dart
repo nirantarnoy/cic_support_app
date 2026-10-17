@@ -453,7 +453,6 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                                                 // Navigator.of(context).popUntil(
                                                 //     (_) => count++ >= 2);
                                               }
-                                              EasyLoading.dismiss();
                                             },
                                             child: Text(
                                               'ใช่',
@@ -565,7 +564,6 @@ class _SafetyplanAreaPageState extends State<SafetyplanAreaPage> {
                                                         builder: (context) =>
                                                             PlancheckcompletePage()));
                                               }
-                                              EasyLoading.dismiss();
                                             },
                                             child: Text(
                                               'ใช่',

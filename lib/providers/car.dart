@@ -67,8 +67,8 @@ class CarData extends ChangeNotifier {
       'car_non_conform': json.encode(nonconformJson),
       'status': 1,
       'car_photo': carphoto,
-      'created_by': 2,
-      'emp_id': int.parse(user_id),
+      'created_by': int.tryParse(user_id) ?? 0,
+      'emp_id': int.tryParse(user_id) ?? 0,
       'module_type_id': module_type_id,
     };
     print('photo are ${json.encode(photoJson)}');
